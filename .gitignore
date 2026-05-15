@@ -1,0 +1,26 @@
+# Secrets — NE JAMAIS COMMITTER
+config.json
+*.bak.*
+__pycache__/
+*.pyc
+
+# Logs locaux (restent sur ton Mac, pas en ligne)
+refresh.log
+launchd.err.log
+launchd.out.log
+wake_watcher.log
+wake_watcher.err.log
+wake_watcher.out.log
+publish.log
+
+# Data lourde non publique
+evol_liasses_2025.csv
+faq-comparaison-performances.csv
+faq.csv
+*.csv
+
+# Data.json (régénéré à chaque run, le HTML l'embed déjà)
+data.json
+
+# Fichiers OS
+.DS_Store

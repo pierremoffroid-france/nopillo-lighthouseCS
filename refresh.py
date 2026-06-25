@@ -29,6 +29,16 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Optional
 
+# ---------- FUSEAU HORAIRE ----------
+# Force l'heure de Paris pour TOUS les datetime.now() du script, quel que soit
+# l'endroit où il tourne (Mac = déjà Paris ; GitHub Actions = UTC par défaut).
+# Sans ça, l'horodatage "Dernière MAJ" s'affiche en UTC (-2h en été) dans le cloud.
+os.environ['TZ'] = 'Europe/Paris'
+try:
+    time.tzset()  # applique le TZ au process (POSIX : Linux/macOS)
+except AttributeError:
+    pass  # Windows n'a pas tzset ; sans effet (on tourne sur Linux/Mac de toute façon)
+
 # ---------- PATHS ----------
 SCRIPT_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = SCRIPT_DIR / 'config.json'

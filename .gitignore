@@ -1,26 +1,14 @@
-# Secrets — NE JAMAIS COMMITTER
+# JAMAIS committer le token HubSpot
 config.json
+
+# Artefacts locaux / logs
+*.log
+*.bak
 *.bak.*
 __pycache__/
 *.pyc
-
-# Logs locaux (restent sur ton Mac, pas en ligne)
-refresh.log
-launchd.err.log
-launchd.out.log
-wake_watcher.log
-wake_watcher.err.log
-wake_watcher.out.log
-publish.log
-
-# Data lourde non publique
-evol_liasses_2025.csv
-faq-comparaison-performances.csv
-faq.csv
-*.csv
-
-# Data.json (régénéré à chaque run, le HTML l'embed déjà)
-data.json
-
-# Fichiers OS
 .DS_Store
+
+# Le CSV FAQ est géré séparément (sync Drive / Make) — décommente si tu ne veux
+# pas le versionner dans le repo :
+# faq-comparaison-performances.csv

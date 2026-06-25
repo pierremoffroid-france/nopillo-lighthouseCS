@@ -1,0 +1,112 @@
+{
+  "ic_map": [
+    {
+      "owner_id": 31560323,
+      "name": "Aaron",
+      "tl": "cyrielle",
+      "level": "N1"
+    },
+    {
+      "owner_id": 32138611,
+      "name": "Alexis",
+      "tl": "cyrielle",
+      "level": "N1"
+    },
+    {
+      "owner_id": 32138600,
+      "name": "Athalia",
+      "tl": "cyrielle",
+      "level": "N1"
+    },
+    {
+      "owner_id": 32837724,
+      "name": "Emeline",
+      "tl": "cyrielle",
+      "level": "N1"
+    },
+    {
+      "owner_id": 31643141,
+      "name": "Ivana",
+      "tl": "cyrielle",
+      "level": "N1"
+    },
+    {
+      "owner_id": 32138628,
+      "name": "Manon",
+      "tl": "cyrielle",
+      "level": "N1"
+    },
+    {
+      "owner_id": 29996724,
+      "name": "Priscilla",
+      "tl": "cyrielle",
+      "level": "N1+Liasses"
+    },
+    {
+      "owner_id": 844737572,
+      "name": "Hamda",
+      "tl": "cyrielle",
+      "level": "Immat"
+    },
+    {
+      "owner_id": 76990561,
+      "name": "Alexia",
+      "tl": "enzo",
+      "level": "N1"
+    },
+    {
+      "owner_id": 31560329,
+      "name": "Alice",
+      "tl": "enzo",
+      "level": "N1"
+    },
+    {
+      "owner_id": 30815127,
+      "name": "Andrea",
+      "tl": "enzo",
+      "level": "N1"
+    },
+    {
+      "owner_id": 30815153,
+      "name": "Angeline",
+      "tl": "enzo",
+      "level": "N1"
+    },
+    {
+      "owner_id": 31560320,
+      "name": "Gaëlle",
+      "tl": "enzo",
+      "level": "N1"
+    },
+    {
+      "owner_id": 32834520,
+      "name": "Jordan",
+      "tl": "enzo",
+      "level": "N1"
+    },
+    {
+      "owner_id": 29996718,
+      "name": "Jade",
+      "tl": "enzo",
+      "level": "N2"
+    },
+    {
+      "owner_id": 1990978149,
+      "name": "Magda",
+      "tl": "enzo",
+      "level": "N2"
+    },
+    {
+      "owner_id": 75453551,
+      "name": "Lilian",
+      "tl": "pierre",
+      "level": "Retention"
+    },
+    {
+      "owner_id": 650299108,
+      "name": "Mathieu",
+      "tl": "pierre",
+      "level": "Retention"
+    }
+  ]
+}

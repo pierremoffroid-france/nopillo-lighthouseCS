@@ -1,0 +1,87 @@
+name: Lighthouse refresh
+
+# Rafraîchit le dashboard Lighthouse 5×/jour et publie sur GitHub Pages.
+#
+# Horaires (heure de Paris, été = UTC+2) :
+#   08h00 · 11h00 · 14h00 · 17h30 · 20h30
+# ⚠️ Les crons GitHub sont en UTC et "best-effort" (5-30 min de retard possible).
+#    En hiver (UTC+1) tout se décale d'1h plus tôt en heure locale (choix assumé).
+#
+# Conversion été (CEST = UTC+2) :
+#   08h00 Paris → 06h00 UTC
+#   11h00 Paris → 09h00 UTC
+#   14h00 Paris → 12h00 UTC
+#   17h30 Paris → 15h30 UTC
+#   20h30 Paris → 18h30 UTC
+
+on:
+  schedule:
+    - cron: '0 6 * * *'    # 08h00 Paris
+    - cron: '0 9 * * *'    # 11h00 Paris
+    - cron: '0 12 * * *'   # 14h00 Paris
+    - cron: '30 15 * * *'  # 17h30 Paris
+    - cron: '30 18 * * *'  # 20h30 Paris
+  workflow_dispatch:        # bouton "Run workflow" pour lancer à la main / tester
+
+# Le GITHUB_TOKEN doit pouvoir écrire (commit du HTML régénéré)
+permissions:
+  contents: write
+
+# Évite deux refreshs simultanés (si un run déborde sur le suivant)
+concurrency:
+  group: lighthouse-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20      # le refresh tourne ~6 min ; 20 = marge large
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Générer config.json depuis les secrets
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+          PARAM_PWD: ${{ secrets.PARAM_PWD }}
+        run: python3 make_config.py
+
+      - name: Lancer refresh.py
+        run: |
+          echo "Refresh démarré : $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M:%S %Z')"
+          python3 refresh.py
+          echo "Refresh terminé : $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M:%S %Z')"
+
+      - name: Préparer index.html (GitHub Pages sert index.html)
+        run: |
+          if [ -f lighthouse.html ]; then
+            cp lighthouse.html index.html
+            echo "index.html mis à jour."
+          else
+            echo "❌ lighthouse.html introuvable — refresh.py a échoué ?"
+            exit 1
+          fi
+
+      - name: Commit + push si changement
+        run: |
+          git config --local user.name  "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          # on ne commit JAMAIS config.json (contient le token) — voir .gitignore
+          git add lighthouse.html index.html data.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Aucun changement à publier."
+          else
+            git commit -m "Auto-refresh $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M')"
+            git push
+            echo "✓ Publié sur GitHub Pages."
+          fi
+
+      - name: Nettoyer config.json (sécurité)
+        if: always()
+        run: rm -f config.json

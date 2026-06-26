@@ -1220,7 +1220,7 @@
   <!-- Éditeur (caché tant que verrouillé) -->
   <div id="paramEditor" style="display:none">
     <div class="block">
-      <div class="block-header"><div><h3 class="block-title">Affectation des IC</h3><div class="block-sub">Modifie le Team Leader / niveau de chaque IC, puis copie le bloc JSON généré dans <code>ic_config.json</code> (à côté de refresh.py). Au prochain refresh, tout Lighthouse se recale automatiquement.</div></div></div>
+      <div class="block-header"><div><h3 class="block-title">Affectation des IC</h3><div class="block-sub">Modifie le Team Leader / niveau / statut de chaque IC, puis copie le bloc JSON généré dans <code>ic_config.json</code> (à côté de refresh.py). Au prochain refresh, tout Lighthouse se recale automatiquement. Un IC <strong>Inactif</strong> (parti) disparaît des vues actuelles mais reste dans l'historique.</div></div></div>
       <div id="paramSource" class="block-sub" style="margin-bottom:8px"></div>
       <div class="table-wrap" style="overflow-x:auto">
         <table class="data-table" id="paramTable" style="width:100%;border-collapse:collapse;font-size:12px">
@@ -1229,6 +1229,7 @@
             <th style="text-align:left;padding:6px">owner_id</th>
             <th style="text-align:left;padding:6px">Team Leader</th>
             <th style="text-align:left;padding:6px">Niveau</th>
+            <th style="text-align:left;padding:6px">Statut</th>
           </tr></thead>
           <tbody id="paramTbody"></tbody>
         </table>
@@ -5550,7 +5551,8 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   function getConfig(){
     // source : DATA.IC_MAP_CONFIG (généré par refresh.py depuis ic_config.json / fallback)
     const src = (typeof DATA!=='undefined' && DATA.IC_MAP_CONFIG) || [];
-    return src.map(e => ({owner_id:e.owner_id, name:e.name, tl:e.tl, level:e.level}));
+    return src.map(e => ({owner_id:e.owner_id, name:e.name, tl:e.tl, level:e.level,
+                          active: (e.active!==undefined ? !!e.active : true)}));
   }
 
   const TL_OPTIONS = ['cyrielle','enzo','pierre'];
@@ -5563,7 +5565,7 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
     if (srcEl) srcEl.textContent = 'Source actuelle : ' + ((typeof DATA!=='undefined' && DATA.IC_MAP_SOURCE) || 'inconnue');
     if (!tb) return;
     tb.innerHTML = working.map((e,i) => `
-      <tr style="border-bottom:1px solid var(--border,#eee)">
+      <tr style="border-bottom:1px solid var(--border,#eee);${e.active?'':'opacity:.5'}">
         <td style="padding:6px;font-weight:600">${e.name}</td>
         <td style="padding:6px;font-family:var(--font-mono);color:var(--muted)">${e.owner_id}</td>
         <td style="padding:6px">
@@ -5574,6 +5576,11 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
         <td style="padding:6px">
           <input data-i="${i}" class="param-level" value="${e.level}" style="padding:5px 8px;border-radius:6px;border:1px solid var(--border2,#ccc);font-size:12px;width:120px" />
         </td>
+        <td style="padding:6px">
+          <button data-i="${i}" class="param-active" style="padding:5px 10px;border-radius:6px;border:1px solid var(--border2,#ccc);font-size:12px;cursor:pointer;font-weight:600;${e.active?'background:#e6f7ed;color:#1a7f43':'background:#fbe6e8;color:#b3261e'}">
+            ${e.active?'● Actif':'○ Inactif'}
+          </button>
+        </td>
       </tr>`).join('');
     tb.querySelectorAll('.param-tl').forEach(sel => sel.addEventListener('change', e=>{
       working[+e.target.dataset.i].tl = e.target.value; renderJson();
@@ -5581,12 +5588,17 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
     tb.querySelectorAll('.param-level').forEach(inp => inp.addEventListener('input', e=>{
       working[+e.target.dataset.i].level = e.target.value; renderJson();
     }));
+    tb.querySelectorAll('.param-active').forEach(btn => btn.addEventListener('click', e=>{
+      const i = +e.target.dataset.i;
+      working[i].active = !working[i].active;
+      renderTable(); renderJson();
+    }));
   }
 
   function renderJson(){
     const pre = document.getElementById('paramJson');
     if (!pre) return;
-    const obj = { ic_map: working.map(e=>({owner_id:e.owner_id, name:e.name, tl:e.tl, level:e.level})) };
+    const obj = { ic_map: working.map(e=>({owner_id:e.owner_id, name:e.name, tl:e.tl, level:e.level, active:e.active})) };
     pre.textContent = JSON.stringify(obj, null, 2);
   }
 

@@ -100,29 +100,41 @@ def _load_ic_map():
     """
     Charge IC_MAP depuis ic_config.json (à côté de refresh.py) si présent et valide.
     Sinon retourne le fallback codé en dur. Ne lève jamais : sécurité avant tout.
+
+    Remplit aussi _load_ic_map._active : {owner_id: bool} (statut actif/inactif).
+    Un IC absent du dict = considéré actif par défaut (rétro-compatible).
     """
     path = Path(__file__).resolve().parent / 'ic_config.json'
+    # par défaut : tout le monde actif
+    _load_ic_map._active = {oid: True for oid in _IC_MAP_FALLBACK}
     if not path.exists():
         return dict(_IC_MAP_FALLBACK)
     try:
         raw = json.loads(path.read_text(encoding='utf-8'))
         entries = raw.get('ic_map', [])
         out = {}
+        active = {}
         for e in entries:
             oid = int(e['owner_id'])
             out[oid] = (str(e['name']), str(e['tl']), str(e.get('level', 'N1')))
+            # 'active' absent → actif par défaut (rétro-compatible avec anciens configs)
+            active[oid] = bool(e.get('active', True))
         if not out:
             raise ValueError("ic_map vide")
-        # log différé (log pas encore configuré à l'import) : on stocke un flag
-        _load_ic_map._source = f"ic_config.json ({len(out)} IC)"
+        _load_ic_map._active = active
+        n_inactive = sum(1 for v in active.values() if not v)
+        _load_ic_map._source = f"ic_config.json ({len(out)} IC, {n_inactive} inactif·s)"
         return out
     except Exception as e:
+        _load_ic_map._active = {oid: True for oid in _IC_MAP_FALLBACK}
         _load_ic_map._source = f"FALLBACK codé en dur (ic_config.json invalide : {e})"
         return dict(_IC_MAP_FALLBACK)
 
 
 _load_ic_map._source = "FALLBACK codé en dur (ic_config.json absent)"
+_load_ic_map._active = {oid: True for oid in _IC_MAP_FALLBACK}
 IC_MAP = _load_ic_map()
+IC_ACTIVE = _load_ic_map._active  # {owner_id: bool}
 
 # Pipeline stages internal IDs for "LOST" detection
 # The ticket status "LOST [NE PAS UTILISER]" has a specific stage ID
@@ -582,6 +594,9 @@ def fetch_calls_by_ic(client: HubSpotClient, ref_now: datetime.datetime) -> dict
     for period in periods:
         start, end = period_bounds(period)
         for owner_id, (ic_name, tl, level) in IC_MAP.items():
+            # IC inactif → pas la peine d'interroger l'API (masqué des vues actuelles)
+            if not IC_ACTIVE.get(owner_id, True):
+                continue
             filters = [{
                 'propertyName': 'hubspot_owner_id', 'operator': 'EQ', 'value': str(owner_id)
             }, {
@@ -825,6 +840,9 @@ def compute_ic_data(tickets: list, ref_now: datetime.datetime, calls_by_ic: dict
         period_calls = calls_by_ic.get(period, {})
         period_stats = []
         for owner_id, (ic_name, tl, level) in IC_MAP.items():
+            # IC inactif (parti) → masqué des vues ACTUELLES (mais gardé dans l'historique)
+            if not IC_ACTIVE.get(owner_id, True):
+                continue
             stats = compute_ic_stats_split(created_tickets, closed_tickets, ic_name)
             stats['name'] = ic_name
             stats['tl'] = tl
@@ -3153,7 +3171,8 @@ def main():
     data = {
         'IC_DATA': ic_data,
         'IC_MAP_CONFIG': [
-            {'owner_id': oid, 'name': nm, 'tl': tl, 'level': lvl}
+            {'owner_id': oid, 'name': nm, 'tl': tl, 'level': lvl,
+             'active': IC_ACTIVE.get(oid, True)}
             for oid, (nm, tl, lvl) in IC_MAP.items()
         ],
         'IC_MAP_SOURCE': _load_ic_map._source,

@@ -1240,7 +1240,91 @@ def compute_liasses(contacts: list, ref_now: datetime.datetime = None, client=No
         'current_week_2025': current_iso_week,
     }
 
-def compute_etp_monthly(tickets: list, ref_now: datetime.datetime, threshold_per_day: int = 6) -> dict:
+
+# ============================================================
+# SEUIL ETP ADAPTATIF (v9.5)
+# ============================================================
+# Problème résolu : un seuil fixe "6 tickets/jour = 1 ETP" était calibré en
+# haute charge (PF). En basse charge, un IC bossant à 100% ne ferme que 3-4
+# tickets/jour faute de volume → l'ancien seuil le pénalisait à tort.
+#
+# Principe (validé avec Pierre) : le seuil "respire" avec la charge réelle.
+#   seuil_brut = MAX(tickets créés par N1, fermés par N1) / nb_N1_actifs / jours_ouvrés
+#   seuil      = borné dans [PLANCHER=2, PLAFOND=6]
+# Ne concerne QUE les N1 (N2/Immat/Retention ont un autre métier, hors mesure).
+# "N1 actif" = IC N1 présent (statut actif) ayant fermé ≥1 ticket sur la période.
+
+ETP_SEUIL_PLANCHER = 2.0
+ETP_SEUIL_PLAFOND = 6.0
+
+
+def compute_adaptive_threshold(tickets: list, working_days: list) -> dict:
+    """
+    Calcule le seuil ETP adaptatif pour un ensemble de jours ouvrés donné,
+    sur la base des seuls tickets N1 et des IC N1 actifs (présents + ≥1 ticket).
+
+    Args:
+      tickets: liste de tickets enrichis (avec ic_level, ic_name, owner_id,
+               created, closed, is_resolved, is_lost)
+      working_days: liste de date (jours ouvrés de la période considérée)
+
+    Returns dict:
+      seuil          : seuil tickets/jour borné [2,6] pour "1 ETP"
+      seuil_brut     : seuil avant bornage (transparence)
+      n_n1_actifs    : nb d'IC N1 actifs sur la période
+      charge         : MAX(créés N1, fermés N1) sur la période
+      n_working      : nb de jours ouvrés
+    """
+    if not working_days:
+        return {'seuil': ETP_SEUIL_PLAFOND, 'seuil_brut': ETP_SEUIL_PLAFOND,
+                'n_n1_actifs': 0, 'charge': 0, 'n_working': 0}
+
+    wd_set = set(working_days)
+    n_working = len(working_days)
+
+    # owner_id des N1 présents (statut actif)
+    n1_active_owners = {oid for oid, (nm, tl, lvl) in IC_MAP.items()
+                        if lvl == 'N1' and IC_ACTIVE.get(oid, True)}
+
+    created_n1 = 0
+    closed_n1 = 0
+    owners_with_activity = set()
+    for t in tickets:
+        if t.get('ic_level') != 'N1':
+            continue
+        owner = t.get('owner_id')
+        if owner not in n1_active_owners:
+            continue
+        cdt = t.get('created')
+        cd = cdt.date() if (cdt and hasattr(cdt, 'date')) else cdt
+        if cd in wd_set:
+            created_n1 += 1
+            owners_with_activity.add(owner)
+        if (t.get('is_resolved') or t.get('is_lost')) and t.get('closed'):
+            kd = t['closed'].date() if hasattr(t['closed'], 'date') else t['closed']
+            if kd in wd_set:
+                closed_n1 += 1
+                owners_with_activity.add(owner)
+
+    n_n1_actifs = len(owners_with_activity)
+    charge = max(created_n1, closed_n1)
+
+    if n_n1_actifs == 0 or n_working == 0:
+        seuil_brut = ETP_SEUIL_PLAFOND
+    else:
+        seuil_brut = charge / n_n1_actifs / n_working
+
+    seuil = max(ETP_SEUIL_PLANCHER, min(ETP_SEUIL_PLAFOND, seuil_brut))
+    return {
+        'seuil': round(seuil, 2),
+        'seuil_brut': round(seuil_brut, 2),
+        'n_n1_actifs': n_n1_actifs,
+        'charge': charge,
+        'n_working': n_working,
+    }
+
+
+def compute_etp_monthly(tickets: list, ref_now: datetime.datetime, threshold_per_day: int = 6, adaptive: bool = True) -> dict:
     """
     Compute monthly ETP (full-time equivalent) of active ICs.
 
@@ -1301,6 +1385,7 @@ def compute_etp_monthly(tickets: list, ref_now: datetime.datetime, threshold_per
     n_active_ics_by_month = []
     working_days_by_month = []
     tickets_per_etp_per_day = []
+    adaptive_threshold_by_month = []
     ic_breakdown = defaultdict(list)
 
     all_owners = sorted(daily_closed.keys())
@@ -1322,11 +1407,19 @@ def compute_etp_monthly(tickets: list, ref_now: datetime.datetime, threshold_per
         n_working = len(working_days)
         working_days_by_month.append(n_working)
 
+        # v9.5 — seuil ETP : adaptatif (N1) ou fixe (N2, legacy)
+        if adaptive:
+            thr_info = compute_adaptive_threshold(tickets, working_days)
+            month_threshold = thr_info['seuil']
+        else:
+            month_threshold = THRESHOLD_PER_DAY
+        adaptive_threshold_by_month.append(month_threshold)
+
         owner_contribs = {}
         for owner in all_owners:
             if n_working == 0:
                 continue
-            active_days = sum(1 for d in working_days if daily_closed[owner].get(d, 0) >= THRESHOLD_PER_DAY)
+            active_days = sum(1 for d in working_days if daily_closed[owner].get(d, 0) >= month_threshold)
             if active_days > 0:
                 owner_contribs[owner] = active_days / n_working
 
@@ -1367,6 +1460,7 @@ def compute_etp_monthly(tickets: list, ref_now: datetime.datetime, threshold_per
         'n_active_ics': n_active_ics_by_month,
         'working_days': working_days_by_month,
         'tickets_per_etp_per_day': tickets_per_etp_per_day,
+        'adaptive_threshold': adaptive_threshold_by_month,  # v9.5 — seuil ETP/mois
         'ic_breakdown_monthly': dict(ic_breakdown),
         'threshold_per_day': THRESHOLD_PER_DAY,
         # Index of current (partial) month, or None if today is the last day of the month.
@@ -1406,8 +1500,8 @@ def compute_etp_monthly_by_level(tickets: list, ref_now: datetime.datetime, leve
     elif level_lower == 'n2':
         # Tickets explicitly tagged n2
         filtered = [t for t in tickets if (t.get('niveau') or '').lower() == 'n2']
-        # Use threshold 2 for N2 (more complex tickets, lower volume)
-        result = compute_etp_monthly(filtered, ref_now, threshold_per_day=2)
+        # Use threshold 2 for N2 (more complex tickets, lower volume) — NON adaptatif
+        result = compute_etp_monthly(filtered, ref_now, threshold_per_day=2, adaptive=False)
         # Force zero for months before Dec 2025 (tag didn't exist)
         for i, label in enumerate(result['months']):
             # Parse label like "Mar25" or "Déc25"
@@ -2489,16 +2583,23 @@ def compute_charge_indicator(tickets: list, ref_now: datetime.datetime, client=N
     # (on exclut les N2 pour rester aligné avec la team Care "front-line")
     n1_tickets = [t for t in tickets if t.get('ic_level') == 'N1']
 
-    # === STEP 1 : Trouver "hier business" (avec filtre ≥ 3 IC actifs en v9.1) ===
-    # On scanne en arrière jusqu'à trouver un jour où ≥ 3 IC N1 ont fermé ≥ 6 tickets.
-    # Limite : 14 jours en arrière (sécurité, ne devrait jamais aller au-delà).
-    ETP_THRESHOLD = 6
-    MIN_ACTIVE_ICS = 3  # v9.1 : élève le seuil pour éviter jours quasi-vides
+    # === STEP 1 : Trouver "hier business" (v9.5 : seuil adaptatif) ===
+    # Un "jour business" = jour ouvré où au moins MIN_ACTIVE_ICS IC N1 présents
+    # ont fermé ≥1 ticket. On ne juge plus avec un seuil fixe de 6 (qui faisait
+    # échouer la détection en basse charge), mais on prend les IC qui ont
+    # réellement travaillé ce jour-là.
+    MIN_ACTIVE_ICS = 3  # nb min d'IC N1 ayant fermé ≥1 ticket pour valider un jour
+
+    # owner_id des N1 présents (statut actif) — pour exclure les partis
+    _n1_active_owners = {oid for oid, (nm, tl, lvl) in IC_MAP.items()
+                         if lvl == 'N1' and IC_ACTIVE.get(oid, True)}
 
     def closed_per_ic_for_date(d):
-        """Returns dict {ic_name: nb_tickets_closed_that_day} for N1 tickets."""
+        """Returns dict {ic_name: nb_tickets_closed_that_day} for N1 active ICs."""
         by_ic = defaultdict(int)
         for t in n1_tickets:
+            if t.get('owner_id') not in _n1_active_owners:
+                continue
             if t.get('closed') and t['closed'].date() == d and (t.get('is_resolved') or t.get('is_lost')):
                 ic = t.get('ic_name')
                 if ic:
@@ -2511,7 +2612,8 @@ def compute_charge_indicator(tickets: list, ref_now: datetime.datetime, client=N
     for delta in range(1, 15):
         candidate = today_date - datetime.timedelta(days=delta)
         by_ic = closed_per_ic_for_date(candidate)
-        active = [ic for ic, n in by_ic.items() if n >= ETP_THRESHOLD]
+        # v9.5 : "actif ce jour" = a fermé ≥1 ticket (au lieu de ≥6)
+        active = [ic for ic, n in by_ic.items() if n >= 1]
         if len(active) >= MIN_ACTIVE_ICS:
             yesterday_business = candidate
             yesterday_active_ics = active
@@ -2620,7 +2722,7 @@ def compute_charge_indicator(tickets: list, ref_now: datetime.datetime, client=N
     for delta in range(1, 151):
         d = today_date - datetime.timedelta(days=delta)
         by_ic_closed = closed_per_ic_for_date(d)
-        active = [ic for ic, n in by_ic_closed.items() if n >= ETP_THRESHOLD]
+        active = [ic for ic, n in by_ic_closed.items() if n >= 1]
         if len(active) < MIN_ACTIVE_ICS:
             continue
         business_dates_collected.append(d)
@@ -2760,12 +2862,16 @@ def compute_weekly_productivity(tickets: list, ref_now: datetime.datetime) -> di
     """
     today_date = ref_now.date()
     n1_tickets = [t for t in tickets if t.get('ic_level') == 'N1']
-    ETP_THRESHOLD = 6
     MIN_ACTIVE_ICS = 3
+
+    _n1_active_owners = {oid for oid, (nm, tl, lvl) in IC_MAP.items()
+                         if lvl == 'N1' and IC_ACTIVE.get(oid, True)}
 
     def closed_per_ic_for_date(d):
         by_ic = defaultdict(int)
         for t in n1_tickets:
+            if t.get('owner_id') not in _n1_active_owners:
+                continue
             if t.get('closed') and t['closed'].date() == d and (t.get('is_resolved') or t.get('is_lost')):
                 ic = t.get('ic_name')
                 if ic:
@@ -2775,7 +2881,7 @@ def compute_weekly_productivity(tickets: list, ref_now: datetime.datetime) -> di
     def compute_week_avg(start_date, end_date):
         """
         Pour une fenêtre [start_date, end_date] (incluse) :
-        - somme tickets fermés N1 sur tous les jours business (≥ MIN_ACTIVE_ICS IC actifs)
+        - somme tickets fermés N1 sur tous les jours business (≥ MIN_ACTIVE_ICS IC ayant fermé ≥1)
         - somme du nb d'IC actifs sur ces mêmes jours
         - retourne (avg = total / sum_active_ics, total_closed, sum_active_ic_days, n_business_days)
         """
@@ -2785,7 +2891,7 @@ def compute_weekly_productivity(tickets: list, ref_now: datetime.datetime) -> di
         d = start_date
         while d <= end_date:
             by_ic = closed_per_ic_for_date(d)
-            active = [ic for ic, n in by_ic.items() if n >= ETP_THRESHOLD]
+            active = [ic for ic, n in by_ic.items() if n >= 1]
             if len(active) >= MIN_ACTIVE_ICS:
                 day_closed = sum(by_ic[ic] for ic in active)
                 total_closed += day_closed
@@ -3201,6 +3307,8 @@ def main():
         'TICKETS_PER_ETP_PER_DAY_MONTH': trunc(etp['tickets_per_etp_per_day']),
         'ETP_BREAKDOWN_MONTHLY': etp['ic_breakdown_monthly'],
         'ETP_THRESHOLD': etp['threshold_per_day'],
+        'ETP_ADAPTIVE_THRESHOLD': trunc(etp.get('adaptive_threshold', [])),  # v9.5 seuil/mois
+        'ETP_ADAPTIVE_THRESHOLD_N1': trunc(etp_n1.get('adaptive_threshold', [])),
         # N1 split
         'ETP_MONTH_N1': trunc(etp_n1['etp']),
         'CLOSED_PER_ETP_MONTH_N1': trunc(etp_n1['closed_per_etp']),

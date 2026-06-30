@@ -838,7 +838,7 @@
   </div>
 
   <div class="block">
-    <div class="block-header"><div><h3 class="block-title">Effectif IC actif &amp; productivité<span class="source-tag">ETP calculé sur l'activité réelle</span></h3><div class="block-sub">Un IC compte 1 ETP s'il ferme ≥ <strong id="etpThreshold">6</strong> tickets/jour sur tous les jours ouvrés <em>écoulés</em> du mois · congés, ramp-up et passages en management automatiquement déduits · <em>mois en cours = barre hachurée, calcul prorata sur jours ouvrés écoulés</em> · <strong>courbe = tickets fermés / ETP / jour ouvré moyen</strong> (insensible à la longueur du mois)</div></div></div>
+    <div class="block-header"><div><h3 class="block-title">Effectif IC actif &amp; productivité<span class="source-tag">ETP calculé sur l'activité réelle</span></h3><div class="block-sub">Un IC compte 1 ETP s'il atteint le <strong>seuil adaptatif</strong> du mois (<strong id="etpThreshold">~</strong> tickets/jour) sur tous les jours ouvrés <em>écoulés</em> · ce seuil <strong>s'ajuste à la charge réelle</strong> (basse charge → seuil bas, pic PF → seuil haut, borné 2–6) pour ne pas pénaliser un IC quand il y a peu de tickets · congés, ramp-up et management auto-déduits · <em>mois en cours = barre hachurée, prorata jours écoulés</em> · <strong>courbe = tickets fermés / ETP / jour ouvré moyen</strong></div></div></div>
     <div class="chart-wrap"><canvas id="chartETP"></canvas></div>
   </div>
 
@@ -5802,7 +5802,12 @@ function buildETPChart(){
   const id='chartETP'; destroyIfExists(id);
   const el=document.getElementById(id); if(!el) return;
   const thrEl = document.getElementById('etpThreshold');
-  if (thrEl) thrEl.textContent = ETP_THRESHOLD;
+  if (thrEl) {
+    // v9.5 : affiche le seuil adaptatif du mois courant (dernier de la série)
+    const adapt = DATA.ETP_ADAPTIVE_THRESHOLD || [];
+    const cur = adapt.length ? adapt[adapt.length-1] : ETP_THRESHOLD;
+    thrEl.textContent = cur;
+  }
   const partialIdx = (DATA && DATA.PARTIAL_MONTH_INDEX != null) ? DATA.PARTIAL_MONTH_INDEX : null;
   const wdElapsedNow = (DATA && DATA.WORKING_DAYS_ELAPSED_MONTH) || 0;
   const wdTotalNow = (DATA && DATA.WORKING_DAYS_TOTAL_NOW) || 0;

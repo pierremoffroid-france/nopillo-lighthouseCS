@@ -3,42 +3,42 @@
     {
       "owner_id": 31560323,
       "name": "Aaron",
-      "tl": "cyrielle",
+      "tl": "noemie",
       "level": "N1",
       "active": true
     },
     {
       "owner_id": 32138611,
       "name": "Alexis",
-      "tl": "cyrielle",
+      "tl": "noemie",
       "level": "N1",
       "active": true
     },
     {
       "owner_id": 32138600,
       "name": "Athalia",
-      "tl": "cyrielle",
+      "tl": "noemie",
       "level": "N1",
       "active": true
     },
     {
       "owner_id": 32837724,
       "name": "Emeline",
-      "tl": "cyrielle",
+      "tl": "noemie",
       "level": "N1",
       "active": true
     },
     {
       "owner_id": 31643141,
       "name": "Ivana",
-      "tl": "cyrielle",
+      "tl": "noemie",
       "level": "N1",
       "active": true
     },
     {
       "owner_id": 32138628,
       "name": "Manon",
-      "tl": "cyrielle",
+      "tl": "noemie",
       "level": "N1",
       "active": true
     },
@@ -57,58 +57,23 @@
       "active": true
     },
     {
-      "owner_id": 76990561,
-      "name": "Alexia",
-      "tl": "enzo",
-      "level": "N1",
-      "active": true
-    },
-    {
-      "owner_id": 31560329,
-      "name": "Alice",
-      "tl": "enzo",
-      "level": "N1",
-      "active": true
-    },
-    {
-      "owner_id": 30815127,
-      "name": "Andrea",
-      "tl": "enzo",
-      "level": "N1",
-      "active": true
-    },
-    {
-      "owner_id": 30815153,
-      "name": "Angeline",
-      "tl": "enzo",
-      "level": "N1",
-      "active": true
-    },
-    {
       "owner_id": 31560320,
       "name": "Gaëlle",
-      "tl": "enzo",
-      "level": "N1",
-      "active": true
-    },
-    {
-      "owner_id": 32834520,
-      "name": "Jordan",
-      "tl": "enzo",
+      "tl": "cyrielle",
       "level": "N1",
       "active": true
     },
     {
       "owner_id": 29996718,
       "name": "Jade",
-      "tl": "enzo",
+      "tl": "cyrielle",
       "level": "N2",
       "active": true
     },
     {
       "owner_id": 1990978149,
       "name": "Magda",
-      "tl": "enzo",
+      "tl": "cyrielle",
       "level": "N2",
       "active": true
     },
@@ -120,11 +85,53 @@
       "active": true
     },
     {
+      "owner_id": 1722214870,
+      "name": "Clara",
+      "tl": "pierre",
+      "level": "Retention",
+      "active": true
+    },
+    {
       "owner_id": 650299108,
       "name": "Mathieu",
       "tl": "pierre",
       "level": "Retention",
       "active": true
+    },
+    {
+      "owner_id": 76990561,
+      "name": "Alexia",
+      "tl": "noemie",
+      "level": "N1",
+      "active": false
+    },
+    {
+      "owner_id": 31560329,
+      "name": "Alice",
+      "tl": "noemie",
+      "level": "N1",
+      "active": false
+    },
+    {
+      "owner_id": 30815127,
+      "name": "Andrea",
+      "tl": "noemie",
+      "level": "N1",
+      "active": false
+    },
+    {
+      "owner_id": 30815153,
+      "name": "Angeline",
+      "tl": "noemie",
+      "level": "N1",
+      "active": false
+    },
+    {
+      "owner_id": 32834520,
+      "name": "Jordan",
+      "tl": "noemie",
+      "level": "N1",
+      "active": false
     }
   ]
 }

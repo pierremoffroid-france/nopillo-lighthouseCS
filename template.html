@@ -67,8 +67,8 @@
     /* People accents (kept distinct) */
     --cyrielle:#7C3AED;
     --cyrielle-dim:rgba(124,58,237,0.10);
-    --enzo:var(--green-strong);
-    --enzo-dim:rgba(8,153,102,0.10);
+    --noemie:var(--green-strong);
+    --noemie-dim:rgba(8,153,102,0.10);
     --pierre:#DB2777;
     --pierre-dim:rgba(219,39,119,0.10);
 
@@ -136,7 +136,7 @@
   .kpi.orange::before{background:var(--orange)}
   .kpi.yellow::before{background:var(--yellow)}
   .kpi.cyrielle::before{background:var(--cyrielle)}
-  .kpi.enzo::before{background:var(--enzo)}
+  .kpi.noemie::before{background:var(--noemie)}
   .kpi.pierre::before{background:var(--pierre)}
   .kpi.grey::before{background:var(--muted)}
   .kpi-label{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;font-weight:500}
@@ -184,7 +184,7 @@
 
   .tl-pill{display:inline-block;font-family:var(--font-mono);font-size:9px;padding:2px 8px;border-radius:999px;letter-spacing:.03em;font-weight:500}
   .tl-pill.cyrielle{background:var(--cyrielle-dim);color:var(--cyrielle);border:1px solid rgba(124,58,237,0.25)}
-  .tl-pill.enzo{background:var(--enzo-dim);color:var(--enzo);border:1px solid rgba(8,153,102,0.25)}
+  .tl-pill.noemie{background:var(--noemie-dim);color:var(--noemie);border:1px solid rgba(8,153,102,0.25)}
   .tl-pill.pierre{background:var(--pierre-dim);color:var(--pierre);border:1px solid rgba(219,39,119,0.25)}
   .level-pill{display:inline-block;font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:999px;letter-spacing:.03em;font-weight:500;background:var(--surface2);color:var(--muted);border:1px solid var(--border2)}
 
@@ -660,7 +660,7 @@
     <div class="tab" data-tab="n2">N2<span class="tab-count">2</span></div>
     <div class="tab" data-tab="liasses">Liasses</div>
     <div class="tab" data-tab="faq">FAQ</div>
-    <div class="tab" data-tab="retention">Retention</div>
+    <div class="tab" data-tab="retention">Success</div>
     <div class="tab" data-tab="satisfaction">Satisfaction</div>
     <div class="tab" data-tab="parametres" style="margin-left:auto">⚙️ Paramètres</div>
     
@@ -995,7 +995,7 @@
     <div class="block-actions" style="margin-bottom:10px">
       <span class="chip active" data-team="all">Tous</span>
       <span class="chip" data-team="cyrielle">Cyrielle</span>
-      <span class="chip" data-team="enzo">Enzo</span>
+      <span class="chip" data-team="noemie">Noémie</span>
     </div>
     <div class="table-wrap">
       <table>
@@ -1016,7 +1016,7 @@
   </div>
 
   <div class="block">
-    <div class="block-header"><div><h3 class="block-title">Performance par pôle · semaine dernière <span id="poleHeaderWeek"></span></h3><div class="block-sub">Comparatif rapide entre les 3 pôles du département (Enzo N1+N2, Cyrielle N1+Immat, Pierre Retention)</div></div></div>
+    <div class="block-header"><div><h3 class="block-title">Performance par pôle · semaine dernière <span id="poleHeaderWeek"></span></h3><div class="block-sub">Comparatif rapide entre les 3 pôles du département (Noémie N1, Cyrielle N1+N2+Immat, Pierre Success)</div></div></div>
     <div class="table-wrap" id="poleTable"></div>
   </div>
 </section>
@@ -1051,9 +1051,9 @@
 <!-- ============ RETENTION ============ -->
 <section class="section" id="section-retention">
   <div class="wip-overlay active" id="wipOverlay">
-    <div class="wip-message">WORK IN PROGRESS<br><span class="sub">Data non relevant · section à instruire avec l'équipe Retention</span></div>
+    <div class="wip-message">WORK IN PROGRESS<br><span class="sub">Data non relevant · section à instruire avec l'équipe Success</span></div>
   </div>
-  <h2 class="section-title">Équipe Retention · Lilian, Clara, Mathieu</h2>
+  <h2 class="section-title">Équipe Success · Lilian, Clara, Mathieu</h2>
   <div class="kpi-grid">
     <div class="kpi red"><div class="kpi-label">Churn W17</div><div class="kpi-value red">24</div><div class="kpi-sub">clients</div></div>
     <div class="kpi red"><div class="kpi-label">ARR perdu W17</div><div class="kpi-value red small">11 976 €</div><div class="kpi-sub">estim.</div></div>
@@ -5303,22 +5303,23 @@ const TEAM_MAPPING = {
     { name:'Ivana', ownerId:31643141, level:'N1', contract:'Freelance' },
     { name:'Manon', ownerId:32138628, level:'N1', contract:'Freelance' },
     { name:'Priscilla', ownerId:29996724, level:'N1+Liasses', contract:'CDI' },
-    { name:'Hamda', ownerId:844737572, level:'Immat', contract:'Freelance' }
-  ]},
-  enzo: { tl:'Enzo De Jesus Marques', tlId:32254822, agents:[
-    { name:'Alexia', ownerId:76990561, level:'N1', contract:'Freelance' },
-    { name:'Alice', ownerId:31560329, level:'N1', contract:'Freelance' },
-    { name:'Andrea', ownerId:30815127, level:'N1', contract:'Freelance' },
-    { name:'Angeline', ownerId:30815153, level:'N1', contract:'Freelance' },
+    { name:'Hamda', ownerId:844737572, level:'Immat', contract:'Freelance' },
     { name:'Gaëlle', ownerId:31560320, level:'N1', contract:'Freelance' },
-    { name:'Jordan', ownerId:32834520, level:'N1', contract:'Freelance' },
     { name:'Jade', ownerId:29996718, level:'N2', contract:'CDI' },
     { name:'Magda', ownerId:1990978149, level:'N2', contract:'CDI' }
   ]},
+  noemie: { tl:'Noémie', tlId:35743994, agents:[
+    { name:'Aaron', ownerId:31560323, level:'N1', contract:'Freelance' },
+    { name:'Alexis', ownerId:32138611, level:'N1', contract:'Freelance' },
+    { name:'Athalia', ownerId:32138600, level:'N1', contract:'Freelance' },
+    { name:'Emeline', ownerId:32837724, level:'N1', contract:'Freelance' },
+    { name:'Ivana', ownerId:31643141, level:'N1', contract:'Freelance' },
+    { name:'Manon', ownerId:32138628, level:'N1', contract:'Freelance' }
+  ]},
   pierre: { tl:'Pierre Moffroid', tlId:31772973, agents:[
-    { name:'Lilian', ownerId:75453551, level:'Retention', contract:'Alternant' },
-    { name:'Mathieu', ownerId:650299108, level:'Retention', contract:'Freelance' },
-    { name:'Clara', ownerId:null, level:'Retention', contract:'CDI' }
+    { name:'Lilian', ownerId:75453551, level:'Success', contract:'Alternant' },
+    { name:'Mathieu', ownerId:650299108, level:'Success', contract:'Freelance' },
+    { name:'Clara', ownerId:1722214870, level:'Success', contract:'CDI' }
   ]}
 };
 
@@ -5428,7 +5429,7 @@ const C = {
   orange:'#FF7A3D',
   yellow:'#F5B400',
   cyrielle:'#7C3AED',
-  enzo:'#089966',
+  noemie:'#089966',
   pierre:'#DB2777',
   muted:'#6B6B85',
   grid:'rgba(4,4,37,0.04)',
@@ -5555,8 +5556,8 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
                           active: (e.active!==undefined ? !!e.active : true)}));
   }
 
-  const TL_OPTIONS = ['cyrielle','enzo','pierre'];
-  const TL_LABEL = {cyrielle:'Cyrielle', enzo:'Enzo', pierre:'Pierre (Retention)'};
+  const TL_OPTIONS = ['cyrielle','noemie','pierre'];
+  const TL_LABEL = {cyrielle:'Cyrielle', noemie:'Noémie', pierre:'Pierre (Success)'};
 
   function renderTable(){
     if (!working) working = getConfig();
@@ -5716,14 +5717,14 @@ function renderOverviewKPIs() {
 function renderPoleTable() {
   const el = document.getElementById('poleTable');
   const lw = IC_DATA.lastweek;
-  const enzoN1 = lw.filter(x => x.tl === 'enzo');
+  const noemieN1 = lw.filter(x => x.tl === 'noemie');
   const cyrN1 = lw.filter(x => x.tl === 'cyrielle');
   const sumFor = (arr,key) => arr.reduce((s,x)=>s+(x[key]||0),0);
   const avgW = (arr,pk,nk) => { let s=0,n=0; arr.forEach(x=>{ if(x[pk] != null && x[nk]>0){s+=x[pk]*x[nk];n+=x[nk];} }); return n?(s/n).toFixed(1):'—'; };
   const rows = [
-    { name:'<span class="tl-pill enzo">Enzo</span> N1 + N2 (6 N1 + 2 N2)', ic:8, closed:sumFor(enzoN1,'closed'), sla:avgW(enzoN1,'sla_pct','sla_n'), ces:avgW(enzoN1,'ces_pct','ces_n'), lost:`${(sumFor(enzoN1,'lost')/sumFor(enzoN1,'created')*100).toFixed(1)}%` },
-    { name:'<span class="tl-pill cyrielle">Cyrielle</span> N1 + Immat (6 N1 + Priscilla + Hamda)', ic:8, closed:sumFor(cyrN1,'closed'), sla:avgW(cyrN1,'sla_pct','sla_n'), ces:avgW(cyrN1,'ces_pct','ces_n'), lost:`${(sumFor(cyrN1,'lost')/sumFor(cyrN1,'created')*100).toFixed(1)}%` },
-    { name:'<span class="tl-pill pierre">Pierre</span> Retention (3)', ic:3, closed:'—', sla:'—', ces:'—', lost:'—' }
+    { name:'<span class="tl-pill noemie">Noémie</span> N1 (6 N1)', ic:6, closed:sumFor(noemieN1,'closed'), sla:avgW(noemieN1,'sla_pct','sla_n'), ces:avgW(noemieN1,'ces_pct','ces_n'), lost:`${(sumFor(noemieN1,'lost')/sumFor(noemieN1,'created')*100).toFixed(1)}%` },
+    { name:'<span class="tl-pill cyrielle">Cyrielle</span> N1 + N2 + Immat (Gaëlle + Jade + Magda + Priscilla + Hamda)', ic:5, closed:sumFor(cyrN1,'closed'), sla:avgW(cyrN1,'sla_pct','sla_n'), ces:avgW(cyrN1,'ces_pct','ces_n'), lost:`${(sumFor(cyrN1,'lost')/sumFor(cyrN1,'created')*100).toFixed(1)}%` },
+    { name:'<span class="tl-pill pierre">Pierre</span> Success (3)', ic:3, closed:'—', sla:'—', ces:'—', lost:'—' }
   ];
   const totClosed = sumFor(lw,'closed');
   const totCreated = sumFor(lw,'created');
@@ -5759,7 +5760,7 @@ function buildETPChartLevel(level){
   const wdElapsedNow = (DATA && DATA.WORKING_DAYS_ELAPSED_MONTH) || 0;
   const wdTotalNow = (DATA && DATA.WORKING_DAYS_TOTAL_NOW) || 0;
 
-  const colorMain = level==='N1' ? C.cyrielle : C.enzo;
+  const colorMain = level==='N1' ? C.cyrielle : C.noemie;
   // Per-bar styling: hatched/lighter for partial month
   const barBg = labels.map((_, i) => (i === partialIdx) ? alpha(colorMain, 0.18) : alpha(colorMain, 0.40));
   const barBorder = labels.map((_, i) => (i === partialIdx) ? colorMain : colorMain);
@@ -6302,7 +6303,7 @@ function buildN1Bars(){
   const filtered = data.filter(ic => ic.level !== 'Immat' && ic.created > 0);
   const sorted = [...filtered].sort((a,b)=> (b.closed||0) - (a.closed||0));
   const labels = sorted.map(ic => ic.name);
-  const colors = sorted.map(ic => ic.tl === 'cyrielle' ? C.cyrielle : C.enzo);
+  const colors = sorted.map(ic => ic.tl === 'cyrielle' ? C.cyrielle : C.noemie);
   const periodLabel = {today:`aujourd'hui`, yesterday:`hier`, thisweek:`cette semaine (${CURRENT_WEEK_LABEL})`, lastweek:`semaine dernière (${LAST_FULL_WEEK_LABEL})`, '30d':'30 derniers jours', '3m':'3 derniers mois'}[n1Period];
 
   // Closed
@@ -6371,7 +6372,7 @@ function populateICSelect(){
   const N1_IC = ['Aaron','Alexis','Athalia','Emeline','Ivana','Manon','Priscilla','Alexia','Alice','Andrea','Angeline','Gaëlle','Jordan'];
   sel.innerHTML = N1_IC.filter(n => IC_HISTORY[n]).sort().map(name => {
     const ic = IC_DATA['30d'].find(i=>i.name===name);
-    const tlName = ic ? (ic.tl==='cyrielle' ? 'Cyrielle' : 'Enzo') : '';
+    const tlName = ic ? (ic.tl==='cyrielle' ? 'Cyrielle' : 'Noémie') : '';
     return `<option value="${name}">${name} · TL ${tlName}</option>`;
   }).join('');
   sel.addEventListener('change', buildICDetail);
@@ -6391,7 +6392,7 @@ function buildICDetail(){
   if (!name) return;
   const h = IC_HISTORY[name]; if (!h) return;
   const ic = IC_DATA['30d'].find(i=>i.name===name);
-  const color = ic && ic.tl === 'cyrielle' ? C.cyrielle : C.enzo;
+  const color = ic && ic.tl === 'cyrielle' ? C.cyrielle : C.noemie;
   const teamClosed = teamAvgSeries(h.weeks, 'closed');
   const teamSla = teamAvgSeries(h.weeks, 'sla');
   const teamCes = teamAvgSeries(h.weeks, 'ces');
@@ -6543,7 +6544,7 @@ function renderICTable(){
     if(a.touch_avg != null){T.touchS+=a.touch_avg; T.touchN++;}
     return `<tr>
       <td>${a.name}</td>
-      <td><span class="tl-pill ${a.tl}">${a.tl === 'cyrielle' ? 'Cyrielle' : 'Enzo'}</span></td>
+      <td><span class="tl-pill ${a.tl}">${a.tl === 'cyrielle' ? 'Cyrielle' : 'Noémie'}</span></td>
       <td><span class="level-pill">${a.level}</span></td>
       <td>${a.created}</td><td>${a.closed}</td>
       ${cellSLA(a.sla_pct)}${cellCES(a.ces_pct, a.ces_n)}
@@ -6551,7 +6552,7 @@ function renderICTable(){
       ${cellLost(a.lost_pct)}
     </tr>`;
   }).join('') + `<tr class="avg-row">
-    <td>Total ${n1TeamFilter === 'all' ? filtered.length+' IC' : (n1TeamFilter === 'enzo' ? 'Enzo' : 'Cyrielle')}</td>
+    <td>Total ${n1TeamFilter === 'all' ? filtered.length+' IC' : (n1TeamFilter === 'noemie' ? 'Noémie' : 'Cyrielle')}</td>
     <td></td><td></td>
     <td>${T.created}</td><td>${T.closed}</td>
     <td>${T.slaN ? (T.slaS/T.slaN).toFixed(1)+'%' : '—'}</td>
@@ -6572,7 +6573,7 @@ function buildN1Compare(){
   // the real KPI value with unit (e.g. "653 tickets / IC", "89% CES") rather
   // than the unitless 0-100 radar score that read like "81,594 tickets" in fr-FR.
   function radarFor(arr) {
-    const e = arr.filter(a=>a.tl==='enzo'); const c = arr.filter(a=>a.tl==='cyrielle');
+    const e = arr.filter(a=>a.tl==='noemie'); const c = arr.filter(a=>a.tl==='cyrielle');
     const avg = (arr2,key) => { const v=arr2.filter(a=>a[key] != null && a[key] != undefined); return v.length ? v.reduce((s,a)=>s+a[key],0)/v.length : 0; };
     const buildRaw = (sub) => ({
       closed: avg(sub,'closed'),
@@ -6589,7 +6590,7 @@ function buildN1Compare(){
       100 - r.lost,
       100 - norm(r.touch || 0, 6)
     ];
-    return { enzo: toScore(enzoRaw), cyr: toScore(cyrRaw), enzoRaw, cyrRaw };
+    return { noemie: toScore(enzoRaw), cyr: toScore(cyrRaw), noemieRaw: enzoRaw, cyrRaw };
   }
   const r30 = radarFor(d30), r3m = radarFor(d3m);
   // Format raw value for tooltip based on metric index
@@ -6604,8 +6605,8 @@ function buildN1Compare(){
   chartInstances[id] = new Chart(el, {
     type:'radar',
     data:{ labels: metrics, datasets:[
-      { label:'Enzo · 30j', data: r30.enzo, borderColor: C.enzo, backgroundColor: alpha(C.enzo,0.15), borderWidth: 2, pointBackgroundColor: C.enzo },
-      { label:'Enzo · 3 mois', data: r3m.enzo, borderColor: C.enzo, borderDash:[5,4], backgroundColor: 'transparent', borderWidth: 1.5, pointBackgroundColor: C.enzo, pointRadius:2 },
+      { label:'Noémie · 30j', data: r30.noemie, borderColor: C.noemie, backgroundColor: alpha(C.noemie,0.15), borderWidth: 2, pointBackgroundColor: C.noemie },
+      { label:'Noémie · 3 mois', data: r3m.noemie, borderColor: C.noemie, borderDash:[5,4], backgroundColor: 'transparent', borderWidth: 1.5, pointBackgroundColor: C.noemie, pointRadius:2 },
       { label:'Cyrielle · 30j', data: r30.cyr, borderColor: C.cyrielle, backgroundColor: alpha(C.cyrielle,0.15), borderWidth: 2, pointBackgroundColor: C.cyrielle },
       { label:'Cyrielle · 3 mois', data: r3m.cyr, borderColor: C.cyrielle, borderDash:[5,4], backgroundColor: 'transparent', borderWidth: 1.5, pointBackgroundColor: C.cyrielle, pointRadius:2 }
     ]},
@@ -6619,10 +6620,10 @@ function buildN1Compare(){
           callbacks: {
             title: items => items[0].label,
             label: ctx => {
-              const dsLabel = ctx.dataset.label; // e.g. "Enzo · 30j"
-              const isEnzo = dsLabel.startsWith('Enzo');
+              const dsLabel = ctx.dataset.label; // e.g. "Noémie · 30j"
+              const isEnzo = dsLabel.startsWith('Noémie');
               const is30 = dsLabel.includes('30j');
-              const raw = is30 ? (isEnzo ? r30.enzoRaw : r30.cyrRaw) : (isEnzo ? r3m.enzoRaw : r3m.cyrRaw);
+              const raw = is30 ? (isEnzo ? r30.noemieRaw : r30.cyrRaw) : (isEnzo ? r3m.noemieRaw : r3m.cyrRaw);
               return ` ${dsLabel} : ${fmtRaw(raw, ctx.dataIndex)}`;
             }
           }

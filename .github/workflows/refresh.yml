@@ -78,6 +78,7 @@ jobs:
             echo "Aucun changement à publier."
           else
             git commit -m "Auto-refresh $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M')"
+            git pull --no-edit --no-rebase
             git push
             echo "✓ Publié sur GitHub Pages."
           fi

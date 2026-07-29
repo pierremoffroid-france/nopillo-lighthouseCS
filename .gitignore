@@ -12,3 +12,4 @@ __pycache__/
 # Le CSV FAQ est géré séparément (sync Drive / Make) — décommente si tu ne veux
 # pas le versionner dans le repo :
 # faq-comparaison-performances.csv
+data.json.local-backup

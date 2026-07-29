@@ -113,6 +113,14 @@
   .neg{color:var(--green-strong)} .pos{color:var(--raspberry)}
 
 
+  /* CONTROLE TICKETS V3 */
+  .ctl-note{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:.55rem;line-height:1.6}
+  .ctl-scroll{max-height:420px;overflow-y:auto;overflow-x:auto;border-radius:14px;border:1px solid var(--border);background:var(--surface)}
+  .ctl-scroll thead th{position:sticky;top:0;z-index:2}
+  .ctl-link{color:var(--indigo);text-decoration:none;font-family:var(--mono);font-size:11px;border-bottom:1px solid transparent}
+  .ctl-link:hover{border-bottom-color:var(--indigo)}
+  .ctl-empty{padding:2rem 1.5rem;text-align:center;color:var(--muted);font-size:12.5px}
+
   @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
   @media (max-width:560px){.rail-num{font-size:2.6rem}.wrap{padding:0 1rem}.topbar-in{padding:.9rem 1rem}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -248,10 +256,24 @@
   </section>
 
 
+  <!-- ===== CONTROLE QUALITE : tickets V3 ===== -->
+  <section>
+    <div class="eyebrow">Contrôle qualité · tickets des clients passés en V3</div>
+    <div class="ctl-scroll">
+      <table>
+        <thead>
+          <tr><th>Semaine</th><th>ID ticket</th><th>Créé le</th><th>Ouvrir dans HubSpot</th></tr>
+        </thead>
+        <tbody id="ctlBody"></tbody>
+      </table>
+    </div>
+    <div class="ctl-note" id="ctlNote"></div>
+  </section>
+
 </div>
 
 <script>
-const D = {"target": 5000, "deadline": "2026-09-30", "kickoff": "2026-07-22", "series_start": "2026-07-13", "today": "2026-07-29", "days_left": 63, "weeks_left": 9.0, "working_days_left": 46, "remaining": 4704, "rate_needed": 523, "counts": {"active_total": 8834, "active_v2": 8488, "active_v3": 282, "active_unknown": 64, "all_v3": 296}, "pct_target": 5.9, "pct_base": 3.2, "history_ok": true, "n_born_v3": 3, "weeks": [{"y": 2026, "w": 29, "label": "W29", "start": "2026-07-13", "end": "2026-07-19", "future": false, "partial": false, "migrated": 0, "born": 0, "cum": 0, "pct_target": 0.0, "pct_base": 0.0, "clients_v2": 8770, "clients_v3": 0, "tickets_v2": 255, "tickets_v3": 0, "ratio_v2": 0.0291, "ratio_v3": null, "delta": null, "target_cum": 0}, {"y": 2026, "w": 30, "label": "W30", "start": "2026-07-20", "end": "2026-07-26", "future": false, "partial": false, "migrated": 293, "born": 1, "cum": 294, "pct_target": 5.9, "pct_base": 3.3, "clients_v2": 8476, "clients_v3": 294, "tickets_v2": 272, "tickets_v3": 1, "ratio_v2": 0.0321, "ratio_v3": 0.0034, "delta": -0.0287, "target_cum": 0}, {"y": 2026, "w": 31, "label": "W31", "start": "2026-07-27", "end": "2026-08-02", "future": false, "partial": true, "migrated": 0, "born": 2, "cum": 296, "pct_target": 5.9, "pct_base": 3.4, "clients_v2": 8474, "clients_v3": 296, "tickets_v2": 101, "tickets_v3": 1, "ratio_v2": 0.0119, "ratio_v3": 0.0034, "delta": -0.0085, "target_cum": 500}, {"y": 2026, "w": 32, "label": "W32", "start": "2026-08-03", "end": "2026-08-09", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 1000}, {"y": 2026, "w": 33, "label": "W33", "start": "2026-08-10", "end": "2026-08-16", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 1500}, {"y": 2026, "w": 34, "label": "W34", "start": "2026-08-17", "end": "2026-08-23", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 2000}, {"y": 2026, "w": 35, "label": "W35", "start": "2026-08-24", "end": "2026-08-30", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 2500}, {"y": 2026, "w": 36, "label": "W36", "start": "2026-08-31", "end": "2026-09-06", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 3000}, {"y": 2026, "w": 37, "label": "W37", "start": "2026-09-07", "end": "2026-09-13", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 3500}, {"y": 2026, "w": 38, "label": "W38", "start": "2026-09-14", "end": "2026-09-20", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 4000}, {"y": 2026, "w": 39, "label": "W39", "start": "2026-09-21", "end": "2026-09-27", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 4500}, {"y": 2026, "w": 40, "label": "W40", "start": "2026-09-28", "end": "2026-10-04", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 5000}], "ticket_weeks": ["W29", "W30", "W31"], "refreshed_at": "29/07/2026 à 11h58", "refreshed_iso": "2026-07-29T11:58:35"};
+const D = {"target": 5000, "deadline": "2026-09-30", "kickoff": "2026-07-22", "series_start": "2026-07-13", "today": "2026-07-29", "days_left": 63, "weeks_left": 9.0, "working_days_left": 46, "remaining": 4702, "rate_needed": 522, "counts": {"active_total": 8844, "active_v2": 8488, "active_v3": 284, "active_unknown": 72, "all_v3": 298}, "pct_target": 6.0, "pct_base": 3.2, "history_ok": true, "n_born_v3": 5, "portal_id": "26173790", "v3_tickets": [{"id": "426101815535", "date": "2026-07-28", "created": "28/07/2026 à 07h33", "week": "W31"}, {"id": "425760632007", "date": "2026-07-25", "created": "25/07/2026 à 09h29", "week": "W30"}], "weeks": [{"y": 2026, "w": 29, "label": "W29", "start": "2026-07-13", "end": "2026-07-19", "future": false, "partial": false, "migrated": 0, "born": 0, "cum": 0, "pct_target": 0.0, "pct_base": 0.0, "clients_v2": 8772, "clients_v3": 0, "tickets_v2": 255, "tickets_v3": 0, "ratio_v2": 0.0291, "ratio_v3": null, "delta": null, "target_cum": 0}, {"y": 2026, "w": 30, "label": "W30", "start": "2026-07-20", "end": "2026-07-26", "future": false, "partial": false, "migrated": 293, "born": 1, "cum": 294, "pct_target": 5.9, "pct_base": 3.3, "clients_v2": 8478, "clients_v3": 294, "tickets_v2": 271, "tickets_v3": 1, "ratio_v2": 0.032, "ratio_v3": 0.0034, "delta": -0.0286, "target_cum": 0}, {"y": 2026, "w": 31, "label": "W31", "start": "2026-07-27", "end": "2026-08-02", "future": false, "partial": true, "migrated": 0, "born": 4, "cum": 298, "pct_target": 6.0, "pct_base": 3.4, "clients_v2": 8474, "clients_v3": 298, "tickets_v2": 125, "tickets_v3": 1, "ratio_v2": 0.0148, "ratio_v3": 0.0034, "delta": -0.0114, "target_cum": 500}, {"y": 2026, "w": 32, "label": "W32", "start": "2026-08-03", "end": "2026-08-09", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 1000}, {"y": 2026, "w": 33, "label": "W33", "start": "2026-08-10", "end": "2026-08-16", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 1500}, {"y": 2026, "w": 34, "label": "W34", "start": "2026-08-17", "end": "2026-08-23", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 2000}, {"y": 2026, "w": 35, "label": "W35", "start": "2026-08-24", "end": "2026-08-30", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 2500}, {"y": 2026, "w": 36, "label": "W36", "start": "2026-08-31", "end": "2026-09-06", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 3000}, {"y": 2026, "w": 37, "label": "W37", "start": "2026-09-07", "end": "2026-09-13", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 3500}, {"y": 2026, "w": 38, "label": "W38", "start": "2026-09-14", "end": "2026-09-20", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 4000}, {"y": 2026, "w": 39, "label": "W39", "start": "2026-09-21", "end": "2026-09-27", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 4500}, {"y": 2026, "w": 40, "label": "W40", "start": "2026-09-28", "end": "2026-10-04", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 5000}], "ticket_weeks": ["W29", "W30", "W31"], "refreshed_at": "29/07/2026 à 17h39", "refreshed_iso": "2026-07-29T17:39:06"};
 
 const nf = n => (n === null || n === undefined) ? ' vs ' : n.toLocaleString('fr-FR');
 const pf = n => (n === null || n === undefined) ? ' vs ' : n.toLocaleString('fr-FR', {minimumFractionDigits:1, maximumFractionDigits:1}) + ' %';
@@ -420,6 +442,29 @@ new Chart(document.getElementById('chartVol'), {
     }
   }
 });
+
+/* ---------- contrôle qualité : tickets V3 ---------- */
+(() => {
+  const rows = D.v3_tickets || [];
+  const body = document.getElementById('ctlBody');
+  const note = document.getElementById('ctlNote');
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="4" class="ctl-empty">Aucun ticket créé par un client depuis sa bascule en V3.</td></tr>';
+    note.textContent = 'Aucune donnée personnelle affichée : seuls l\'identifiant du ticket et sa date de création figurent ici.';
+    return;
+  }
+  const base = `https://app.hubspot.com/contacts/${D.portal_id}/ticket/`;
+  body.innerHTML = rows.map(t => `<tr>
+    <td>${t.week}</td>
+    <td>${t.id}</td>
+    <td>${t.created}</td>
+    <td><a class="ctl-link" href="${base}${t.id}" target="_blank" rel="noopener noreferrer">ouvrir ↗</a></td>
+  </tr>`).join('');
+  note.textContent = `${nf(rows.length)} ticket(s) créé(s) par un client après sa bascule en V3, du plus récent au plus ancien. `
+    + `Un ticket créé avant la bascule n'apparaît pas ici : il relève de l'expérience V2. `
+    + `Aucune donnée personnelle n'est affichée, ni nom de client, ni objet du ticket, ni propriétaire : `
+    + `seuls l'identifiant et la date figurent ici, le détail se consulte dans HubSpot après authentification.`;
+})();
 
 /* ---------- tableau ---------- */
 document.getElementById('tbody').innerHTML = D.weeks.map(w => {

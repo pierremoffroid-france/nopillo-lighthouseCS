@@ -113,6 +113,14 @@
   .neg{color:var(--green-strong)} .pos{color:var(--raspberry)}
 
 
+  /* CONTROLE TICKETS V3 */
+  .ctl-note{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:.55rem;line-height:1.6}
+  .ctl-scroll{max-height:420px;overflow-y:auto;overflow-x:auto;border-radius:14px;border:1px solid var(--border);background:var(--surface)}
+  .ctl-scroll thead th{position:sticky;top:0;z-index:2}
+  .ctl-link{color:var(--indigo);text-decoration:none;font-family:var(--mono);font-size:11px;border-bottom:1px solid transparent}
+  .ctl-link:hover{border-bottom-color:var(--indigo)}
+  .ctl-empty{padding:2rem 1.5rem;text-align:center;color:var(--muted);font-size:12.5px}
+
   @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
   @media (max-width:560px){.rail-num{font-size:2.6rem}.wrap{padding:0 1rem}.topbar-in{padding:.9rem 1rem}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -247,6 +255,20 @@
     </div>
   </section>
 
+
+  <!-- ===== CONTROLE QUALITE : tickets V3 ===== -->
+  <section>
+    <div class="eyebrow">Contrôle qualité · tickets des clients passés en V3</div>
+    <div class="ctl-scroll">
+      <table>
+        <thead>
+          <tr><th>Semaine</th><th>ID ticket</th><th>Créé le</th><th>Ouvrir dans HubSpot</th></tr>
+        </thead>
+        <tbody id="ctlBody"></tbody>
+      </table>
+    </div>
+    <div class="ctl-note" id="ctlNote"></div>
+  </section>
 
 </div>
 
@@ -420,6 +442,29 @@ new Chart(document.getElementById('chartVol'), {
     }
   }
 });
+
+/* ---------- contrôle qualité : tickets V3 ---------- */
+(() => {
+  const rows = D.v3_tickets || [];
+  const body = document.getElementById('ctlBody');
+  const note = document.getElementById('ctlNote');
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="4" class="ctl-empty">Aucun ticket créé par un client depuis sa bascule en V3.</td></tr>';
+    note.textContent = 'Aucune donnée personnelle affichée : seuls l\'identifiant du ticket et sa date de création figurent ici.';
+    return;
+  }
+  const base = `https://app.hubspot.com/contacts/${D.portal_id}/ticket/`;
+  body.innerHTML = rows.map(t => `<tr>
+    <td>${t.week}</td>
+    <td>${t.id}</td>
+    <td>${t.created}</td>
+    <td><a class="ctl-link" href="${base}${t.id}" target="_blank" rel="noopener noreferrer">ouvrir ↗</a></td>
+  </tr>`).join('');
+  note.textContent = `${nf(rows.length)} ticket(s) créé(s) par un client après sa bascule en V3, du plus récent au plus ancien. `
+    + `Un ticket créé avant la bascule n'apparaît pas ici : il relève de l'expérience V2. `
+    + `Aucune donnée personnelle n'est affichée, ni nom de client, ni objet du ticket, ni propriétaire : `
+    + `seuls l'identifiant et la date figurent ici, le détail se consulte dans HubSpot après authentification.`;
+})();
 
 /* ---------- tableau ---------- */
 document.getElementById('tbody').innerHTML = D.weeks.map(w => {

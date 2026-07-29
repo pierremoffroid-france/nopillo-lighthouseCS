@@ -7,19 +7,34 @@
  "days_left": 63,
  "weeks_left": 9.0,
  "working_days_left": 46,
- "remaining": 4704,
- "rate_needed": 523,
+ "remaining": 4702,
+ "rate_needed": 522,
  "counts": {
-  "active_total": 8834,
+  "active_total": 8844,
   "active_v2": 8488,
-  "active_v3": 282,
-  "active_unknown": 64,
-  "all_v3": 296
+  "active_v3": 284,
+  "active_unknown": 72,
+  "all_v3": 298
  },
- "pct_target": 5.9,
+ "pct_target": 6.0,
  "pct_base": 3.2,
  "history_ok": true,
- "n_born_v3": 3,
+ "n_born_v3": 5,
+ "portal_id": "26173790",
+ "v3_tickets": [
+  {
+   "id": "426101815535",
+   "date": "2026-07-28",
+   "created": "28/07/2026 à 07h33",
+   "week": "W31"
+  },
+  {
+   "id": "425760632007",
+   "date": "2026-07-25",
+   "created": "25/07/2026 à 09h29",
+   "week": "W30"
+  }
+ ],
  "weeks": [
   {
    "y": 2026,
@@ -34,7 +49,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 8770,
+   "clients_v2": 8772,
    "clients_v3": 0,
    "tickets_v2": 255,
    "tickets_v3": 0,
@@ -56,13 +71,13 @@
    "cum": 294,
    "pct_target": 5.9,
    "pct_base": 3.3,
-   "clients_v2": 8476,
+   "clients_v2": 8478,
    "clients_v3": 294,
-   "tickets_v2": 272,
+   "tickets_v2": 271,
    "tickets_v3": 1,
-   "ratio_v2": 0.0321,
+   "ratio_v2": 0.032,
    "ratio_v3": 0.0034,
-   "delta": -0.0287,
+   "delta": -0.0286,
    "target_cum": 0
   },
   {
@@ -74,17 +89,17 @@
    "future": false,
    "partial": true,
    "migrated": 0,
-   "born": 2,
-   "cum": 296,
-   "pct_target": 5.9,
+   "born": 4,
+   "cum": 298,
+   "pct_target": 6.0,
    "pct_base": 3.4,
    "clients_v2": 8474,
-   "clients_v3": 296,
-   "tickets_v2": 101,
+   "clients_v3": 298,
+   "tickets_v2": 125,
    "tickets_v3": 1,
-   "ratio_v2": 0.0119,
+   "ratio_v2": 0.0148,
    "ratio_v3": 0.0034,
-   "delta": -0.0085,
+   "delta": -0.0114,
    "target_cum": 500
   },
   {
@@ -246,6 +261,6 @@
   "W30",
   "W31"
  ],
- "refreshed_at": "29/07/2026 à 11h58",
- "refreshed_iso": "2026-07-29T11:58:35"
+ "refreshed_at": "29/07/2026 à 17h39",
+ "refreshed_iso": "2026-07-29T17:39:06"
 }

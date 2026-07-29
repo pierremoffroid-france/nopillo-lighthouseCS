@@ -41,6 +41,7 @@ DEADLINE = datetime.date(2026, 9, 30)          # échéance
 KICKOFF = datetime.date(2026, 7, 22)           # première vague (mercredi 22/07)
 SERIES_START = datetime.date(2026, 7, 13)      # W29 : début de tout affichage. Rien avant.
 CC_PIPELINE_ID = '253837526'                   # pipeline Customer Care
+HS_PORTAL_ID = '26173790'                      # pour construire les liens ticket
 ACTIVE_STATUSES = ('actif', 'overdue', 'pending')
 
 # ---------- PATHS ----------
@@ -374,6 +375,7 @@ def classify_tickets(hs, tickets, cust_idx, mig_dates, hist_ok):
     log.info(f"  {len(assoc)} tickets associés à au moins un contact")
 
     per_week = defaultdict(lambda: {'v2': 0, 'v3': 0, 'unknown': 0, 'noclient': 0})
+    v3_rows = []   # tickets V3 : id + date uniquement, aucune donnée personnelle
     for t in tickets:
         tid = str(t.get('id'))
         created = parse_ts((t.get('properties') or {}).get('createdate'))
@@ -393,20 +395,32 @@ def classify_tickets(hs, tickets, cust_idx, mig_dates, hist_ok):
             mdate = mig_dates.get(contact)
             if hist_ok and mdate:
                 # avant sa bascule, ce client vivait l'expérience V2
-                per_week[wk]['v3' if created.date() >= mdate else 'v2'] += 1
+                is_v3 = created.date() >= mdate
+                per_week[wk]['v3' if is_v3 else 'v2'] += 1
             else:
+                is_v3 = True
                 per_week[wk]['v3'] += 1
+            if is_v3:
+                v3_rows.append({
+                    'id': tid,
+                    'date': created.date().isoformat(),
+                    'created': created.strftime('%d/%m/%Y à %Hh%M'),
+                    'week': week_label(*wk),
+                })
         elif info['v'] == 'V2':
             per_week[wk]['v2'] += 1
         else:
             per_week[wk]['unknown'] += 1
-    return per_week
+    v3_rows.sort(key=lambda r: (r['date'], r['id']), reverse=True)
+    log.info(f"  {len(v3_rows)} ticket(s) V3 post-bascule listés pour contrôle")
+    return per_week, v3_rows
 
 
 # ======================================================================
 # 5 · CALCUL DU MODÈLE
 # ======================================================================
-def build_model(cust_idx, mig_dates, born_v3, hist_ok, tickets_week, hist_snapshots):
+def build_model(cust_idx, mig_dates, born_v3, hist_ok, tickets_week, hist_snapshots,
+                v3_rows=None):
     today = datetime.date.today()
 
     active_v2 = sum(1 for i in cust_idx.values() if i['active'] and i['v'] == 'V2')
@@ -514,6 +528,8 @@ def build_model(cust_idx, mig_dates, born_v3, hist_ok, tickets_week, hist_snapsh
         'pct_base': round(100 * active_v3 / active_total, 1) if active_total else 0,
         'history_ok': hist_ok,
         'n_born_v3': len(born_v3),
+        'portal_id': HS_PORTAL_ID,
+        'v3_tickets': v3_rows or [],
         'weeks': rows,
         'ticket_weeks': ticket_rows,
         'refreshed_at': datetime.datetime.now().strftime('%d/%m/%Y à %Hh%M'),
@@ -564,9 +580,10 @@ def main():
     since = datetime.datetime.combine(
         SERIES_START - datetime.timedelta(days=SERIES_START.weekday()), datetime.time.min)
     tickets = fetch_tickets(hs, since)
-    tickets_week = classify_tickets(hs, tickets, cust_idx, mig_dates, hist_ok)
+    tickets_week, v3_rows = classify_tickets(hs, tickets, cust_idx, mig_dates, hist_ok)
 
-    model = build_model(cust_idx, mig_dates, born_v3, hist_ok, tickets_week, snapshots)
+    model = build_model(cust_idx, mig_dates, born_v3, hist_ok, tickets_week, snapshots,
+                        v3_rows=v3_rows)
 
     DATA_PATH.write_text(json.dumps(model, indent=1, ensure_ascii=False), encoding='utf-8')
 
@@ -587,6 +604,7 @@ def main():
     log.info(f"  Base active : {c['active_total']} · V2 {c['active_v2']} · V3 {c['active_v3']}")
     log.info(f"  Reste {model['remaining']} en {model['weeks_left']} sem → {model['rate_needed']}/sem")
     log.info(f"  Historique produit_version exploitable : {model['history_ok']}")
+    log.info(f"  Tickets V3 listés pour contrôle : {len(model['v3_tickets'])}")
     log.info("=" * 66)
 
 

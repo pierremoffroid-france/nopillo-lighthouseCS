@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="3600">
+<title>Migration V3 · Customer Operations · Nopillo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🚚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  /* ====================================================================
+     Charte Nopillo · identique à Lighthouse (charte-graphique-V2, nov. 2024)
+     Indigo #5747FF · Émeraude #11E28F · Framboise #DB3352 · Dark #040425
+     Typo : Futura PT → Jost. Mono : JetBrains Mono.
+     ==================================================================== */
+  :root{
+    --indigo:#5747FF; --emerald:#11E28F; --raspberry:#DB3352;
+    --lavender:#DEDAFF; --tea:#E8FFD9; --dark:#040425;
+    --bg:#F8F8FC; --surface:#FFFFFF; --surface2:#F2F1FA; --surface-hover:#EDECF5;
+    --border:rgba(4,4,37,.08); --border2:rgba(4,4,37,.16);
+    --text:var(--dark); --text-soft:#2A2A45; --muted:#6B6B85;
+    --accent-dim:rgba(87,71,255,.10); --accent-strong:#3D2DDB;
+    --green-strong:#089966; --green-dim:rgba(17,226,143,.14);
+    --red-dim:rgba(219,51,82,.10); --orange:#FF7A3D; --orange-dim:rgba(255,122,61,.12);
+    --grid:rgba(4,4,37,.05); --tick:#9092A8;
+    --font:'Futura PT','Jost','Futura',-apple-system,BlinkMacSystemFont,'Trebuchet MS',sans-serif;
+    --mono:'JetBrains Mono','SF Mono','Menlo',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:var(--font)}
+  body{background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.005em;padding-bottom:3rem}
+  .mono{font-family:var(--mono);font-feature-settings:'tnum' on,'lnum' on}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 1.5rem}
+
+  /* TOPBAR */
+  .topbar{background:rgba(248,248,252,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40}
+  .topbar-in{max-width:1240px;margin:0 auto;padding:1rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .brand h1{font-size:1.28rem;font-weight:700;letter-spacing:-.025em;display:flex;align-items:center;gap:13px;line-height:1}
+  .brand-logo{height:25px;width:auto;color:var(--indigo);display:block;flex-shrink:0}
+  .divider{display:inline-block;width:1px;height:21px;background:var(--border2)}
+  .brand .sub{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:5px;letter-spacing:.02em}
+  .badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted);padding:5px 11px;border:1px solid var(--border2);border-radius:999px;background:var(--surface);letter-spacing:.02em;text-decoration:none}
+  .badge:hover{border-color:var(--indigo);color:var(--indigo)}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green-strong);box-shadow:0 0 0 3px var(--green-dim)}
+
+  /* SECTION */
+  section{margin-top:1.5rem}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.4rem 1.5rem}
+
+  /* ===== SIGNATURE : le rail de migration ===== */
+  .rail-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.6rem 1.7rem 1.5rem;position:relative;overflow:hidden}
+  .rail-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1.2rem;flex-wrap:wrap;margin-bottom:1.5rem}
+  .rail-figure{display:flex;align-items:baseline;gap:.55rem}
+  .rail-num{font-size:3.4rem;font-weight:700;letter-spacing:-.04em;line-height:.9;color:var(--indigo)}
+  .rail-den{font-family:var(--mono);font-size:1rem;color:var(--muted)}
+  .rail-cap{font-size:.86rem;color:var(--text-soft);margin-top:.45rem;max-width:34ch}
+  .rail-right{text-align:right}
+  .rail-days{font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+  .rail-days small{font-family:var(--mono);font-size:.7rem;font-weight:400;color:var(--muted);letter-spacing:.03em}
+
+  .rail{position:relative;height:46px;margin:0 0 .45rem}
+  .rail-track{position:absolute;inset:14px 0;background:var(--surface2);border-radius:999px;overflow:hidden}
+  .rail-fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--indigo),#7A6BFF);border-radius:999px;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+  .rail-pace{position:absolute;top:0;bottom:0;width:2px;background:var(--dark);opacity:.55}
+  .rail-pace::after{content:attr(data-lab);position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--text-soft);white-space:nowrap;letter-spacing:.02em}
+  .rail-ticks{position:absolute;left:0;right:0;bottom:-2px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--tick)}
+
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:1.5rem}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.05rem 1.15rem;position:relative}
+  .kpi::before{content:'';position:absolute;left:1.15rem;right:1.15rem;top:0;height:2px;border-radius:0 0 3px 3px;background:var(--indigo)}
+  .kpi.k-green::before{background:var(--emerald)} .kpi.k-red::before{background:var(--raspberry)}
+  .kpi.k-orange::before{background:var(--orange)} .kpi.k-neutral::before{background:var(--border2)}
+  .kpi-l{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+  .kpi-v{font-size:1.7rem;font-weight:700;letter-spacing:-.03em;line-height:1.05}
+  .kpi-s{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:.4rem;line-height:1.5}
+  .k-green .kpi-v{color:var(--green-strong)} .k-red .kpi-v{color:var(--raspberry)}
+  .k-orange .kpi-v{color:#D9600F} .kpi-v{color:var(--indigo)} .k-neutral .kpi-v{color:var(--text)}
+
+  /* CHARTS */
+  .ch-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.1rem}
+  .ch-title{font-size:.95rem;font-weight:600;letter-spacing:-.01em}
+  .ch-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap}
+  .lg{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .lg-box{width:9px;height:9px;border-radius:3px}
+  .lg-line{width:17px;border-top:2px solid}
+  .lg-dash{width:17px;border-top:2px dashed}
+  .cv{position:relative;width:100%;height:290px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* TABLE */
+  .tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);background:var(--surface)}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  thead th{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:11px 11px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface2)}
+  thead th:first-child{text-align:left}
+  tbody td{padding:9px 11px;text-align:right;font-family:var(--mono);font-size:11px;white-space:nowrap;border-bottom:1px solid var(--border)}
+  tbody td:first-child{text-align:left;font-family:var(--font);font-size:12px;font-weight:600}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--surface2)}
+  tr.is-future td{color:var(--tick)}
+  tr.is-current{background:var(--accent-dim)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:999px;letter-spacing:.02em}
+  .p-green{background:var(--green-dim);color:var(--green-strong)}
+  .p-orange{background:var(--orange-dim);color:#D9600F}
+  .p-red{background:var(--red-dim);color:var(--raspberry)}
+  .p-grey{background:var(--surface2);color:var(--muted)}
+  .neg{color:var(--green-strong)} .pos{color:var(--raspberry)}
+
+
+  @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+  @media (max-width:560px){.rail-num{font-size:2.6rem}.wrap{padding:0 1rem}.topbar-in{padding:.9rem 1rem}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  a:focus-visible,th:focus-visible{outline:2px solid var(--indigo);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <h1>
+        <svg class="brand-logo" viewBox="0 -0.5 81 27" xmlns="http://www.w3.org/2000/svg" aria-label="Nopillo">
+          <path d="M11.9693 17.2058V13.8364C11.9693 11.0336 10.0605 9.14961 7.21839 9.14961C5.88306 9.14961 4.74031 9.53983 3.82187 10.3077V9.42654H0V21.6157H3.82187V15.0134C3.82187 13.7022 4.72761 12.8231 6.07775 12.8231C7.33478 12.8231 8.1474 13.6644 8.1474 14.9672V17.9443C8.1474 20.3464 9.47638 21.6157 11.9904 21.6157H13.1565V17.9422H12.7121C12.2253 17.9422 11.9693 17.6883 11.9693 17.2058Z" fill="currentColor"/>
+          <path d="M20.2775 9.14961C16.5064 9.14961 13.6644 11.8895 13.6644 15.5211C13.6644 19.1527 16.5064 21.8926 20.2775 21.8926C24.0486 21.8926 26.8907 19.1527 26.8907 15.5211C26.8907 11.8895 24.0465 9.14961 20.2775 9.14961ZM20.2775 18.2191C18.739 18.2191 17.5793 17.0589 17.5793 15.5211C17.5793 13.9833 18.739 12.8231 20.2775 12.8231C21.816 12.8231 22.9757 13.9833 22.9757 15.5211C22.9757 17.0589 21.816 18.2191 20.2775 18.2191Z" fill="currentColor"/>
+          <path d="M74.3868 9.00695C70.6158 9.00695 67.7737 11.7469 67.7737 15.3784C67.7737 19.01 70.6158 21.7499 74.3868 21.7499C78.1579 21.7499 81 19.01 81 15.3784C81 11.7469 78.1558 9.00695 74.3868 9.00695ZM74.3868 18.0764C72.8484 18.0764 71.6887 16.9163 71.6887 15.3784C71.6887 13.8406 72.8484 12.6805 74.3868 12.6805C75.9253 12.6805 77.085 13.8406 77.085 15.3784C77.085 16.9163 75.9253 18.0764 74.3868 18.0764Z" fill="currentColor"/>
+          <path d="M35.6645 9.14961C34.3757 9.14961 33.216 9.55661 32.2912 10.3308V9.42654H28.4694V26.0004H32.2912V20.7115C33.216 21.4856 34.3757 21.8926 35.6645 21.8926C39.0504 21.8926 41.6025 19.1527 41.6025 15.5211C41.6025 11.8895 39.0504 9.14961 35.6645 9.14961ZM34.9894 18.2191C33.4509 18.2191 32.2912 17.0589 32.2912 15.5211C32.2912 13.9833 33.4509 12.8231 34.9894 12.8231C36.5279 12.8231 37.6876 13.9833 37.6876 15.5211C37.6876 17.0589 36.5279 18.2191 34.9894 18.2191Z" fill="currentColor"/>
+          <path d="M44.7621 3.84177C43.4479 3.84177 42.4554 4.81523 42.4554 6.10547C42.4554 7.39572 43.4479 8.39225 44.7621 8.39225C46.0762 8.39225 47.092 7.4083 47.092 6.10547C47.092 4.80264 46.091 3.84177 44.7621 3.84177Z" fill="currentColor"/>
+          <path d="M46.673 9.42654H42.8511V21.6157H46.673V9.42654Z" fill="currentColor"/>
+          <path d="M66.578 17.6421C66.5442 17.6673 66.5209 17.682 66.5188 17.6862C65.7104 18.324 64.6036 19.1988 63.9412 19.073C63.7444 19.0352 63.5751 18.8862 63.4228 18.6198C63.2492 18.3156 63.0059 17.6023 62.9551 17.1785C64.2671 15.9302 66.0913 13.9372 67.4838 11.4133C68.8847 8.87268 69.5175 6.40548 69.3609 4.07885C69.2297 2.12145 68.2689 0.615115 66.8531 0.145172C65.5771 -0.276518 64.1804 0.243776 63.0165 1.57598C60.4939 4.46907 59.4147 10.9748 59.3279 14.3966C59.3194 14.7575 59.3343 15.1099 59.347 15.4498C59.3512 15.5652 59.3554 15.6806 59.3575 15.8022C58.9978 16.1568 58.6042 16.5113 58.1979 16.8533L57.1757 17.6254C57.1419 17.6547 57.1334 17.661 57.1017 17.6862C56.2933 18.324 55.1886 19.1967 54.5262 19.0709C54.3294 19.0331 54.1601 18.8841 54.0078 18.6177C53.8321 18.3114 53.5887 17.5939 53.5401 17.1764C54.8521 15.9281 56.6763 13.9351 58.0688 11.4112C59.4697 8.87058 60.1024 6.40338 59.9458 4.07675C59.8146 2.11935 58.8539 0.613017 57.4381 0.143074C56.1621 -0.278615 54.7654 0.241678 53.6014 1.57388C51.0789 4.46697 49.9997 10.9727 49.9129 14.3945C49.9044 14.7596 49.9192 15.1246 49.9319 15.4477C49.9362 15.5631 49.9404 15.6785 49.9425 15.8001C49.6187 16.119 48.804 16.91 48.5289 17.1512L48.4569 17.2142V21.2821L48.7828 21.0765C48.9818 20.9506 49.3965 20.5961 49.7965 20.2562C50.0653 20.0275 50.3192 19.8114 50.4652 19.7002C50.5287 19.652 50.5901 19.6058 50.6515 19.5618C51.0832 20.6548 51.79 21.5192 52.6576 22.0101C53.2544 22.3479 53.902 22.5199 54.5855 22.5199C55.5992 22.5199 56.8519 22.1423 57.855 21.5339C58.1936 21.3283 58.8094 20.7408 59.3512 20.2226C59.6157 19.9709 59.8654 19.7317 60.0326 19.5828C60.0432 19.5744 60.0538 19.5681 60.0643 19.5597C60.4961 20.6548 61.2029 21.5171 62.0705 22.0101C62.6673 22.3479 63.3148 22.5199 63.9984 22.5199C64.9486 22.5199 65.977 22.1884 67.0563 21.5339C67.3208 21.3744 67.7779 21.001 68.4191 20.424C67.5748 19.6835 66.9378 18.7331 66.5759 17.6401L66.578 17.6421ZM63.2302 10.3664C63.6175 8.20763 64.61 4.69145 65.7823 3.63198C66.049 4.48165 66.0871 6.65514 64.5634 9.5755C64.1296 10.4063 63.5984 11.2308 62.9762 12.0364C63.0376 11.514 63.1223 10.9622 63.2281 10.3664H63.2302ZM53.8173 10.3664C54.2046 8.20763 55.1949 4.69355 56.3694 3.63198C56.6361 4.48165 56.6742 6.65514 55.1505 9.5755C54.7167 10.4063 54.1855 11.2308 53.5655 12.0364C53.6268 11.514 53.7115 10.9622 53.8173 10.3664Z" fill="currentColor"/>
+        </svg>
+        <span class="divider"></span>
+        <span>Migration V3</span>
+      </h1>
+      <div class="sub" id="subline"></div>
+    </div>
+    <div class="badges">
+      <span class="badge"><span class="dot"></span><span id="refreshBadge"></span></span>
+      <a class="badge" href="./index.html">📡 Lighthouse</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== SIGNATURE : le rail ===== -->
+  <section>
+    <div class="rail-card">
+      <div class="rail-head">
+        <div>
+          <div class="eyebrow">Clients migrés en V3</div>
+          <div class="rail-figure">
+            <span class="rail-num mono" id="railNum"> vs </span>
+            <span class="rail-den">/ <span id="railTarget">5 000</span></span>
+          </div>
+          <div class="rail-cap" id="railCap"></div>
+        </div>
+        <div class="rail-right">
+          <div class="rail-days mono" id="railDays"> vs </div>
+          <div class="rail-days" style="font-size:.72rem;font-weight:400"><small id="railDeadline"></small></div>
+        </div>
+      </div>
+      <div class="rail">
+        <div class="rail-track">
+          <div class="rail-fill" id="railFill" style="width:0%"></div>
+        </div>
+        <div class="rail-pace" id="railPace" data-lab="trajectoire" style="left:0%"></div>
+        <div class="rail-ticks" id="railTicks"></div>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+    <div id="degraded" style="display:none;margin-top:12px;background:#FFF6E8;border:1px solid rgba(255,122,61,.35);border-radius:12px;padding:.8rem 1.1rem;font-size:12.5px;color:#7A3F0C;line-height:1.5"></div>
+  </section>
+
+  <!-- ===== COURBE MIGRATION ===== -->
+  <section>
+    <div class="card">
+      <div class="ch-head">
+        <div>
+          <div class="ch-title">Migrations par semaine et trajectoire vers l'objectif</div>
+          <div class="ch-sub" id="chSub1"></div>
+        </div>
+        <div class="legend">
+          <div class="lg"><span class="lg-box" style="background:var(--indigo)"></span>Migrés dans la semaine</div>
+          <div class="lg"><span class="lg-line" style="border-color:var(--indigo)"></span>Cumulé réel</div>
+          <div class="lg"><span class="lg-dash" style="border-color:var(--raspberry)"></span>Trajectoire cible</div>
+        </div>
+      </div>
+      <div class="cv"><canvas id="chartMig" role="img" aria-label="Migrations hebdomadaires et cumul vers 5000 clients"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ===== CHARGE TICKETS ===== -->
+  <section>
+    <div class="grid2">
+      <div class="card">
+        <div class="ch-head">
+          <div>
+            <div class="ch-title">Tickets par client et par semaine</div>
+            <div class="ch-sub">Le signal qui autorise (ou gèle) la vague suivante</div>
+          </div>
+        </div>
+        <div class="legend" style="margin-bottom:.8rem">
+          <div class="lg"><span class="lg-line" style="border-color:var(--muted)"></span>V2</div>
+          <div class="lg"><span class="lg-line" style="border-color:var(--indigo)"></span>V3</div>
+        </div>
+        <div class="cv" style="height:250px"><canvas id="chartRatio" role="img" aria-label="Tickets par client par semaine, V2 contre V3"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ch-head">
+          <div>
+            <div class="ch-title">Volume de tickets créés</div>
+            <div class="ch-sub">Pipeline Customer Care, clients uniquement</div>
+          </div>
+        </div>
+        <div class="legend" style="margin-bottom:.8rem">
+          <div class="lg"><span class="lg-box" style="background:#C9C7DE"></span>V2</div>
+          <div class="lg"><span class="lg-box" style="background:var(--indigo)"></span>V3</div>
+        </div>
+        <div class="cv" style="height:250px"><canvas id="chartVol" role="img" aria-label="Volume hebdomadaire de tickets par version"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TABLEAU ===== -->
+  <section>
+    <div class="eyebrow">Suivi semaine par semaine</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Semaine</th><th>Période</th>
+            <th>Migrés</th><th>Cumulé</th><th>% objectif</th><th>% base active</th>
+            <th>Clients V3</th><th>Tickets V3</th><th>T/client V3</th>
+            <th>Clients V2</th><th>Tickets V2</th><th>T/client V2</th>
+            <th>Écart</th><th>Feu</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+
+</div>
+
+<script>
+const D = {"target": 5000, "deadline": "2026-09-30", "kickoff": "2026-07-22", "series_start": "2026-07-13", "today": "2026-07-29", "days_left": 63, "weeks_left": 9.0, "working_days_left": 46, "remaining": 4704, "rate_needed": 523, "counts": {"active_total": 8833, "active_v2": 8487, "active_v3": 282, "active_unknown": 64, "all_v3": 296}, "pct_target": 5.9, "pct_base": 3.2, "history_ok": true, "n_born_v3": 3, "weeks": [{"y": 2026, "w": 29, "label": "W29", "start": "2026-07-13", "end": "2026-07-19", "future": false, "partial": false, "migrated": 0, "born": 0, "cum": 0, "pct_target": 0.0, "pct_base": 0.0, "clients_v2": 8769, "clients_v3": 0, "tickets_v2": 255, "tickets_v3": 0, "ratio_v2": 0.0291, "ratio_v3": null, "delta": null, "target_cum": 0}, {"y": 2026, "w": 30, "label": "W30", "start": "2026-07-20", "end": "2026-07-26", "future": false, "partial": false, "migrated": 293, "born": 1, "cum": 294, "pct_target": 5.9, "pct_base": 3.3, "clients_v2": 8475, "clients_v3": 294, "tickets_v2": 272, "tickets_v3": 1, "ratio_v2": 0.0321, "ratio_v3": 0.0034, "delta": -0.0287, "target_cum": 0}, {"y": 2026, "w": 31, "label": "W31", "start": "2026-07-27", "end": "2026-08-02", "future": false, "partial": true, "migrated": 0, "born": 2, "cum": 296, "pct_target": 5.9, "pct_base": 3.4, "clients_v2": 8473, "clients_v3": 296, "tickets_v2": 100, "tickets_v3": 1, "ratio_v2": 0.0118, "ratio_v3": 0.0034, "delta": -0.0084, "target_cum": 500}, {"y": 2026, "w": 32, "label": "W32", "start": "2026-08-03", "end": "2026-08-09", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 1000}, {"y": 2026, "w": 33, "label": "W33", "start": "2026-08-10", "end": "2026-08-16", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 1500}, {"y": 2026, "w": 34, "label": "W34", "start": "2026-08-17", "end": "2026-08-23", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 2000}, {"y": 2026, "w": 35, "label": "W35", "start": "2026-08-24", "end": "2026-08-30", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 2500}, {"y": 2026, "w": 36, "label": "W36", "start": "2026-08-31", "end": "2026-09-06", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 3000}, {"y": 2026, "w": 37, "label": "W37", "start": "2026-09-07", "end": "2026-09-13", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 3500}, {"y": 2026, "w": 38, "label": "W38", "start": "2026-09-14", "end": "2026-09-20", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 4000}, {"y": 2026, "w": 39, "label": "W39", "start": "2026-09-21", "end": "2026-09-27", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 4500}, {"y": 2026, "w": 40, "label": "W40", "start": "2026-09-28", "end": "2026-10-04", "future": true, "partial": false, "migrated": 0, "born": 0, "cum": null, "pct_target": null, "pct_base": null, "clients_v2": null, "clients_v3": null, "target_cum": 5000}], "ticket_weeks": ["W29", "W30", "W31"], "refreshed_at": "29/07/2026 à 11h50", "refreshed_iso": "2026-07-29T11:50:40"};
+
+const nf = n => (n === null || n === undefined) ? ' vs ' : n.toLocaleString('fr-FR');
+const pf = n => (n === null || n === undefined) ? ' vs ' : n.toLocaleString('fr-FR', {minimumFractionDigits:1, maximumFractionDigits:1}) + ' %';
+const rf = n => (n === null || n === undefined) ? ' vs ' : n.toLocaleString('fr-FR', {minimumFractionDigits:3, maximumFractionDigits:3});
+const dfr = s => { const d = new Date(s + 'T00:00:00'); return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'short'}); };
+
+const C = { indigo:'#5747FF', indigoSoft:'rgba(87,71,255,.14)', rasp:'#DB3352',
+            muted:'#6B6B85', mutedSoft:'#C9C7DE', grid:'rgba(4,4,37,.05)',
+            axis:'rgba(4,4,37,.10)', tick:'#9092A8', dark:'#040425' };
+
+/* ---------- entête ---------- */
+document.getElementById('subline').textContent =
+  `Objectif ${nf(D.target)} clients au ${dfr(D.deadline)} · première vague le ${dfr(D.kickoff)} · suivi depuis W29 · source HubSpot`;
+document.getElementById('refreshBadge').textContent = 'MAJ ' + D.refreshed_at;
+
+/* ---------- rail ---------- */
+const migrated = D.counts.all_v3;
+const pctTarget = D.pct_target;
+document.getElementById('railNum').textContent = nf(migrated);
+document.getElementById('railTarget').textContent = nf(D.target);
+document.getElementById('railDays').textContent = 'J-' + D.days_left;
+document.getElementById('railDeadline').textContent =
+  `${D.working_days_left} jours ouvrés · échéance ${dfr(D.deadline)}`;
+document.getElementById('railFill').style.width = Math.min(pctTarget, 100) + '%';
+document.getElementById('railTicks').innerHTML =
+  [0, .25, .5, .75, 1].map(f => `<span>${nf(Math.round(D.target * f))}</span>`).join('');
+document.getElementById('railCap').textContent =
+  `${pf(pctTarget)} de l'objectif · ${pf(D.pct_base)} de la base active (${nf(D.counts.active_total)} clients)`;
+
+/* repère « où la trajectoire linéaire devrait nous placer aujourd'hui » */
+const kick = new Date(D.kickoff + 'T00:00:00'), dead = new Date(D.deadline + 'T00:00:00'), now = new Date(D.today + 'T00:00:00');
+const paceFrac = Math.max(0, Math.min(1, (now - kick) / (dead - kick)));
+const pacePct = Math.round(paceFrac * 100);
+const paceEl = document.getElementById('railPace');
+paceEl.style.left = pacePct + '%';
+paceEl.dataset.lab = 'trajectoire · ' + nf(Math.round(paceFrac * D.target));
+
+/* ---------- KPI ---------- */
+const paceTargetToday = Math.round(paceFrac * D.target);
+const gap = migrated - paceTargetToday;
+const scored = D.weeks.filter(w => !w.future && w.ratio_v3 !== undefined && w.ratio_v3 !== null && w.ratio_v2);
+const lastDone = [...scored].filter(w => !w.partial).pop() || [...scored].pop();
+let feuCls = 'k-neutral', feuTxt = 'pas encore de signal', feuVal = ' vs ';
+if (lastDone) {
+  const d = lastDone.delta;
+  feuVal = (d > 0 ? '+' : '') + rf(d);
+  if (d <= 0) { feuCls = 'k-green'; feuTxt = 'V3 plus léger que V2 → on peut accélérer'; }
+  else if (d <= lastDone.ratio_v2 * 0.25) { feuCls = 'k-orange'; feuTxt = 'V3 légèrement au-dessus → on maintient'; }
+  else { feuCls = 'k-red'; feuTxt = 'V3 nettement au-dessus → geler la vague'; }
+  feuTxt += ` (${lastDone.label}${lastDone.partial ? ', semaine partielle' : ''})`;
+}
+const kpis = [
+  { l:'Reste à migrer', v:nf(D.remaining), s:`sur ${nf(D.target)} · ${nf(D.counts.active_v2)} clients V2 dans la base active`, c:'' },
+  { l:'Rythme requis', v:nf(D.rate_needed) + ' /sem', s:`${D.weeks_left} semaines restantes jusqu'au ${dfr(D.deadline)}`, c:'' },
+  { l:'Avance / retard sur trajectoire', v:(gap >= 0 ? '+' : '') + nf(gap), s:`trajectoire linéaire à ce jour : ${nf(paceTargetToday)}`, c: gap >= 0 ? 'k-green' : 'k-red' },
+  { l:'Écart tickets/client V3 vs V2', v:feuVal, s:feuTxt, c:feuCls },
+];
+document.getElementById('kpis').innerHTML = kpis.map(k =>
+  `<div class="kpi ${k.c}"><div class="kpi-l">${k.l}</div><div class="kpi-v mono">${k.v}</div><div class="kpi-s">${k.s}</div></div>`
+).join('');
+
+
+/* ---------- bandeau mode dégradé ---------- */
+if (!D.history_ok) {
+  const g = document.getElementById('degraded');
+  g.style.display = 'block';
+  g.innerHTML = "<strong>Mode dégradé.</strong> L'historique de produit_version n'est pas lisible dans HubSpot : la série hebdomadaire se reconstruit à partir des relevés quotidiens et les tickets sont ventilés sur la version actuelle du client.";
+}
+
+/* ---------- graphique migration ---------- */
+const labels = D.weeks.map(w => w.label);
+new Chart(document.getElementById('chartMig'), {
+  data: {
+    labels,
+    datasets: [
+      { type:'bar', label:'Migrés', data: D.weeks.map(w => w.future ? null : (w.migrated + w.born)),
+        backgroundColor: C.indigoSoft, borderColor: C.indigo, borderWidth: 1.5, borderRadius: 5,
+        borderSkipped: false, yAxisID: 'y1', order: 3 },
+      { type:'line', label:'Cumulé', data: D.weeks.map(w => w.cum),
+        borderColor: C.indigo, backgroundColor:'rgba(87,71,255,.07)', borderWidth: 2.4,
+        pointRadius: 2.5, pointBackgroundColor: C.indigo, fill: true, tension:.25,
+        spanGaps: false, yAxisID: 'y', order: 1 },
+      { type:'line', label:'Trajectoire cible', data: D.weeks.map(w => w.target_cum),
+        borderColor: C.rasp, borderWidth: 1.6, borderDash:[6,5], pointRadius: 0,
+        fill: false, yAxisID: 'y', order: 2 },
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false, animation:{duration:400},
+    interaction:{mode:'index', intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'rgba(4,4,37,.92)', borderColor:'rgba(255,255,255,.12)', borderWidth:1,
+        titleFont:{family:'Jost', size:12}, bodyFont:{family:'JetBrains Mono', size:11}, padding:10,
+        callbacks:{
+          title: it => { const w = D.weeks[it[0].dataIndex]; return `${w.label} · ${dfr(w.start)} → ${dfr(w.end)}`; },
+          label: ctx => ctx.parsed.y === null ? null : ` ${ctx.dataset.label} : ${nf(ctx.parsed.y)}`
+        }
+      }
+    },
+    scales:{
+      y:{ position:'left', beginAtZero:true, suggestedMax: D.target,
+          ticks:{color:C.tick, font:{family:'JetBrains Mono', size:10}, callback:v => v >= 1000 ? (v/1000)+'k' : v},
+          grid:{color:C.grid}, border:{color:C.axis},
+          title:{display:true, text:'Cumulé', color:C.tick, font:{family:'JetBrains Mono', size:9.5}} },
+      y1:{ position:'right', beginAtZero:true,
+          ticks:{color:C.tick, font:{family:'JetBrains Mono', size:10}},
+          grid:{display:false}, border:{color:C.axis},
+          title:{display:true, text:'Par semaine', color:C.tick, font:{family:'JetBrains Mono', size:9.5}} },
+      x:{ ticks:{color:C.tick, font:{family:'JetBrains Mono', size:9.5}, autoSkip:false, maxRotation:0},
+          grid:{display:false}, border:{color:C.axis} }
+    }
+  }
+});
+
+/* ---------- graphiques tickets ---------- */
+const tw = D.weeks.filter(w => w.tickets_v2 !== undefined);
+const tLabels = tw.map(w => w.label);
+document.getElementById('chSub1').textContent =
+  `${D.weeks.filter(w => !w.future).length} semaine(s) écoulée(s) depuis W29 · horizon jusqu'à ${dfr(D.deadline)}`;
+
+new Chart(document.getElementById('chartRatio'), {
+  type:'line',
+  data:{ labels: tLabels, datasets:[
+    { label:'V2', data: tw.map(w => w.ratio_v2), borderColor: C.muted, borderWidth: 2,
+      pointRadius: 2, pointBackgroundColor: C.muted, fill:false, tension:.25 },
+    { label:'V3', data: tw.map(w => w.ratio_v3), borderColor: C.indigo, borderWidth: 2.4,
+      pointRadius: 2.5, pointBackgroundColor: C.indigo, fill:false, tension:.25, spanGaps:true },
+  ]},
+  options:{
+    responsive:true, maintainAspectRatio:false, animation:{duration:400},
+    interaction:{mode:'index', intersect:false},
+    plugins:{ legend:{display:false},
+      tooltip:{ backgroundColor:'rgba(4,4,37,.92)', titleFont:{family:'Jost', size:12},
+        bodyFont:{family:'JetBrains Mono', size:11}, padding:10,
+        callbacks:{ label: ctx => ctx.parsed.y === null ? null :
+          ` ${ctx.dataset.label} : ${rf(ctx.parsed.y)} ticket/client` } } },
+    scales:{
+      y:{ beginAtZero:true, ticks:{color:C.tick, font:{family:'JetBrains Mono', size:10}},
+          grid:{color:C.grid}, border:{color:C.axis} },
+      x:{ ticks:{color:C.tick, font:{family:'JetBrains Mono', size:9.5}, autoSkip:true, maxRotation:0},
+          grid:{display:false}, border:{color:C.axis} }
+    }
+  }
+});
+
+new Chart(document.getElementById('chartVol'), {
+  type:'bar',
+  data:{ labels: tLabels, datasets:[
+    { label:'V2', data: tw.map(w => w.tickets_v2), backgroundColor:'#C9C7DE', borderRadius:4, stack:'s' },
+    { label:'V3', data: tw.map(w => w.tickets_v3), backgroundColor: C.indigo, borderRadius:4, stack:'s' },
+  ]},
+  options:{
+    responsive:true, maintainAspectRatio:false, animation:{duration:400},
+    interaction:{mode:'index', intersect:false},
+    plugins:{ legend:{display:false},
+      tooltip:{ backgroundColor:'rgba(4,4,37,.92)', titleFont:{family:'Jost', size:12},
+        bodyFont:{family:'JetBrains Mono', size:11}, padding:10,
+        callbacks:{ label: ctx => ` ${ctx.dataset.label} : ${nf(ctx.parsed.y)} tickets` } } },
+    scales:{
+      y:{ stacked:true, beginAtZero:true, ticks:{color:C.tick, font:{family:'JetBrains Mono', size:10}},
+          grid:{color:C.grid}, border:{color:C.axis} },
+      x:{ stacked:true, ticks:{color:C.tick, font:{family:'JetBrains Mono', size:9.5}, autoSkip:true, maxRotation:0},
+          grid:{display:false}, border:{color:C.axis} }
+    }
+  }
+});
+
+/* ---------- tableau ---------- */
+document.getElementById('tbody').innerHTML = D.weeks.map(w => {
+  let feu = '<span class="pill p-grey"> vs </span>';
+  if (w.ratio_v2 && w.ratio_v3 !== null && w.ratio_v3 !== undefined) {
+    if (w.delta <= 0) feu = '<span class="pill p-green">🟢 vert</span>';
+    else if (w.delta <= w.ratio_v2 * 0.25) feu = '<span class="pill p-orange">🟠 orange</span>';
+    else feu = '<span class="pill p-red">🔴 rouge</span>';
+  }
+  const dCls = (w.delta === null || w.delta === undefined) ? '' : (w.delta <= 0 ? 'neg' : 'pos');
+  const dTxt = (w.delta === null || w.delta === undefined) ? ' vs ' : ((w.delta > 0 ? '+' : '') + rf(w.delta));
+  const cls = [w.future ? 'is-future' : '', w.partial ? 'is-current' : ''].filter(Boolean).join(' ');
+  return `<tr class="${cls}">
+    <td>${w.label}${w.partial ? ' <span class="pill p-grey">en cours</span>' : ''}</td>
+    <td>${dfr(w.start)} → ${dfr(w.end)}</td>
+    <td>${w.future ? ' vs ' : nf(w.migrated + w.born)}</td>
+    <td><strong>${nf(w.cum)}</strong></td>
+    <td>${pf(w.pct_target)}</td>
+    <td>${pf(w.pct_base)}</td>
+    <td>${nf(w.clients_v3)}</td>
+    <td>${nf(w.tickets_v3 ?? null)}</td>
+    <td>${rf(w.ratio_v3 ?? null)}</td>
+    <td>${nf(w.clients_v2)}</td>
+    <td>${nf(w.tickets_v2 ?? null)}</td>
+    <td>${rf(w.ratio_v2 ?? null)}</td>
+    <td class="${dCls}">${dTxt}</td>
+    <td>${feu}</td>
+  </tr>`;
+}).join('');
+</script>
+</body>
+</html>

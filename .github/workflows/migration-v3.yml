@@ -1,0 +1,70 @@
+name: Migration V3 · refresh quotidien
+
+on:
+  schedule:
+    # 06h00 UTC = 08h00 Paris en été, 07h00 en hiver. Une seule fois par jour.
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: migration-v3-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Écrire config.json depuis le secret
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+        run: |
+          if [ -z "$HUBSPOT_TOKEN" ]; then
+            echo "::error::secret HUBSPOT_TOKEN absent du repo"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json, os
+          json.dump({"hubspot_token": os.environ["HUBSPOT_TOKEN"]},
+                    open("config.json", "w"))
+          PY
+
+      - name: Refresh
+        run: python3 migration_refresh.py
+
+      - name: Supprimer config.json
+        if: always()
+        run: rm -f config.json
+
+      - name: Commit + push
+        run: |
+          git config user.name  "nopillo-bot"
+          git config user.email "bot@nopillo.com"
+          git add migration.html migration_data.json migration_history.json
+          if git diff --cached --quiet; then
+            echo "aucun changement, rien à publier"
+            exit 0
+          fi
+          git commit -m "Migration V3 · refresh $(date -u '+%Y-%m-%d %H:%M UTC')"
+          # le repo reçoit aussi les pushes de Lighthouse : on rebase-free pull avant de pousser
+          for i in 1 2 3; do
+            git pull --no-edit --no-rebase origin main && git push origin main && exit 0
+            echo "push $i échoué, nouvelle tentative dans 10s"
+            sleep 10
+          done
+          echo "::error::push impossible après 3 tentatives"
+          exit 1
+
+      - name: Log en cas d'échec
+        if: failure()
+        run: tail -60 migration_refresh.log || true

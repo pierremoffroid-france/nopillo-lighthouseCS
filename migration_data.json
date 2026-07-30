@@ -10,10 +10,10 @@
  "remaining": 4325,
  "rate_needed": 488,
  "counts": {
-  "active_total": 8845,
+  "active_total": 8847,
   "active_v2": 8144,
   "active_v3": 627,
-  "active_unknown": 74,
+  "active_unknown": 76,
   "all_v3": 675
  },
  "pct_target": 13.5,
@@ -95,11 +95,11 @@
    "pct_base": 7.6,
    "clients_v2": 8096,
    "clients_v3": 675,
-   "tickets_v2": 148,
+   "tickets_v2": 150,
    "tickets_v3": 1,
-   "ratio_v2": 0.0183,
+   "ratio_v2": 0.0185,
    "ratio_v3": 0.0015,
-   "delta": -0.0168,
+   "delta": -0.017,
    "target_cum": 500
   },
   {
@@ -261,6 +261,6 @@
   "W30",
   "W31"
  ],
- "refreshed_at": "30/07/2026 à 10h04",
- "refreshed_iso": "2026-07-30T10:04:29"
+ "refreshed_at": "30/07/2026 à 10h29",
+ "refreshed_iso": "2026-07-30T10:29:53"
 }

@@ -3,15 +3,15 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-08-08",
- "days_left": 53,
- "weeks_left": 7.6,
+ "today": "2026-08-09",
+ "days_left": 52,
+ "weeks_left": 7.4,
  "working_days_left": 38,
  "remaining": 3584,
- "rate_needed": 473,
+ "rate_needed": 482,
  "counts": {
-  "active_total": 8903,
-  "active_v2": 7404,
+  "active_total": 8901,
+  "active_v2": 7402,
   "active_v3": 1357,
   "active_unknown": 142,
   "all_v3": 1416
@@ -53,27 +53,21 @@
    "week": "W32"
   },
   {
-   "id": "427621270745",
-   "date": "2026-08-07",
-   "created": "07/08/2026 à 15h20",
-   "week": "W32"
-  },
-  {
    "id": "427619345595",
    "date": "2026-08-07",
    "created": "07/08/2026 à 08h28",
    "week": "W32"
   },
   {
-   "id": "427601675481",
-   "date": "2026-08-07",
-   "created": "07/08/2026 à 15h35",
-   "week": "W32"
-  },
-  {
    "id": "427601494249",
    "date": "2026-08-07",
    "created": "07/08/2026 à 09h10",
+   "week": "W32"
+  },
+  {
+   "id": "427523670227",
+   "date": "2026-08-07",
+   "created": "07/08/2026 à 15h20",
    "week": "W32"
   },
   {
@@ -241,7 +235,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 8761,
+   "clients_v2": 8759,
    "clients_v3": 0,
    "tickets_v2": 253,
    "tickets_v3": 0,
@@ -263,13 +257,13 @@
    "cum": 292,
    "pct_target": 5.8,
    "pct_base": 3.3,
-   "clients_v2": 8469,
+   "clients_v2": 8467,
    "clients_v3": 292,
    "tickets_v2": 235,
    "tickets_v3": 1,
-   "ratio_v2": 0.0277,
+   "ratio_v2": 0.0278,
    "ratio_v3": 0.0034,
-   "delta": -0.0243,
+   "delta": -0.0244,
    "target_cum": 0
   },
   {
@@ -307,13 +301,13 @@
    "cum": 1416,
    "pct_target": 28.3,
    "pct_base": 15.9,
-   "clients_v2": 7345,
+   "clients_v2": 7343,
    "clients_v3": 1416,
-   "tickets_v2": 283,
-   "tickets_v3": 30,
-   "ratio_v2": 0.0385,
-   "ratio_v3": 0.0212,
-   "delta": -0.0173,
+   "tickets_v2": 307,
+   "tickets_v3": 29,
+   "ratio_v2": 0.0418,
+   "ratio_v3": 0.0205,
+   "delta": -0.0213,
    "target_cum": 1000
   },
   {
@@ -459,6 +453,6 @@
   "W31",
   "W32"
  ],
- "refreshed_at": "08/08/2026 à 08h31",
- "refreshed_iso": "2026-08-08T08:31:52"
+ "refreshed_at": "09/08/2026 à 08h35",
+ "refreshed_iso": "2026-08-09T08:35:47"
 }

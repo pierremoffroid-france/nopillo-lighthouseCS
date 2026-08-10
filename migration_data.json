@@ -3,17 +3,17 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-08-09",
- "days_left": 52,
- "weeks_left": 7.4,
+ "today": "2026-08-10",
+ "days_left": 51,
+ "weeks_left": 7.3,
  "working_days_left": 38,
  "remaining": 3584,
- "rate_needed": 482,
+ "rate_needed": 492,
  "counts": {
-  "active_total": 8901,
-  "active_v2": 7402,
+  "active_total": 8900,
+  "active_v2": 7400,
   "active_v3": 1357,
-  "active_unknown": 142,
+  "active_unknown": 143,
   "all_v3": 1416
  },
  "pct_target": 28.3,
@@ -22,6 +22,30 @@
  "n_born_v3": 11,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "427850142957",
+   "date": "2026-08-10",
+   "created": "10/08/2026 à 07h02",
+   "week": "W33"
+  },
+  {
+   "id": "427850139868",
+   "date": "2026-08-10",
+   "created": "10/08/2026 à 06h50",
+   "week": "W33"
+  },
+  {
+   "id": "427835916503",
+   "date": "2026-08-10",
+   "created": "10/08/2026 à 05h59",
+   "week": "W33"
+  },
+  {
+   "id": "427834114282",
+   "date": "2026-08-10",
+   "created": "10/08/2026 à 06h50",
+   "week": "W33"
+  },
   {
    "id": "427670674623",
    "date": "2026-08-07",
@@ -235,7 +259,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 8759,
+   "clients_v2": 8757,
    "clients_v3": 0,
    "tickets_v2": 253,
    "tickets_v3": 0,
@@ -257,7 +281,7 @@
    "cum": 292,
    "pct_target": 5.8,
    "pct_base": 3.3,
-   "clients_v2": 8467,
+   "clients_v2": 8465,
    "clients_v3": 292,
    "tickets_v2": 235,
    "tickets_v3": 1,
@@ -279,7 +303,7 @@
    "cum": 675,
    "pct_target": 13.5,
    "pct_base": 7.6,
-   "clients_v2": 8054,
+   "clients_v2": 8053,
    "clients_v3": 675,
    "tickets_v2": 281,
    "tickets_v3": 3,
@@ -295,19 +319,19 @@
    "start": "2026-08-03",
    "end": "2026-08-09",
    "future": false,
-   "partial": true,
+   "partial": false,
    "migrated": 739,
    "born": 2,
    "cum": 1416,
    "pct_target": 28.3,
    "pct_base": 15.9,
-   "clients_v2": 7343,
+   "clients_v2": 7342,
    "clients_v3": 1416,
-   "tickets_v2": 307,
+   "tickets_v2": 319,
    "tickets_v3": 29,
-   "ratio_v2": 0.0418,
+   "ratio_v2": 0.0434,
    "ratio_v3": 0.0205,
-   "delta": -0.0213,
+   "delta": -0.0229,
    "target_cum": 1000
   },
   {
@@ -316,15 +340,20 @@
    "label": "W33",
    "start": "2026-08-10",
    "end": "2026-08-16",
-   "future": true,
-   "partial": false,
+   "future": false,
+   "partial": true,
    "migrated": 0,
    "born": 0,
-   "cum": null,
-   "pct_target": null,
-   "pct_base": null,
-   "clients_v2": null,
-   "clients_v3": null,
+   "cum": 1416,
+   "pct_target": 28.3,
+   "pct_base": 15.9,
+   "clients_v2": 7341,
+   "clients_v3": 1416,
+   "tickets_v2": 22,
+   "tickets_v3": 4,
+   "ratio_v2": 0.003,
+   "ratio_v3": 0.0028,
+   "delta": -0.0002,
    "target_cum": 1500
   },
   {
@@ -451,8 +480,9 @@
   "W29",
   "W30",
   "W31",
-  "W32"
+  "W32",
+  "W33"
  ],
- "refreshed_at": "09/08/2026 à 08h35",
- "refreshed_iso": "2026-08-09T08:35:47"
+ "refreshed_at": "10/08/2026 à 09h05",
+ "refreshed_iso": "2026-08-10T09:05:52"
 }

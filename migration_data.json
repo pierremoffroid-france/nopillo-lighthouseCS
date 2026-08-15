@@ -3,29 +3,95 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-08-14",
- "days_left": 47,
- "weeks_left": 6.7,
- "working_days_left": 34,
- "remaining": 2851,
- "rate_needed": 425,
+ "today": "2026-08-15",
+ "days_left": 46,
+ "weeks_left": 6.6,
+ "working_days_left": 33,
+ "remaining": 2850,
+ "rate_needed": 434,
  "counts": {
-  "active_total": 9256,
-  "active_v2": 6965,
-  "active_v3": 2103,
-  "active_unknown": 188,
-  "all_v3": 2149
+  "active_total": 9268,
+  "active_v2": 6964,
+  "active_v3": 2104,
+  "active_unknown": 200,
+  "all_v3": 2150
  },
  "pct_target": 43.0,
  "pct_base": 22.7,
  "history_ok": true,
- "n_born_v3": 13,
+ "n_born_v3": 14,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "429240818885",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 18h25",
+   "week": "W33"
+  },
+  {
+   "id": "429226422500",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 18h30",
+   "week": "W33"
+  },
+  {
+   "id": "429088660666",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 15h00",
+   "week": "W33"
+  },
+  {
+   "id": "429071899882",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 12h07",
+   "week": "W33"
+  },
+  {
+   "id": "429053494464",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 08h50",
+   "week": "W33"
+  },
+  {
+   "id": "429039434966",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 15h16",
+   "week": "W33"
+  },
+  {
+   "id": "429037692102",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 16h49",
+   "week": "W33"
+  },
   {
    "id": "429037414615",
    "date": "2026-08-14",
    "created": "14/08/2026 à 05h49",
+   "week": "W33"
+  },
+  {
+   "id": "428999842033",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 14h33",
+   "week": "W33"
+  },
+  {
+   "id": "428992952563",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 09h14",
+   "week": "W33"
+  },
+  {
+   "id": "428985492696",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 10h40",
+   "week": "W33"
+  },
+  {
+   "id": "428983652550",
+   "date": "2026-08-14",
+   "created": "14/08/2026 à 09h38",
    "week": "W33"
   },
   {
@@ -375,9 +441,9 @@
    "pct_base": 0.0,
    "clients_v2": 9068,
    "clients_v3": 0,
-   "tickets_v2": 253,
+   "tickets_v2": 252,
    "tickets_v3": 0,
-   "ratio_v2": 0.0279,
+   "ratio_v2": 0.0278,
    "ratio_v3": null,
    "delta": null,
    "target_cum": 0
@@ -417,13 +483,13 @@
    "cum": 671,
    "pct_target": 13.4,
    "pct_base": 7.6,
-   "clients_v2": 8012,
+   "clients_v2": 8000,
    "clients_v3": 671,
    "tickets_v2": 280,
    "tickets_v3": 2,
-   "ratio_v2": 0.0349,
+   "ratio_v2": 0.035,
    "ratio_v3": 0.003,
-   "delta": -0.0319,
+   "delta": -0.032,
    "target_cum": 500
   },
   {
@@ -439,13 +505,13 @@
    "cum": 1408,
    "pct_target": 28.2,
    "pct_base": 15.8,
-   "clients_v2": 7305,
+   "clients_v2": 7293,
    "clients_v3": 1408,
    "tickets_v2": 318,
    "tickets_v3": 24,
-   "ratio_v2": 0.0435,
+   "ratio_v2": 0.0436,
    "ratio_v3": 0.017,
-   "delta": -0.0265,
+   "delta": -0.0266,
    "target_cum": 1000
   },
   {
@@ -457,17 +523,17 @@
    "future": false,
    "partial": true,
    "migrated": 740,
-   "born": 1,
-   "cum": 2149,
+   "born": 2,
+   "cum": 2150,
    "pct_target": 43.0,
    "pct_base": 23.2,
-   "clients_v2": 6919,
-   "clients_v3": 2149,
-   "tickets_v2": 172,
-   "tickets_v3": 29,
-   "ratio_v2": 0.0249,
-   "ratio_v3": 0.0135,
-   "delta": -0.0114,
+   "clients_v2": 6918,
+   "clients_v3": 2150,
+   "tickets_v2": 218,
+   "tickets_v3": 40,
+   "ratio_v2": 0.0315,
+   "ratio_v3": 0.0186,
+   "delta": -0.0129,
    "target_cum": 1500
   },
   {
@@ -597,6 +663,6 @@
   "W32",
   "W33"
  ],
- "refreshed_at": "14/08/2026 à 09h04",
- "refreshed_iso": "2026-08-14T09:04:48"
+ "refreshed_at": "15/08/2026 à 08h18",
+ "refreshed_iso": "2026-08-15T08:18:10"
 }

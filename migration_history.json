@@ -14,5 +14,149 @@
   "active_v3": 627,
   "active_unknown": 76,
   "all_v3": 675
+ },
+ {
+  "date": "2026-07-31",
+  "active_total": 8859,
+  "active_v2": 8141,
+  "active_v3": 631,
+  "active_unknown": 87,
+  "all_v3": 679
+ },
+ {
+  "date": "2026-08-01",
+  "active_total": 8873,
+  "active_v2": 8143,
+  "active_v3": 629,
+  "active_unknown": 101,
+  "all_v3": 677
+ },
+ {
+  "date": "2026-08-02",
+  "active_total": 8871,
+  "active_v2": 8141,
+  "active_v3": 629,
+  "active_unknown": 101,
+  "all_v3": 677
+ },
+ {
+  "date": "2026-08-03",
+  "active_total": 8872,
+  "active_v2": 8139,
+  "active_v3": 629,
+  "active_unknown": 104,
+  "all_v3": 677
+ },
+ {
+  "date": "2026-08-04",
+  "active_total": 8877,
+  "active_v2": 8136,
+  "active_v3": 628,
+  "active_unknown": 113,
+  "all_v3": 676
+ },
+ {
+  "date": "2026-08-05",
+  "active_total": 8887,
+  "active_v2": 8136,
+  "active_v3": 629,
+  "active_unknown": 122,
+  "all_v3": 677
+ },
+ {
+  "date": "2026-08-06",
+  "active_total": 8900,
+  "active_v2": 7410,
+  "active_v3": 1360,
+  "active_unknown": 130,
+  "all_v3": 1416
+ },
+ {
+  "date": "2026-08-07",
+  "active_total": 8899,
+  "active_v2": 7406,
+  "active_v3": 1357,
+  "active_unknown": 136,
+  "all_v3": 1415
+ },
+ {
+  "date": "2026-08-08",
+  "active_total": 8903,
+  "active_v2": 7404,
+  "active_v3": 1357,
+  "active_unknown": 142,
+  "all_v3": 1416
+ },
+ {
+  "date": "2026-08-09",
+  "active_total": 8901,
+  "active_v2": 7402,
+  "active_v3": 1357,
+  "active_unknown": 142,
+  "all_v3": 1416
+ },
+ {
+  "date": "2026-08-10",
+  "active_total": 8900,
+  "active_v2": 7400,
+  "active_v3": 1357,
+  "active_unknown": 143,
+  "all_v3": 1416
+ },
+ {
+  "date": "2026-08-11",
+  "active_total": 9238,
+  "active_v2": 7687,
+  "active_v3": 1396,
+  "active_unknown": 155,
+  "all_v3": 1413
+ },
+ {
+  "date": "2026-08-12",
+  "active_total": 9238,
+  "active_v2": 7681,
+  "active_v3": 1395,
+  "active_unknown": 162,
+  "all_v3": 1413
+ },
+ {
+  "date": "2026-08-13",
+  "active_total": 9247,
+  "active_v2": 6962,
+  "active_v3": 2109,
+  "active_unknown": 176,
+  "all_v3": 2155
+ },
+ {
+  "date": "2026-08-14",
+  "active_total": 9256,
+  "active_v2": 6965,
+  "active_v3": 2103,
+  "active_unknown": 188,
+  "all_v3": 2149
+ },
+ {
+  "date": "2026-08-15",
+  "active_total": 9268,
+  "active_v2": 6964,
+  "active_v3": 2104,
+  "active_unknown": 200,
+  "all_v3": 2150
+ },
+ {
+  "date": "2026-08-16",
+  "active_total": 9270,
+  "active_v2": 6963,
+  "active_v3": 2104,
+  "active_unknown": 203,
+  "all_v3": 2150
+ },
+ {
+  "date": "2026-08-17",
+  "active_total": 9270,
+  "active_v2": 6962,
+  "active_v3": 2104,
+  "active_unknown": 204,
+  "all_v3": 2150
  }
 ]

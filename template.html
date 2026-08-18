@@ -382,11 +382,13 @@
     background:var(--charge-accent, #9092A8);
     transition:background .3s ease;
   }
-  .charge-block.status-green::before{background:#11E28F}
-  .charge-block.status-yellow::before{background:#F5B400}
-  .charge-block.status-orange::before{background:#FF7A3D}
-  .charge-block.status-red::before{background:#DB3352}
-  .charge-block.status-gray::before{background:#9092A8}
+  /* v9.6 (18/08/2026) : palette neutre, plus aucun code couleur d'alerte */
+  .charge-block.status-green::before,
+  .charge-block.status-yellow::before,
+  .charge-block.status-orange::before,
+  .charge-block.status-red::before,
+  .charge-block.status-gray::before,
+  .charge-block.status-neutral::before{background:#C9C3FF}
 
   .charge-header{
     display:flex;
@@ -418,11 +420,8 @@
     letter-spacing:.05em;
     text-transform:uppercase;
   }
-  .charge-status-badge.s-green{background:rgba(17,226,143,0.12);color:#0a9c64}
-  .charge-status-badge.s-yellow{background:rgba(245,180,0,0.14);color:#a07300}
-  .charge-status-badge.s-orange{background:rgba(255,122,61,0.14);color:#c25018}
-  .charge-status-badge.s-red{background:rgba(219,51,82,0.14);color:#a51e35}
-  .charge-status-badge.s-gray{background:rgba(144,146,168,0.14);color:#6b6b85}
+  /* v9.6 (18/08/2026) : badge de statut supprimé (aucune notion de charge affichée) */
+  .charge-status-badge{display:none}
 
   .charge-grid{
     display:grid;
@@ -466,11 +465,16 @@
     padding:2px 7px;
     border-radius:6px;
   }
-  .charge-metric-delta.d-green{background:rgba(17,226,143,0.15);color:#0a9c64}
-  .charge-metric-delta.d-yellow{background:rgba(245,180,0,0.18);color:#a07300}
-  .charge-metric-delta.d-orange{background:rgba(255,122,61,0.18);color:#c25018}
-  .charge-metric-delta.d-red{background:rgba(219,51,82,0.16);color:#a51e35}
-  .charge-metric-delta.d-gray{background:rgba(144,146,168,0.14);color:#6b6b85}
+  /* v9.6 : le delta reste une information, plus un jugement → teinte unique */
+  .charge-metric-delta.d-green,
+  .charge-metric-delta.d-yellow,
+  .charge-metric-delta.d-orange,
+  .charge-metric-delta.d-red,
+  .charge-metric-delta.d-gray{
+    background:rgba(87,71,255,0.07);
+    color:#6B62C9;
+    font-weight:600;
+  }
 
   /* Jauge horizontale */
   .charge-gauge{
@@ -486,11 +490,12 @@
     border-radius:4px;
     transition:width .4s ease, background-color .3s ease;
   }
-  .charge-gauge-fill.g-green{background:linear-gradient(90deg, #11E28F, #0a9c64)}
-  .charge-gauge-fill.g-yellow{background:linear-gradient(90deg, #F5B400, #a07300)}
-  .charge-gauge-fill.g-orange{background:linear-gradient(90deg, #FF7A3D, #c25018)}
-  .charge-gauge-fill.g-red{background:linear-gradient(90deg, #DB3352, #a51e35)}
-  .charge-gauge-fill.g-gray{background:#9092A8}
+  /* v9.6 : jauges en indigo doux, identiques quel que soit le niveau */
+  .charge-gauge-fill.g-green,
+  .charge-gauge-fill.g-yellow,
+  .charge-gauge-fill.g-orange,
+  .charge-gauge-fill.g-red,
+  .charge-gauge-fill.g-gray{background:linear-gradient(90deg, #C7C0FF, #9A8CFF)}
 
   /* Marqueurs min/moy/max sur la jauge */
   .charge-gauge-marker{
@@ -498,10 +503,10 @@
     top:-2px;
     width:2px;
     height:12px;
-    background:rgba(4,4,37,0.5);
+    background:rgba(4,4,37,0.22);
     border-radius:1px;
   }
-  .charge-gauge-marker.m-mean{background:rgba(4,4,37,0.85);width:3px;height:14px;top:-3px}
+  .charge-gauge-marker.m-mean{background:rgba(4,4,37,0.42);width:3px;height:14px;top:-3px}
 
   .charge-metric-ref{
     font-family:var(--font-mono);
@@ -753,11 +758,10 @@
     <div class="charge-header">
       <div>
         <div class="charge-title">
-          <span class="icon">🌡️</span> Indicateur de charge · Team Care
+          <span class="icon">📍</span> Activité du jour · Team Care
         </div>
         <div class="charge-subtitle" id="chargeSubtitle">— · réf. 90j business</div>
       </div>
-      <div class="charge-status-badge s-gray" id="chargeStatusBadge">EN ATTENTE</div>
     </div>
     <div class="charge-grid">
       <!-- M1 : Tickets traités hier -->
@@ -781,7 +785,7 @@
       </div>
       <!-- M3 : Tickets créés aujourd'hui / IC -->
       <div class="charge-metric">
-        <div class="charge-metric-label">🔔 Tickets créés aujourd'hui<br>(par IC actif hier)</div>
+        <div class="charge-metric-label">📥 Tickets créés aujourd'hui<br>(par IC actif hier)</div>
         <div class="charge-metric-value-row">
           <div class="charge-metric-value" id="chargeM3Value">—</div>
           <div class="charge-metric-delta d-gray" id="chargeM3Delta">—</div>
@@ -7275,21 +7279,10 @@ function renderChargeIndicator(){
     sub.innerHTML = `Hier : <strong>${C.ref_date_yesterday_label}</strong> · réf. <strong>${C.business_days_sampled || 90}j business</strong>`;
   }
 
-  // Overall status badge
-  const overall = C.overall_status || 'gray';
-  block.className = 'charge-block status-' + overall;
-  const badge = document.getElementById('chargeStatusBadge');
-  const statusLabels = {
-    green: '🟢 CALME',
-    yellow: '🟡 NORMAL',
-    orange: '🟠 CHARGE ÉLEVÉE',
-    red: '🔴 CHARGE TRÈS ÉLEVÉE',
-    gray: '⚪ INDÉTERMINÉ'
-  };
-  if (badge) {
-    badge.textContent = statusLabels[overall] || statusLabels.gray;
-    badge.className = 'charge-status-badge s-' + overall;
-  }
+  // v9.6 (18/08/2026) : plus de badge de statut ni de qualification de "charge".
+  // Les statuts restent calculés côté refresh.py mais ne pilotent plus l'habillage :
+  // le bloc garde une teinte neutre quel que soit le niveau d'activité.
+  block.className = 'charge-block status-neutral';
 
   // Helper : positionne fill % et marqueurs sur la jauge
   // La jauge va de 0 à max(1.5 * max_90d, value * 1.05) pour avoir de la marge

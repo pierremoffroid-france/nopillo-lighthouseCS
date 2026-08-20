@@ -3,25 +3,61 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-08-19",
- "days_left": 42,
- "weeks_left": 6.0,
- "working_days_left": 31,
- "remaining": 2852,
- "rate_needed": 475,
+ "today": "2026-08-20",
+ "days_left": 41,
+ "weeks_left": 5.9,
+ "working_days_left": 30,
+ "remaining": 2853,
+ "rate_needed": 487,
  "counts": {
-  "active_total": 9297,
-  "active_v2": 6963,
-  "active_v3": 2102,
-  "active_unknown": 232,
-  "all_v3": 2148
+  "active_total": 9308,
+  "active_v2": 6959,
+  "active_v3": 2101,
+  "active_unknown": 248,
+  "all_v3": 2147
  },
- "pct_target": 43.0,
+ "pct_target": 42.9,
  "pct_base": 22.6,
  "history_ok": true,
  "n_born_v3": 14,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "429717605584",
+   "date": "2026-08-19",
+   "created": "19/08/2026 à 11h29",
+   "week": "W34"
+  },
+  {
+   "id": "429686389949",
+   "date": "2026-08-19",
+   "created": "19/08/2026 à 14h56",
+   "week": "W34"
+  },
+  {
+   "id": "429673584878",
+   "date": "2026-08-19",
+   "created": "19/08/2026 à 07h10",
+   "week": "W34"
+  },
+  {
+   "id": "429669406954",
+   "date": "2026-08-19",
+   "created": "19/08/2026 à 15h04",
+   "week": "W34"
+  },
+  {
+   "id": "429649620205",
+   "date": "2026-08-19",
+   "created": "19/08/2026 à 12h07",
+   "week": "W34"
+  },
+  {
+   "id": "429635200208",
+   "date": "2026-08-19",
+   "created": "19/08/2026 à 13h36",
+   "week": "W34"
+  },
   {
    "id": "429635037410",
    "date": "2026-08-19",
@@ -32,12 +68,6 @@
    "id": "429700350189",
    "date": "2026-08-18",
    "created": "18/08/2026 à 15h10",
-   "week": "W34"
-  },
-  {
-   "id": "429691441341",
-   "date": "2026-08-18",
-   "created": "18/08/2026 à 20h47",
    "week": "W34"
   },
   {
@@ -589,7 +619,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 9065,
+   "clients_v2": 9060,
    "clients_v3": 0,
    "tickets_v2": 252,
    "tickets_v3": 0,
@@ -611,7 +641,7 @@
    "cum": 289,
    "pct_target": 5.8,
    "pct_base": 3.1,
-   "clients_v2": 8776,
+   "clients_v2": 8771,
    "clients_v3": 289,
    "tickets_v2": 234,
    "tickets_v3": 1,
@@ -633,9 +663,9 @@
    "cum": 671,
    "pct_target": 13.4,
    "pct_base": 7.6,
-   "clients_v2": 7968,
+   "clients_v2": 7952,
    "clients_v3": 671,
-   "tickets_v2": 280,
+   "tickets_v2": 279,
    "tickets_v3": 2,
    "ratio_v2": 0.0351,
    "ratio_v3": 0.003,
@@ -650,18 +680,18 @@
    "end": "2026-08-09",
    "future": false,
    "partial": false,
-   "migrated": 732,
+   "migrated": 731,
    "born": 3,
-   "cum": 1406,
+   "cum": 1405,
    "pct_target": 28.1,
    "pct_base": 15.8,
-   "clients_v2": 7263,
-   "clients_v3": 1406,
-   "tickets_v2": 315,
+   "clients_v2": 7248,
+   "clients_v3": 1405,
+   "tickets_v2": 316,
    "tickets_v3": 23,
-   "ratio_v2": 0.0434,
+   "ratio_v2": 0.0436,
    "ratio_v3": 0.0164,
-   "delta": -0.027,
+   "delta": -0.0272,
    "target_cum": 1000
   },
   {
@@ -674,16 +704,16 @@
    "partial": false,
    "migrated": 740,
    "born": 2,
-   "cum": 2148,
-   "pct_target": 43.0,
+   "cum": 2147,
+   "pct_target": 42.9,
    "pct_base": 23.2,
-   "clients_v2": 6890,
-   "clients_v3": 2148,
-   "tickets_v2": 239,
+   "clients_v2": 6875,
+   "clients_v3": 2147,
+   "tickets_v2": 238,
    "tickets_v3": 42,
-   "ratio_v2": 0.0347,
+   "ratio_v2": 0.0346,
    "ratio_v3": 0.0196,
-   "delta": -0.0151,
+   "delta": -0.015,
    "target_cum": 1500
   },
   {
@@ -696,16 +726,16 @@
    "partial": true,
    "migrated": 0,
    "born": 0,
-   "cum": 2148,
-   "pct_target": 43.0,
+   "cum": 2147,
+   "pct_target": 42.9,
    "pct_base": 23.1,
-   "clients_v2": 6917,
-   "clients_v3": 2148,
-   "tickets_v2": 108,
-   "tickets_v3": 24,
-   "ratio_v2": 0.0156,
-   "ratio_v3": 0.0112,
-   "delta": -0.0044,
+   "clients_v2": 6913,
+   "clients_v3": 2147,
+   "tickets_v2": 155,
+   "tickets_v3": 29,
+   "ratio_v2": 0.0224,
+   "ratio_v3": 0.0135,
+   "delta": -0.0089,
    "target_cum": 2000
   },
   {
@@ -819,6 +849,6 @@
   "W33",
   "W34"
  ],
- "refreshed_at": "19/08/2026 à 08h23",
- "refreshed_iso": "2026-08-19T08:23:07"
+ "refreshed_at": "20/08/2026 à 08h23",
+ "refreshed_iso": "2026-08-20T08:23:51"
 }

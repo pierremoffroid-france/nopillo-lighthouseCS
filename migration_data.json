@@ -3,18 +3,18 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-08-24",
- "days_left": 37,
- "weeks_left": 5.3,
- "working_days_left": 28,
- "remaining": 2250,
- "rate_needed": 426,
+ "today": "2026-08-25",
+ "days_left": 36,
+ "weeks_left": 5.1,
+ "working_days_left": 27,
+ "remaining": 2251,
+ "rate_needed": 438,
  "counts": {
-  "active_total": 9341,
+  "active_total": 9348,
   "active_v2": 6448,
-  "active_v3": 2608,
-  "active_unknown": 285,
-  "all_v3": 2750
+  "active_v3": 2607,
+  "active_unknown": 293,
+  "all_v3": 2749
  },
  "pct_target": 55.0,
  "pct_base": 27.9,
@@ -22,6 +22,186 @@
  "n_born_v3": 14,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "430149833916",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 21h18",
+   "week": "W35"
+  },
+  {
+   "id": "430131635419",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 17h34",
+   "week": "W35"
+  },
+  {
+   "id": "430099238092",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 17h48",
+   "week": "W35"
+  },
+  {
+   "id": "430015477969",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h30",
+   "week": "W35"
+  },
+  {
+   "id": "429995011281",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 13h41",
+   "week": "W35"
+  },
+  {
+   "id": "429994988763",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h45",
+   "week": "W35"
+  },
+  {
+   "id": "429994880216",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 08h52",
+   "week": "W35"
+  },
+  {
+   "id": "429993123028",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 14h36",
+   "week": "W35"
+  },
+  {
+   "id": "429941345508",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h48",
+   "week": "W35"
+  },
+  {
+   "id": "429937802471",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h46",
+   "week": "W35"
+  },
+  {
+   "id": "429937801464",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h45",
+   "week": "W35"
+  },
+  {
+   "id": "429937798371",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h36",
+   "week": "W35"
+  },
+  {
+   "id": "429920987382",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h26",
+   "week": "W35"
+  },
+  {
+   "id": "429915586796",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h42",
+   "week": "W35"
+  },
+  {
+   "id": "429910256834",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h37",
+   "week": "W35"
+  },
+  {
+   "id": "429903218935",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 13h01",
+   "week": "W35"
+  },
+  {
+   "id": "429899621567",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 15h08",
+   "week": "W35"
+  },
+  {
+   "id": "429893086439",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h40",
+   "week": "W35"
+  },
+  {
+   "id": "429891317964",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h55",
+   "week": "W35"
+  },
+  {
+   "id": "429846190291",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h36",
+   "week": "W35"
+  },
+  {
+   "id": "429842817226",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 15h32",
+   "week": "W35"
+  },
+  {
+   "id": "429815208157",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 09h14",
+   "week": "W35"
+  },
+  {
+   "id": "429795535051",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h43",
+   "week": "W35"
+  },
+  {
+   "id": "429795533028",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h39",
+   "week": "W35"
+  },
+  {
+   "id": "429795527924",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h25",
+   "week": "W35"
+  },
+  {
+   "id": "429786544329",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h49",
+   "week": "W35"
+  },
+  {
+   "id": "429786537157",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h32",
+   "week": "W35"
+  },
+  {
+   "id": "429786535098",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 12h26",
+   "week": "W35"
+  },
+  {
+   "id": "429786427616",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 08h39",
+   "week": "W35"
+  },
+  {
+   "id": "429786426575",
+   "date": "2026-08-24",
+   "created": "24/08/2026 à 08h35",
+   "week": "W35"
+  },
   {
    "id": "429924445378",
    "date": "2026-08-23",
@@ -629,12 +809,6 @@
    "week": "W32"
   },
   {
-   "id": "427611931869",
-   "date": "2026-08-06",
-   "created": "06/08/2026 à 21h55",
-   "week": "W32"
-  },
-  {
    "id": "427611361513",
    "date": "2026-08-06",
    "created": "06/08/2026 à 07h55",
@@ -763,11 +937,11 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 9056,
+   "clients_v2": 9055,
    "clients_v3": 0,
-   "tickets_v2": 251,
+   "tickets_v2": 252,
    "tickets_v3": 0,
-   "ratio_v2": 0.0277,
+   "ratio_v2": 0.0278,
    "ratio_v3": null,
    "delta": null,
    "target_cum": 0
@@ -785,7 +959,7 @@
    "cum": 289,
    "pct_target": 5.8,
    "pct_base": 3.1,
-   "clients_v2": 8767,
+   "clients_v2": 8766,
    "clients_v3": 289,
    "tickets_v2": 234,
    "tickets_v3": 1,
@@ -802,13 +976,13 @@
    "end": "2026-08-02",
    "future": false,
    "partial": false,
-   "migrated": 375,
+   "migrated": 374,
    "born": 8,
-   "cum": 672,
+   "cum": 671,
    "pct_target": 13.4,
    "pct_base": 7.6,
-   "clients_v2": 7914,
-   "clients_v3": 672,
+   "clients_v2": 7907,
+   "clients_v3": 671,
    "tickets_v2": 279,
    "tickets_v3": 2,
    "ratio_v2": 0.0353,
@@ -826,16 +1000,16 @@
    "partial": false,
    "migrated": 732,
    "born": 3,
-   "cum": 1407,
+   "cum": 1406,
    "pct_target": 28.1,
    "pct_base": 15.8,
-   "clients_v2": 7209,
-   "clients_v3": 1407,
+   "clients_v2": 7202,
+   "clients_v3": 1406,
    "tickets_v2": 315,
-   "tickets_v3": 25,
+   "tickets_v3": 24,
    "ratio_v2": 0.0437,
-   "ratio_v3": 0.0178,
-   "delta": -0.0259,
+   "ratio_v3": 0.0171,
+   "delta": -0.0266,
    "target_cum": 1000
   },
   {
@@ -848,16 +1022,16 @@
    "partial": false,
    "migrated": 739,
    "born": 2,
-   "cum": 2148,
-   "pct_target": 43.0,
+   "cum": 2147,
+   "pct_target": 42.9,
    "pct_base": 23.2,
-   "clients_v2": 6837,
-   "clients_v3": 2148,
-   "tickets_v2": 238,
+   "clients_v2": 6830,
+   "clients_v3": 2147,
+   "tickets_v2": 236,
    "tickets_v3": 41,
-   "ratio_v2": 0.0348,
+   "ratio_v2": 0.0346,
    "ratio_v3": 0.0191,
-   "delta": -0.0157,
+   "delta": -0.0155,
    "target_cum": 1500
   },
   {
@@ -870,16 +1044,16 @@
    "partial": false,
    "migrated": 602,
    "born": 0,
-   "cum": 2750,
+   "cum": 2749,
    "pct_target": 55.0,
    "pct_base": 29.4,
-   "clients_v2": 6304,
-   "clients_v3": 2750,
-   "tickets_v2": 249,
+   "clients_v2": 6297,
+   "clients_v3": 2749,
+   "tickets_v2": 239,
    "tickets_v3": 52,
-   "ratio_v2": 0.0395,
+   "ratio_v2": 0.038,
    "ratio_v3": 0.0189,
-   "delta": -0.0206,
+   "delta": -0.0191,
    "target_cum": 2000
   },
   {
@@ -892,16 +1066,16 @@
    "partial": true,
    "migrated": 0,
    "born": 0,
-   "cum": 2750,
+   "cum": 2749,
    "pct_target": 55.0,
    "pct_base": 29.4,
    "clients_v2": 6306,
-   "clients_v3": 2750,
-   "tickets_v2": 0,
-   "tickets_v3": 0,
-   "ratio_v2": 0.0,
-   "ratio_v3": 0.0,
-   "delta": 0.0,
+   "clients_v3": 2749,
+   "tickets_v2": 104,
+   "tickets_v3": 30,
+   "ratio_v2": 0.0165,
+   "ratio_v3": 0.0109,
+   "delta": -0.0056,
    "target_cum": 2500
   },
   {
@@ -999,6 +1173,6 @@
   "W34",
   "W35"
  ],
- "refreshed_at": "24/08/2026 à 08h34",
- "refreshed_iso": "2026-08-24T08:34:00"
+ "refreshed_at": "25/08/2026 à 08h24",
+ "refreshed_iso": "2026-08-25T08:24:49"
 }

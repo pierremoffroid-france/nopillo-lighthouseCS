@@ -7,14 +7,14 @@
  "days_left": 34,
  "weeks_left": 4.9,
  "working_days_left": 25,
- "remaining": 2246,
+ "remaining": 2243,
  "rate_needed": 462,
  "counts": {
-  "active_total": 9360,
-  "active_v2": 6431,
-  "active_v3": 2611,
-  "active_unknown": 318,
-  "all_v3": 2754
+  "active_total": 9369,
+  "active_v2": 6427,
+  "active_v3": 2614,
+  "active_unknown": 328,
+  "all_v3": 2757
  },
  "pct_target": 55.1,
  "pct_base": 27.9,
@@ -23,21 +23,33 @@
  "portal_id": "26173790",
  "v3_tickets": [
   {
+   "id": "430655059133",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 11h59",
+   "week": "W35"
+  },
+  {
+   "id": "430644261070",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h08",
+   "week": "W35"
+  },
+  {
    "id": "430644233424",
    "date": "2026-08-27",
    "created": "27/08/2026 à 10h02",
    "week": "W35"
   },
   {
-   "id": "430642404584",
+   "id": "430642541775",
    "date": "2026-08-27",
-   "created": "27/08/2026 à 08h29",
+   "created": "27/08/2026 à 14h50",
    "week": "W35"
   },
   {
-   "id": "430619317454",
+   "id": "430642404584",
    "date": "2026-08-27",
-   "created": "27/08/2026 à 09h59",
+   "created": "27/08/2026 à 08h29",
    "week": "W35"
   },
   {
@@ -77,9 +89,27 @@
    "week": "W35"
   },
   {
+   "id": "430512143609",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h18",
+   "week": "W35"
+  },
+  {
+   "id": "430512139472",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 11h52",
+   "week": "W35"
+  },
+  {
    "id": "430510295269",
    "date": "2026-08-27",
    "created": "27/08/2026 à 09h57",
+   "week": "W35"
+  },
+  {
+   "id": "430506737905",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h14",
    "week": "W35"
   },
   {
@@ -95,9 +125,33 @@
    "week": "W35"
   },
   {
+   "id": "430494162131",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h12",
+   "week": "W35"
+  },
+  {
+   "id": "430466301162",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h40",
+   "week": "W35"
+  },
+  {
    "id": "430457022704",
    "date": "2026-08-27",
    "created": "27/08/2026 à 08h29",
+   "week": "W35"
+  },
+  {
+   "id": "430453633244",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h50",
+   "week": "W35"
+  },
+  {
+   "id": "430451695812",
+   "date": "2026-08-27",
+   "created": "27/08/2026 à 12h10",
    "week": "W35"
   },
   {
@@ -1399,7 +1453,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 9042,
+   "clients_v2": 9041,
    "clients_v3": 0,
    "tickets_v2": 253,
    "tickets_v3": 0,
@@ -1421,7 +1475,7 @@
    "cum": 288,
    "pct_target": 5.8,
    "pct_base": 3.1,
-   "clients_v2": 8754,
+   "clients_v2": 8753,
    "clients_v3": 288,
    "tickets_v2": 234,
    "tickets_v3": 1,
@@ -1443,7 +1497,7 @@
    "cum": 669,
    "pct_target": 13.4,
    "pct_base": 7.5,
-   "clients_v2": 7884,
+   "clients_v2": 7874,
    "clients_v3": 669,
    "tickets_v2": 279,
    "tickets_v3": 2,
@@ -1465,13 +1519,13 @@
    "cum": 1404,
    "pct_target": 28.1,
    "pct_base": 15.8,
-   "clients_v2": 7179,
+   "clients_v2": 7169,
    "clients_v3": 1404,
    "tickets_v2": 316,
    "tickets_v3": 25,
-   "ratio_v2": 0.044,
+   "ratio_v2": 0.0441,
    "ratio_v3": 0.0178,
-   "delta": -0.0262,
+   "delta": -0.0263,
    "target_cum": 1000
   },
   {
@@ -1487,7 +1541,7 @@
    "cum": 2144,
    "pct_target": 42.9,
    "pct_base": 23.1,
-   "clients_v2": 6808,
+   "clients_v2": 6798,
    "clients_v3": 2144,
    "tickets_v2": 236,
    "tickets_v3": 41,
@@ -1509,7 +1563,7 @@
    "cum": 2746,
    "pct_target": 54.9,
    "pct_base": 29.4,
-   "clients_v2": 6275,
+   "clients_v2": 6265,
    "clients_v3": 2746,
    "tickets_v2": 235,
    "tickets_v3": 50,
@@ -1526,17 +1580,17 @@
    "end": "2026-08-30",
    "future": false,
    "partial": true,
-   "migrated": 8,
+   "migrated": 11,
    "born": 0,
-   "cum": 2754,
+   "cum": 2757,
    "pct_target": 55.1,
    "pct_base": 29.4,
-   "clients_v2": 6288,
-   "clients_v3": 2754,
-   "tickets_v2": 313,
-   "tickets_v3": 108,
-   "ratio_v2": 0.0498,
-   "ratio_v3": 0.0392,
+   "clients_v2": 6284,
+   "clients_v3": 2757,
+   "tickets_v2": 333,
+   "tickets_v3": 117,
+   "ratio_v2": 0.053,
+   "ratio_v3": 0.0424,
    "delta": -0.0106,
    "target_cum": 2500
   },
@@ -1635,6 +1689,6 @@
   "W34",
   "W35"
  ],
- "refreshed_at": "27/08/2026 à 12h29",
- "refreshed_iso": "2026-08-27T12:29:58"
+ "refreshed_at": "27/08/2026 à 18h59",
+ "refreshed_iso": "2026-08-27T18:59:27"
 }

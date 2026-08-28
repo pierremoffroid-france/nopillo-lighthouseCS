@@ -80,6 +80,21 @@ jobs:
           python3 refresh.py
           echo "Refresh terminé : $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M:%S %Z')"
 
+      - name: Contrôle de l'historique Care
+        run: |
+          if [ -f care_history.json ]; then
+            python3 -c "import json;d=json.load(open('care_history.json'));print(f\"historique après refresh : {len(d.get('days',{}))} jours\")"
+          else
+            echo "::error::care_history.json absent APRÈS le refresh — le module Care n'a pas tourné"
+            exit 1
+          fi
+
+      - name: Sauvegarder l'historique Care
+        uses: actions/cache/save@v4
+        with:
+          path: care_history.json
+          key: care-history-${{ github.run_id }}
+
       - name: Préparer index.html (GitHub Pages sert index.html)
         run: |
           if [ -f lighthouse.html ]; then
@@ -105,16 +120,6 @@ jobs:
             echo "✓ Publié sur GitHub Pages."
           fi
 
-      # === care_history.json : sauvegarde du cache (patch_workflow) ===
-      # actions/cache ne réécrit pas une clé existante ; la clé de
-      # restauration porte le run_id, donc on force ici une entrée datée
-      # que le prochain run retrouvera via restore-keys.
-      - name: Sauvegarder l'historique Care
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: care_history.json
-          key: care-history-${{ github.run_id }}
 
       - name: Nettoyer config.json (sécurité)
         if: always()

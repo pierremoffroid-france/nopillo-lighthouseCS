@@ -53,7 +53,7 @@ jobs:
       # Le fichier contient des compteurs quotidiens nominatifs par IC :
       # il reste dans le cache, JAMAIS dans le dépôt (public).
       - name: Restaurer l'historique Care (care-history-cache)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: care_history.json
           key: care-history-${{ github.run_id }}

@@ -13,3 +13,7 @@ __pycache__/
 # pas le versionner dans le repo :
 # faq-comparaison-performances.csv
 data.json.local-backup
+
+# Historique Care : compteurs quotidiens nominatifs par IC.
+# Persisté via actions/cache, jamais commité.
+care_history.json

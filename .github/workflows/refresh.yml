@@ -35,7 +35,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20      # le refresh tourne ~6 min ; 20 = marge large
+    timeout-minutes: 30      # ~7 min avec le module Care ; 30 = marge large
 
     steps:
       - name: Checkout repo
@@ -45,6 +45,28 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      # === care_history.json : persistance entre runs (patch_workflow) ===
+      # Les runners sont éphémères. Sans ce cache, l'historique des
+      # touchpoints repartirait de zéro à chaque exécution et le dashboard
+      # perdrait sa profondeur "mois depuis janvier 2025".
+      # Le fichier contient des compteurs quotidiens nominatifs par IC :
+      # il reste dans le cache, JAMAIS dans le dépôt (public).
+      - name: Restaurer l'historique Care (care-history-cache)
+        uses: actions/cache@v4
+        with:
+          path: care_history.json
+          key: care-history-${{ github.run_id }}
+          restore-keys: |
+            care-history-
+
+      - name: État de l'historique avant refresh
+        run: |
+          if [ -f care_history.json ]; then
+            python3 -c "import json;d=json.load(open('care_history.json'));print(f\"historique restauré : {len(d.get('days',{}))} jours\")"
+          else
+            echo "::warning::care_history.json absent du cache — le refresh ne comblera que 45 jours"
+          fi
 
       - name: Générer config.json depuis les secrets
         env:
@@ -82,6 +104,17 @@ jobs:
             git push
             echo "✓ Publié sur GitHub Pages."
           fi
+
+      # === care_history.json : sauvegarde du cache (patch_workflow) ===
+      # actions/cache ne réécrit pas une clé existante ; la clé de
+      # restauration porte le run_id, donc on force ici une entrée datée
+      # que le prochain run retrouvera via restore-keys.
+      - name: Sauvegarder l'historique Care
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: care_history.json
+          key: care-history-${{ github.run_id }}
 
       - name: Nettoyer config.json (sécurité)
         if: always()

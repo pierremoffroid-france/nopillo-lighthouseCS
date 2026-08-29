@@ -6102,7 +6102,8 @@ function xAxisRotated(){return {ticks:{color:C.tick,font:{family:'JetBrains Mono
 /* Les libellés verticaux étaient coupés d'un caractère ("Emeline" -> "meline")
    faute de place sous la zone de tracé. On réserve la hauteur nécessaire. */
 function withRotatedX(opts, px){
-  withRotatedX(opts);
+  opts.scales = opts.scales || {};
+  opts.scales.x = xAxisRotated();
   opts.layout = opts.layout || {}; opts.layout.padding = opts.layout.padding || {};
   opts.layout.padding.bottom = Math.max(opts.layout.padding.bottom || 0, px || 26);
   return opts;
@@ -8430,7 +8431,7 @@ document.addEventListener('change', e => {
 function renderCesKPIs(){
   const el = document.getElementById('cesKPIs'); if(!el) return;
   const D = cesData();
-  if (!C || !D.available){
+  if (!D || !D.available){
     el.innerHTML = `<div class="block" style="grid-column:1/-1"><div class="block-sub">Données CES détaillées indisponibles. Le module <code>care_activity.py</code> n'a pas encore alimenté ce bloc.</div></div>`;
     return;
   }
@@ -8460,7 +8461,7 @@ function renderCesKPIs(){
 function buildCesDist(){
   const id='chartCesDist'; destroyIfExists(id);
   const el=document.getElementById(id); if(!el) return;
-  const D = cesData(); if(!C || !D.available) return;
+  const D = cesData(); if(!D || !D.available) return;
   const labels = ['1','2','3','4','5','6','7'];
   const vals = labels.map(k => Number((D.distribution||{})[k] || 0));
   const cols = vals.map((_,i)=> i<=3 ? SEM.cesLow : (i===4 ? SEM.callTry : SEM.ces));
@@ -8474,7 +8475,7 @@ function buildCesDist(){
 function buildCesWeekly(){
   const id='chartCesWeekly'; destroyIfExists(id);
   const el=document.getElementById(id); if(!el) return;
-  const D = cesData(); if(!C || !D.available) return;
+  const D = cesData(); if(!D || !D.available) return;
   chartInstances[id] = new Chart(el, {
     type:'bar',
     data:{labels:D.weeks||[], datasets:[
@@ -8505,7 +8506,7 @@ function buildCesWeekly(){
 function renderCesByIc(){
   const wrap = document.getElementById('cesByIcTable'); if(!wrap) return;
   const D = cesData();
-  if (!C || !D.available){ wrap.innerHTML = '<div class="block-sub">—</div>'; return; }
+  if (!D || !D.available){ wrap.innerHTML = '<div class="block-sub">—</div>'; return; }
   const rows = Object.entries(D.by_ic||{}).sort((a,b)=> b[1].n - a[1].n);
   const line = (name, v, grey) => {
     const pct = v.pct_high;
@@ -8530,7 +8531,7 @@ function renderCesDetail(){
   const wrap = document.getElementById('cesDetailTable'); if(!wrap) return;
   const foot = document.getElementById('cesDetailFooter');
   const D = cesData();
-  if (!C || !D.available){ wrap.innerHTML = '<div class="block-sub">—</div>'; return; }
+  if (!D || !D.available){ wrap.innerHTML = '<div class="block-sub">—</div>'; return; }
   let rows = (D.responses||[]).slice();
   if (CES_FILTER === 'low')      rows = rows.filter(r=>r.note<=4);
   if (CES_FILTER === 'high')     rows = rows.filter(r=>r.note>=6);
@@ -8564,26 +8565,33 @@ document.querySelectorAll('[data-cesfilter]').forEach(chip => {
 });
 
 /* ============ INIT ============ */
+/* Un rendu qui échoue ne doit JAMAIS empêcher les suivants de s'afficher.
+   Sans ça, une seule clé manquante dans data.json vide tout le dashboard
+   (incident du 29/08 : CARE_CES absent -> page entièrement blanche). */
+function safe(fn, label){
+  try { fn(); }
+  catch (e) { console.error('[Lighthouse] bloc en échec :', label || fn.name, e); }
+}
 function rebuildAllCharts(){
-  renderChargeIndicator();
-  renderWeeklyProductivity();
-  renderOverviewKPIs(); renderPoleTable();
-  buildETPChart(); buildOverviewVolume(); buildOverviewCES(); buildOverviewClients(); buildOverviewLiasses();
-  buildATRChart();
-  buildVolumeMain(); buildTicketsEmailCallback(); buildVolumeN1N2(); buildNewVsExistingChart(); renderFAQKPIs(); buildFAQViews();
-  renderQualityKPIs();
-  buildQualityCES(); buildQualitySLA(); buildQualityResponse(); buildQualityLost();
-  buildN1Bars(); buildICDetail(); renderICTable(); buildETPChartLevel('N1'); buildN1Compare(); buildETPChartLevel('N2');
-  renderN2KPIs(); renderN2Table();
-  buildN2EscalMonthly(); buildN2Volume();
-  buildRetentionChurn(); buildRetentionReasons();
-  buildLiassesAbsolute(); buildLiassesPct(); buildLiassesCountdown(); renderLiassesKPIs();
-  renderSatisfaction();
-  populateCesIcSelect(); cesRefreshAll();
-  renderHeroCare(); renderChargeCare(); renderCesRecap();
-  buildTouchVolume(); buildCallVolume(); buildHourly();
-  icScopeRefresh(); buildICCareWeekly();
-  renderHeroYtD();
+  safe(()=>renderChargeIndicator(), 'renderChargeIndicator');
+  safe(()=>renderWeeklyProductivity(), 'renderWeeklyProductivity');
+  safe(()=>renderOverviewKPIs(), 'renderOverviewKPIs'); renderPoleTable();
+  safe(()=>buildETPChart(), 'buildETPChart'); buildOverviewVolume(); buildOverviewCES(); buildOverviewClients(); buildOverviewLiasses();
+  safe(()=>buildATRChart(), 'buildATRChart');
+  safe(()=>buildVolumeMain(), 'buildVolumeMain'); buildTicketsEmailCallback(); buildVolumeN1N2(); buildNewVsExistingChart(); renderFAQKPIs(); buildFAQViews();
+  safe(()=>renderQualityKPIs(), 'renderQualityKPIs');
+  safe(()=>buildQualityCES(), 'buildQualityCES'); buildQualitySLA(); buildQualityResponse(); buildQualityLost();
+  safe(()=>buildN1Bars(), 'buildN1Bars'); buildICDetail(); renderICTable(); buildETPChartLevel('N1'); buildN1Compare(); buildETPChartLevel('N2');
+  safe(()=>renderN2KPIs(), 'renderN2KPIs'); renderN2Table();
+  safe(()=>buildN2EscalMonthly(), 'buildN2EscalMonthly'); buildN2Volume();
+  safe(()=>buildRetentionChurn(), 'buildRetentionChurn'); buildRetentionReasons();
+  safe(()=>buildLiassesAbsolute(), 'buildLiassesAbsolute'); buildLiassesPct(); buildLiassesCountdown(); renderLiassesKPIs();
+  safe(()=>renderSatisfaction(), 'renderSatisfaction');
+  safe(()=>populateCesIcSelect(), 'populateCesIcSelect'); cesRefreshAll();
+  safe(()=>renderHeroCare(), 'renderHeroCare'); renderChargeCare(); renderCesRecap();
+  safe(()=>buildTouchVolume(), 'buildTouchVolume'); buildCallVolume(); buildHourly();
+  safe(()=>icScopeRefresh(), 'icScopeRefresh'); buildICCareWeekly();
+  safe(()=>renderHeroYtD(), 'renderHeroYtD');
 }
 
 populateICSelect();

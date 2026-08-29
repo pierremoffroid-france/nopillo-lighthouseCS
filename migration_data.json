@@ -3,12 +3,12 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-08-28",
- "days_left": 33,
- "weeks_left": 4.7,
- "working_days_left": 24,
+ "today": "2026-08-29",
+ "days_left": 32,
+ "weeks_left": 4.6,
+ "working_days_left": 23,
  "remaining": 897,
- "rate_needed": 190,
+ "rate_needed": 196,
  "counts": {
   "active_total": 9368,
   "active_v2": 5133,
@@ -22,6 +22,24 @@
  "n_born_v3": 14,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "430961795310",
+   "date": "2026-08-29",
+   "created": "29/08/2026 à 09h20",
+   "week": "W35"
+  },
+  {
+   "id": "430951009469",
+   "date": "2026-08-29",
+   "created": "29/08/2026 à 09h18",
+   "week": "W35"
+  },
+  {
+   "id": "430965302466",
+   "date": "2026-08-28",
+   "created": "28/08/2026 à 20h01",
+   "week": "W35"
+  },
   {
    "id": "430835084519",
    "date": "2026-08-28",
@@ -2025,11 +2043,11 @@
    "pct_base": 43.8,
    "clients_v2": 4937,
    "clients_v3": 4103,
-   "tickets_v2": 457,
-   "tickets_v3": 190,
-   "ratio_v2": 0.0926,
-   "ratio_v3": 0.0463,
-   "delta": -0.0463,
+   "tickets_v2": 462,
+   "tickets_v3": 193,
+   "ratio_v2": 0.0936,
+   "ratio_v3": 0.047,
+   "delta": -0.0466,
    "target_cum": 2500
   },
   {
@@ -2127,6 +2145,6 @@
   "W34",
   "W35"
  ],
- "refreshed_at": "28/08/2026 à 19h48",
- "refreshed_iso": "2026-08-28T19:48:52"
+ "refreshed_at": "29/08/2026 à 13h53",
+ "refreshed_iso": "2026-08-29T13:53:56"
 }

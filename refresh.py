@@ -524,6 +524,12 @@ def enrich_ticket(t: dict) -> dict:
         'ces_has': ces is not None,
         'ces_promoter': ces is not None and ces >= 6,
         'touches': safe_float(p.get('hs_num_times_contacted')),
+        # === CARE_ACTIVITY (patch_refresh) ===
+        # Un ticket fermé sans aucune réponse agent n'est pas du support : ce
+        # sont les tickets Facturation Électronique créés et clos
+        # automatiquement (audit 28/08 : 123 des 146 d'Aaron sur une semaine).
+        # On les garde visibles mais hors du compteur "tickets traités".
+        'has_agent_reply': bool(p.get('time_to_first_agent_reply')),
         'reopened_at': parse_ts(p.get('hs_ticket_reopened_at')),
         'stage_id': stage,
         # Note: 'in_operating_hours' is misleadingly named — HubSpot returns this in MILLISECONDS, not hours
@@ -717,9 +723,13 @@ def compute_ic_stats_for_period(tickets_period: list, ic_name: str) -> dict:
             'email_lost_pct': 0, 'callback_lost_pct': 0,
             'sla_pct': None, 'sla_n': 0, 'ces_pct': None, 'ces_n': 0,
             'touch_avg': None, 'tl': None, 'level': None,
+            'handled': 0, 'auto_closed': 0,
         }
     closed = sum(1 for t in ic_tickets if t['is_resolved'] or t['is_lost'])
     resolved = sum(1 for t in ic_tickets if t['is_resolved'])
+    _clos = [t for t in ic_tickets if t['is_resolved'] or t['is_lost']]
+    handled = sum(1 for t in _clos if t.get('has_agent_reply'))
+    auto_closed = len(_clos) - handled
     lost = sum(1 for t in ic_tickets if t['is_lost'])
     el = sum(1 for t in ic_tickets if t['ended_email_lost'])
     cl = sum(1 for t in ic_tickets if t['ended_callback_lost'])
@@ -734,6 +744,7 @@ def compute_ic_stats_for_period(tickets_period: list, ic_name: str) -> dict:
         'name': ic_name,
         'total': total, 'created': total,
         'closed': closed, 'resolved': resolved, 'lost': lost,
+        'handled': handled, 'auto_closed': auto_closed,
         'email_lost_n': el, 'callback_lost_n': cl,
         'lost_pct': round(lost / total * 100, 1),
         'email_lost_pct': round(el / total * 100, 1),
@@ -3274,6 +3285,25 @@ def main():
     faq = compute_faq(client=client)
     satisfaction = compute_satisfaction(cfg)
     ytd_kpis = compute_ytd_kpis(tickets, contacts, now, liasses, satisfaction)
+    # === CARE_ACTIVITY (patch_refresh) ===
+    # Touchpoints, appels, répartition horaire, délais et détail CES.
+    # Isolé dans un try : si HubSpot renvoie une erreur sur ce périmètre, le
+    # refresh continue et le dashboard affiche "en attente" au lieu de casser.
+    care = {}
+    try:
+        from care_activity import compute_care_activity
+        care = compute_care_activity(
+            cfg['hubspot_token'],
+            [{'owner_id': oid, 'name': nm, 'tl': tl, 'level': lvl,
+              'active': IC_ACTIVE.get(oid, True)}
+             for oid, (nm, tl, lvl) in IC_MAP.items()],
+            ref_now=now, verbose=True,
+        )
+        log.info("care_activity OK : %s", care.get('CARE_META', {}))
+    except Exception as exc:                       # noqa: BLE001
+        log.error("care_activity a échoué, on publie sans : %s", exc)
+        care = {'CARE_META': {'error': str(exc)[:300]}}
+
     data = {
         'IC_DATA': ic_data,
         'IC_MAP_CONFIG': [
@@ -3380,6 +3410,7 @@ def main():
         log.error(f"Template introuvable: {TEMPLATE_PATH}")
         sys.exit(3)
     template_html = TEMPLATE_PATH.read_text()
+    data.update(care)      # === CARE_ACTIVITY (patch_refresh) ===
     output_html = render_template(template_html, data, now)
     OUTPUT_PATH.write_text(output_html)
 

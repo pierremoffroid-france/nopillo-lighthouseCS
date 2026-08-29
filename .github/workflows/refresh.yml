@@ -22,6 +22,13 @@ on:
     - cron: '30 15 * * *'  # 17h30 Paris
     - cron: '30 18 * * *'  # 20h30 Paris
   workflow_dispatch:        # bouton "Run workflow" pour lancer à la main / tester
+    inputs:
+      backfill:
+        description: "Reconstruire tout l'historique Care depuis janvier 2025 (~8 min, une seule fois)"
+        type: boolean
+        default: false
+        required: false
+    # care-backfill-input
 
 # Le GITHUB_TOKEN doit pouvoir écrire (commit du HTML régénéré)
 permissions:
@@ -35,7 +42,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30      # ~7 min avec le module Care ; 30 = marge large
+    timeout-minutes: 45      # ~7 min avec le module Care ; 30 = marge large
 
     steps:
       - name: Checkout repo
@@ -73,6 +80,13 @@ jobs:
           HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
           PARAM_PWD: ${{ secrets.PARAM_PWD }}
         run: python3 make_config.py
+
+      - name: Backfill historique Care (sur demande)
+        if: ${{ inputs.backfill }}
+        run: |
+          echo "Backfill demandé : reconstruction depuis janvier 2025"
+          python3 care_activity.py --backfill
+          python3 -c "import json;d=json.load(open('care_history.json'));print(f\"backfill terminé : {len(d['days'])} jours\")"
 
       - name: Lancer refresh.py
         run: |

@@ -1010,7 +1010,7 @@
   
 
   <div class="block">
-    <div class="block-header"><div><h3 class="block-title">Tickets créés vs fermés · mois depuis janvier 2025<span class="source-tag">hs_ticket.createdate · closed_date</span></h3><div class="block-sub">Pipeline Customer Care · le détail hebdomadaire est dans l'onglet Volume</div></div></div>
+    <div class="block-header"><div><h3 class="block-title">Tickets créés vs fermés · mois depuis janvier 2025<span class="source-tag">hs_ticket.createdate · closed_date</span></h3><div class="block-sub">Pipeline Customer Care</div></div></div>
     <div class="chart-wrap lg"><canvas id="chartOverviewVolume"></canvas></div>
   </div>
 
@@ -1037,7 +1037,7 @@
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">Évolution de la base clients<span class="source-tag">contact.lifecyclestage = customer</span></h3><div class="block-sub">Clients actifs · base réelle (search_count non plafonné 10k)</div></div>
+      <div><h3 class="block-title">Évolution de la base clients<span class="source-tag">contact.lifecyclestage = customer</span></h3><div class="block-sub">Clients actifs</div></div>
       <div class="block-actions">
         <span class="chip" data-baseperiod="weeks">Semaine par semaine</span>
         <span class="chip active" data-baseperiod="months">Mois par mois</span>
@@ -1130,7 +1130,7 @@
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">Interactions envoyées · touchpoints<span class="source-tag">engagement email · direction sortante</span></h3><div class="block-sub">Chaque envoi d'un IC Care compte pour 1 touchpoint · les mails entrants sont superposés pour lire le ratio</div></div>
+      <div><h3 class="block-title">Interactions envoyées · touchpoints<span class="source-tag">engagement email · direction sortante</span></h3><div class="block-sub">Emails sortants par un IC · entrants superposés</div></div>
       <div class="block-actions">
         <span class="chip active" data-touchperiod="days">30 derniers jours</span>
         <span class="chip" data-touchperiod="weeks">Semaines 2026 YTD</span>
@@ -1143,7 +1143,7 @@
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">Volumétrie des appels sortants<span class="source-tag">engagement call · OUTBOUND</span></h3><div class="block-sub">Aboutis = durée ≥ 30 s · tentatives = &lt; 30 s, la téléphonie enregistre chaque numérotation</div></div>
+      <div><h3 class="block-title">Volumétrie des appels sortants<span class="source-tag">engagement call · OUTBOUND</span></h3><div class="block-sub">Aboutis = durée ≥ 30 s · en dessous, tentative de numérotation</div></div>
       <div class="block-actions">
         <span class="chip active" data-callperiod="days">30 derniers jours</span>
         <span class="chip" data-callperiod="weeks">Semaines 2026 YTD</span>
@@ -1156,7 +1156,7 @@
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">Répartition de l'activité dans la journée<span class="source-tag">heure de Paris · jours ouvrés</span></h3><div class="block-sub">Touchpoints et appels par tranche horaire · repère une journée bien répartie contre une activité concentrée trop tôt ou trop tard</div></div>
+      <div><h3 class="block-title">Répartition de l'activité dans la journée<span class="source-tag">heure de Paris · jours ouvrés</span></h3><div class="block-sub">Touchpoints et appels par tranche horaire</div></div>
       <div class="block-actions">
         <span class="chip active" data-hourperiod="days">30 derniers jours</span>
         <span class="chip" data-hourperiod="weeks">Semaines 2026 YTD</span>
@@ -1192,7 +1192,7 @@
   </div>
 
   <div class="block">
-    <div class="block-header"><div><h3 class="block-title">Tickets · nouveaux clients vs récurrents<span class="source-tag">timestamp_*_liasse_*_finalisee · match ticket↔contact</span></h3><div class="block-sub">Le détail de la définition est dans l'infobulle au survol</div></div></div>
+    <div class="block-header"><div><h3 class="block-title">Tickets · nouveaux clients vs récurrents<span class="source-tag">timestamp_*_liasse_*_finalisee · match ticket↔contact</span></h3><div class="block-sub">Nouveau = aucune liasse finalisée à la date du ticket</div></div></div>
     <div class="chart-wrap lg"><canvas id="chartNewVsExisting"></canvas></div>
   </div>
 </section>
@@ -1214,7 +1214,11 @@
   <div class="block">
     <div class="block-header">
       <div><h3 class="block-title">Temps de 1re réponse · médiane<span class="source-tag">time_to_first_agent_reply</span></h3><div class="block-sub">Heures · temps ouvré uniquement</div></div>
-      <div class="block-actions"><span class="chip" data-rspperiod="weekly">Weekly</span><span class="chip active" data-rspperiod="monthly">Monthly</span></div>
+      <div class="block-actions">
+        <span class="chip" data-rspperiod="weekly">Weekly</span><span class="chip active" data-rspperiod="monthly">Monthly</span>
+        <span style="display:inline-block;width:12px"></span>
+        <span class="chip active" data-rspmode="biz">Heures ouvrées</span><span class="chip" data-rspmode="raw">Temps réel</span>
+      </div>
     </div>
     <div class="chart-wrap"><canvas id="chartQualityResponse"></canvas></div>
   </div>
@@ -1229,7 +1233,7 @@
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">% tickets clos en stage <code>LOST</code> · équipe<span class="source-tag">hs_pipeline_stage</span></h3><div class="block-sub">Doctrine : tout ticket fermé doit être en <code>Résolution</code>. Après la migration du 22/04/2026, tout usage de <code>LOST</code> est une anomalie.</div></div>
+      <div><h3 class="block-title">% tickets clos en stage <code>LOST</code> · équipe<span class="source-tag">hs_pipeline_stage</span></h3><div class="block-sub">Tout ticket fermé doit être en Résolution · tout LOST est une anomalie</div></div>
       <div class="block-actions"><span class="chip" data-lostperiod="weekly">Weekly</span><span class="chip active" data-lostperiod="monthly">Monthly</span></div>
     </div>
     <div class="chart-wrap lg"><canvas id="chartQualityLost"></canvas></div>
@@ -1241,7 +1245,7 @@
     <div class="kpi-grid" id="cesRecapKPIs"></div>
     <div class="block">
       <div class="block-header">
-        <div><h3 class="block-title">Dernières réponses commentées</h3><div class="block-sub">30 réponses les plus récentes avec verbatim · le détail complet et les filtres sont dans l'onglet CES</div></div>
+        <div><h3 class="block-title">Dernières réponses commentées</h3><div class="block-sub">30 réponses les plus récentes avec verbatim</div></div>
         <div class="block-actions"><span class="chip" onclick="switchTab('ces')">Ouvrir l'onglet CES →</span></div>
       </div>
       <div class="table-wrap" id="cesRecapTable"></div>
@@ -1279,11 +1283,11 @@
     </div>
     <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">CES promoteurs (% notes 6-7)</div><div class="chart-wrap"><canvas id="chartN1CES"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">% Lost (stage banni post 22/04 · doctrine : tout fermé = <code>Résolution</code>)</div><div class="chart-wrap"><canvas id="chartN1LostEsc"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">% Lost</div><div class="chart-wrap"><canvas id="chartN1LostEsc"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
-      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés <span style="color:var(--muted);font-size:10px">· emails sortants sur la période</span></div><div class="chart-wrap"><canvas id="chartN1Touch"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis <span style="color:var(--muted);font-size:10px">· sortants ≥ 30 s · tentatives en clair</span></div><div class="chart-wrap"><canvas id="chartN1Calls"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés</div><div class="chart-wrap"><canvas id="chartN1Touch"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis</div><div class="chart-wrap"><canvas id="chartN1Calls"></canvas></div></div>
     </div>
   </div>
 
@@ -1306,11 +1310,11 @@
       <div><div class="block-sub" style="margin-bottom:6px">CES promoteurs <span style="color:var(--muted);font-size:10px">· dispo par IC dès W13 2026 (lancement nouveau survey CES le 20 mars 2026)</span></div><div class="chart-wrap"><canvas id="chartICCES"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
-      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés vs mails entrants <span style="color:var(--muted);font-size:10px">· semaine par semaine</span></div><div class="chart-wrap"><canvas id="chartICTouchWeekly"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis vs tentatives <span style="color:var(--muted);font-size:10px">· semaine par semaine</span></div><div class="chart-wrap"><canvas id="chartICCallsWeekly"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés vs mails entrants</div><div class="chart-wrap"><canvas id="chartICTouchWeekly"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis vs tentatives</div><div class="chart-wrap"><canvas id="chartICCallsWeekly"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
-      <div><div class="block-sub" style="margin-bottom:6px">Appels passés vs demandes de callback <span style="color:var(--muted);font-size:10px">· OUTBOUND · ligne = % callbacks réellement rappelés</span></div><div class="chart-wrap"><canvas id="chartICCalls"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Appels passés vs demandes de callback</div><div class="chart-wrap"><canvas id="chartICCalls"></canvas></div></div>
       <div><div class="block-sub" style="margin-bottom:6px">Temps médian (heures) <span style="color:var(--muted);font-size:10px">· 1re réponse (ouvré) &amp; résolution complète</span></div><div class="chart-wrap"><canvas id="chartICResp"></canvas></div></div>
     </div>
   </div>
@@ -1391,23 +1395,23 @@
 
   <div class="two-col">
     <div class="block">
-      <div class="block-header"><div><h3 class="block-title">Distribution des notes</h3><div class="block-sub">1 à 7 · promoteurs = 6-7 · détracteurs = 1-4 · passifs = 5 (groupes HubSpot)</div></div></div>
+      <div class="block-header"><div><h3 class="block-title">Distribution des notes</h3><div class="block-sub">Promoteurs 6-7 · passifs 5 · détracteurs 1-4</div></div></div>
       <div class="chart-wrap"><canvas id="chartCesDist"></canvas></div>
     </div>
     <div class="block">
-      <div class="block-header"><div><h3 class="block-title">% promoteurs · semaine par semaine</h3><div class="block-sub">Volume de réponses en barres · % promoteurs en courbe</div></div></div>
+      <div class="block-header"><div><h3 class="block-title">% promoteurs · semaine par semaine</h3><div class="block-sub">Réponses en barres · % promoteurs en courbe</div></div></div>
       <div class="chart-wrap"><canvas id="chartCesWeekly"></canvas></div>
     </div>
   </div>
 
   <div class="block">
-    <div class="block-header"><div><h3 class="block-title">CES par IC</h3><div class="block-sub">Périmètre Customer Care · Rétention et IC sortis exclus</div></div></div>
+    <div class="block-header"><div><h3 class="block-title">CES par IC</h3><div class="block-sub">Rétention et IC sortis exclus</div></div></div>
     <div class="table-wrap" id="cesByIcTable"></div>
   </div>
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">Réponses détaillées<span class="source-tag">hs_content · hs_ticket_id</span></h3><div class="block-sub">Chaque ligne ouvre le ticket dans HubSpot · tri du plus récent au plus ancien</div></div>
+      <div><h3 class="block-title">Réponses détaillées<span class="source-tag">hs_content · hs_ticket_id</span></h3><div class="block-sub">Chaque ligne ouvre le ticket dans HubSpot</div></div>
       <div class="block-actions">
         <span class="chip active" data-cesfilter="all">Toutes</span>
         <span class="chip" data-cesfilter="low">Détracteurs (1-4)</span>
@@ -1442,7 +1446,7 @@
 <!-- ============ LIASSES ============ -->
 <section class="section" id="section-liasses">
   <h2 class="section-title">PF 2025 · bilan de campagne<span class="source-tag">période fiscale close</span></h2>
-  <div class="block-sub" style="margin:-.7rem 0 1.1rem">Archive de la période fiscale 2025, conservée pour la comparaison avec la PF 2026. Les objectifs et le compte à rebours de campagne ne sont plus pilotants.</div>
+  <div class="block-sub" style="margin:-.7rem 0 1.1rem">Archive PF 2025 · objectifs et compte à rebours plus pilotants</div>
 
   <div class="hero-ytd" style="margin-bottom:1.4rem">
     <div class="hero-ytd-header">
@@ -1476,7 +1480,7 @@
 
   <div class="two-col liasses-rows-tall">
     <div class="block">
-      <div class="block-header"><div><h3 class="block-title">% liasses / clients · comparatif 2 campagnes<span class="source-tag">liasse_2024 vs liasse_2025</span></h3><div class="block-sub">Dénominateur dynamique : base clients réelle de la semaine · courbe 2025 arrêtée à la dernière semaine complète</div></div></div>
+      <div class="block-header"><div><h3 class="block-title">% liasses / clients · comparatif 2 campagnes<span class="source-tag">liasse_2024 vs liasse_2025</span></h3><div class="block-sub">Base clients réelle de la semaine · 2025 arrêtée à la dernière semaine complète</div></div></div>
       <div class="chart-wrap xl"><canvas id="chartLiassesPct"></canvas></div>
     </div>
     <div class="block">
@@ -6094,7 +6098,15 @@ function baseOpts(){
   };
 }
 function legendOn(o){o.plugins.legend={display:true,labels:{color:C.tick,font:{family:'JetBrains Mono',size:10},boxWidth:10,boxHeight:10,padding:10}};return o;}
-function xAxisRotated(){return {ticks:{color:C.tick,font:{family:'JetBrains Mono',size:10},maxRotation:90,minRotation:90,autoSkip:false},grid:{display:false},border:{color:C.axis}};}
+function xAxisRotated(){return {ticks:{color:C.tick,font:{family:'JetBrains Mono',size:10},maxRotation:90,minRotation:90,autoSkip:false,padding:2},grid:{display:false},border:{color:C.axis}};}
+/* Les libellés verticaux étaient coupés d'un caractère ("Emeline" -> "meline")
+   faute de place sous la zone de tracé. On réserve la hauteur nécessaire. */
+function withRotatedX(opts, px){
+  withRotatedX(opts);
+  opts.layout = opts.layout || {}; opts.layout.padding = opts.layout.padding || {};
+  opts.layout.padding.bottom = Math.max(opts.layout.padding.bottom || 0, px || 26);
+  return opts;
+}
 
 /* ============ OVERVIEW ============ */
 function renderOverviewKPIs() {
@@ -6341,7 +6353,7 @@ function buildOverviewCES(){
   const el=document.getElementById(id); if(!el) return;
   const opts = baseOpts();
   opts.scales.y = { min:50, max:105, ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, stepSize:10, callback:v=>v<=100?v+'%':''}, grid:{color:C.grid}, border:{color:C.axis}};
-  opts.scales.x = xAxisRotated();
+  withRotatedX(opts);
   chartInstances[id] = new Chart(el, {
     type:'line',
     data:{ labels: WEEKS_LONG, datasets:[
@@ -6631,9 +6643,8 @@ function buildVolumeN1N2(){
   opts.scales.y = { stacked:true, beginAtZero:true, ticks:{color:C.tick,font:{family:'JetBrains Mono',size:10}}, grid:{color:C.grid}, border:{color:C.axis}};
   opts.scales.x.stacked = true;
   opts.scales.y2 = { position:'right', min:0, max:20, ticks:{color:C.orange,font:{family:'JetBrains Mono',size:10}, callback:v=>v+'%'}, grid:{display:false}, border:{display:false}};
-  chartInstances[id] =
   opts.plugins.dataLabels = { enabled:false };  // séries trop denses : chiffres illisibles
-  new Chart(el, {
+  chartInstances[id] = new Chart(el, {
     data:{ labels, datasets:[
       { type:'bar', label:'N1', data: n1, backgroundColor: alpha(C.accent,0.5), borderColor: C.accent, borderWidth:1, stack:'s', yAxisID:'y' },
       { type:'bar', label:'N2', data: n2, backgroundColor: C.red, borderColor: C.red, borderWidth:1, borderRadius:3, stack:'s', yAxisID:'y' },
@@ -6725,7 +6736,7 @@ function buildQualitySLA(){
   else { labels=WEEKS_GLOBAL; data=SLA_LONG; }
   const opts = baseOpts();
   opts.scales.y = { min:70, max:105, ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, stepSize:20, callback:v=>v<=100?v+'%':''}, grid:{color:C.grid}, border:{color:C.axis}};
-  if (slaPeriod === 'weekly') { opts.scales.x = xAxisRotated(); }
+  if (slaPeriod === 'weekly') { withRotatedX(opts); }
   chartInstances[id] = new Chart(el, {
     type:'line',
     data:{ labels, datasets:[{ label:'SLA 1re rép.', data, borderColor: C.accent, backgroundColor: alpha(C.accent,0.12), borderWidth:2, fill:true, tension:0.1, pointRadius:2, pointBackgroundColor: C.accent }]},
@@ -6741,19 +6752,39 @@ document.querySelectorAll('[data-rspperiod]').forEach(chip=>{
     rspPeriod = chip.dataset.rspperiod; buildQualityResponse();
   });
 });
+let rspMode = 'biz';
+document.querySelectorAll('[data-rspmode]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('[data-rspmode]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active'); rspMode = chip.dataset.rspmode; buildQualityResponse();
+  });
+});
 function buildQualityResponse(){
   const id='chartQualityResponse'; destroyIfExists(id);
   const el=document.getElementById(id); if(!el) return;
   let labels, data;
   if (rspPeriod==='monthly'){ labels=MONTHS; data=RESP_MONTH; }
   else { labels=WEEKS_GLOBAL; data=RESP_LONG; }
+  /* "Heures ouvrées" = calendrier SLA HubSpot, les nuits et week-ends ne
+     comptent pas. "Temps réel" = délai calendaire brut, sans aucune pause.
+     Le ratio est estimé sur la fenêtre Care où l'on dispose des deux mesures. */
+  if (rspMode === 'raw'){
+    const D = (DATA.CARE_DELAYS || {});
+    const rows = (D.by_period && D.by_period['30d']) || [];
+    const biz = rows.map(r=>r.reply_biz_h).filter(v=>v!=null);
+    const raw = rows.map(r=>r.reply_raw_h).filter(v=>v!=null);
+    const k = (biz.length && raw.length)
+      ? (raw.reduce((a,b)=>a+b,0) / biz.reduce((a,b)=>a+b,0)) : null;
+    data = k ? data.map(v => v == null ? null : +(v * k).toFixed(1)) : data;
+  }
   const opts = baseOpts();
   opts.scales.y = { beginAtZero:true, suggestedMax:6, ticks:{color:C.tick,font:{family:'JetBrains Mono',size:10},callback:v=>v.toFixed(1)+'h'}, grid:{color:C.grid}, border:{color:C.axis}};
-  if (rspPeriod === 'weekly') { opts.scales.x = xAxisRotated(); }
+  if (rspPeriod === 'weekly') { withRotatedX(opts); }
   opts.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:true, formatter:v=>v?v.toFixed(1)+'h':'' };
   chartInstances[id] = new Chart(el, {
     type:'bar',
-    data:{ labels, datasets:[{ label:'Médiane', data, backgroundColor: alpha(C.orange,0.4), borderColor: C.orange, borderWidth:1.5, borderRadius:3 }]},
+    data:{ labels, datasets:[{ label: rspMode==='raw' ? 'Médiane · temps réel' : 'Médiane · heures ouvrées',
+      data, backgroundColor: alpha(C.orange,0.4), borderColor: C.orange, borderWidth:1.5, borderRadius:3 }]},
     options: opts
   });
 }
@@ -6775,10 +6806,11 @@ function buildQualityLost(){
   }
   const opts = baseOpts();
   opts.scales.y = { beginAtZero:true, max:22, ticks:{color:C.tick,font:{family:'JetBrains Mono',size:10},callback:v=>v+'%'}, grid:{color:C.grid}, border:{color:C.axis}};
-  if (lostPeriod === 'weekly') opts.scales.x = xAxisRotated();
-  opts.plugins.dataLabels = (lostPeriod === 'monthly')
-    ? { enabled:true, fontSize:9, color:C.labelText, rotate:false, formatter:v => v == null ? '' : v.toFixed(1)+'%' }
-    : { enabled:false };
+  if (lostPeriod === 'weekly') withRotatedX(opts);
+  opts.plugins.dataLabels = { enabled:true, color:C.labelText,
+    fontSize: lostPeriod === 'monthly' ? 9 : 8,
+    rotate: lostPeriod !== 'monthly',
+    formatter: v => v == null ? '' : Math.round(v)+'%' };
   // Seuils : vert <2% · ambre 2-5% · orange 5-15% · framboise >15%
   const colors = data.map(v => v == null ? C.muted : (v >= 15 ? C.red : v >= 5 ? C.orange : v >= 2 ? C.yellow : C.green));
   chartInstances[id] = new Chart(el, {
@@ -6809,7 +6841,7 @@ function buildN1Bars(){
   // Closed
   destroyIfExists('chartN1Closed');
   const co = baseOpts();
-  co.scales.x = xAxisRotated();
+  withRotatedX(co);
   co.plugins.dataLabels = { enabled:true, fontSize:10, color:C.labelText, rotate:false };
   co.plugins.tooltip.callbacks = { title: items => items[0].label + ' · ' + periodLabel };
   chartInstances['chartN1Closed'] = new Chart(document.getElementById('chartN1Closed'), {
@@ -6822,7 +6854,7 @@ function buildN1Bars(){
   destroyIfExists('chartN1SLA');
   const so = baseOpts();
   so.scales.y = { min:40, max:110, ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, stepSize:20, callback:v=>v<=100?v+'%':''}, grid:{color:C.grid}, border:{color:C.axis}};
-  so.scales.x = xAxisRotated();
+  withRotatedX(so);
   so.plugins.dataLabels = { enabled:true, fontSize:10, color:C.labelText, rotate:false, formatter:v=>v?v+'%':'—' };
   chartInstances['chartN1SLA'] = new Chart(document.getElementById('chartN1SLA'), {
     type:'bar',
@@ -6834,7 +6866,7 @@ function buildN1Bars(){
   destroyIfExists('chartN1CES');
   const ceo = baseOpts();
   ceo.scales.y = { min:0, max:110, ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, stepSize:20, callback:v=>v<=100?v+'%':''}, grid:{color:C.grid}, border:{color:C.axis}};
-  ceo.scales.x = xAxisRotated();
+  withRotatedX(ceo);
   ceo.plugins.dataLabels = { enabled:true, fontSize:10, color:C.labelText, rotate:false, formatter:v=>v?Math.round(v):'—' };
   ceo.plugins.tooltip.callbacks = { label: ctx => { const ic=sorted[ctx.dataIndex]; return `CES ${ic.ces_pct||0}% · ${ic.ces_n} réponses`; } };
   chartInstances['chartN1CES'] = new Chart(document.getElementById('chartN1CES'), {
@@ -6850,7 +6882,7 @@ function buildN1Bars(){
   destroyIfExists('chartN1LostEsc');
   const leo = legendOn(baseOpts());
   leo.scales.y = { beginAtZero:true, ticks:{color:C.tick,font:{family:'JetBrains Mono',size:10},callback:v=>v+'%'}, grid:{color:C.grid}, border:{color:C.axis}};
-  leo.scales.x = xAxisRotated();
+  withRotatedX(leo);
   leo.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:true, formatter:v=>v==null?'':Math.round(v)+'%' };
   const lostColors = sorted.map(ic => {
     const v = ic.lost_pct == null ? 0 : ic.lost_pct;
@@ -7029,18 +7061,11 @@ function buildICDetail(){
   destroyIfExists('chartICCalls');
   const oc = legendOn(baseOpts());
   oc.scales.y = { beginAtZero:true, position:'left', ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}}, grid:{color:C.grid}, border:{color:C.axis}, title:{display:true,text:'Nb',color:C.muted,font:{size:9}} };
-  oc.scales.y1 = { beginAtZero:true, max:110, position:'right', ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, callback:v=>v<=100?v+'%':''}, grid:{drawOnChartArea:false}, border:{color:C.axis} };
-  oc.plugins.tooltip.callbacks = {
-    label: ctx => {
-      if (ctx.dataset.label === '% rappelés') return ` ${ctx.parsed.y==null?'n/a':ctx.parsed.y+'%'} callbacks rappelés`;
-      return ` ${ctx.dataset.label} : ${ctx.parsed.y}`;
-    }
-  };
+  oc.plugins.tooltip.callbacks = { label: ctx => ` ${ctx.dataset.label} : ${ctx.parsed.y}` };
   chartInstances['chartICCalls'] = new Chart(document.getElementById('chartICCalls'), {
     data:{ labels: PERIOD_KEYS.map(p=>PERIOD_LBL[p]), datasets:[
       { type:'bar', label:'Appels passés', data: callsByPeriod, backgroundColor: alpha(color,0.45), borderColor: color, borderWidth:1.5, borderRadius:3, yAxisID:'y', order:2 },
-      { type:'bar', label:'Callbacks demandés', data: cbReqByPeriod, backgroundColor: alpha(C.muted,0.25), borderColor: C.muted, borderWidth:1.5, borderRadius:3, yAxisID:'y', order:3 },
-      { type:'line', label:'% rappelés', data: cbRatePct, borderColor: C.accent, backgroundColor: alpha(C.accent,0.1), borderWidth:2, pointRadius:3, fill:false, tension:0.2, yAxisID:'y1', order:1, spanGaps:true }
+      { type:'bar', label:'Callbacks demandés', data: cbReqByPeriod, backgroundColor: alpha(C.muted,0.25), borderColor: C.muted, borderWidth:1.5, borderRadius:3, yAxisID:'y', order:3 }
     ]},
     options: oc
   });
@@ -7398,9 +7423,8 @@ function buildLiassesPct(){
       borderWidth:2.5, borderDash:[5,3], fill:false, tension:0.1, pointRadius:2.5, spanGaps:false
     });
   }
-  chartInstances[id] =
   opts.plugins.dataLabels = { enabled:false };  // séries trop denses : chiffres illisibles
-  new Chart(el, {
+  chartInstances[id] = new Chart(el, {
     type:'line',
     data:{ labels: LIASSES_WEEKS, datasets },
     options: opts
@@ -8142,9 +8166,13 @@ function buildN1CareBars(){
   const T = (DATA.CARE_TOUCH && DATA.CARE_TOUCH[n1Period]) || null;
   if (!T) { emptyChart('chartN1Touch', "Touchpoints non collectés sur cette période"); }
   else {
-    const rows = T.filter(inIcScope).slice().sort((a,b)=>b.sent-a.sent);
+    const _scopeT = careOnly(IC_DATA['30d']||[]).filter(inIcScope);
+    const _byT = {}; T.forEach(r => { _byT[r.name] = r; });
+    const rows = _scopeT.map(a => Object.assign({name:a.name, tl:a.tl, sent:0, recv:0, per_day:0, missing:true},
+                                                _byT[a.name] || {}))
+                        .sort((a,b)=>b.sent-a.sent);
     const cols = rows.map(r => r.tl === 'cyrielle' ? SEM.tlCyrielle : SEM.tlNoemie);
-    const o = baseOpts(); o.scales.x = xAxisRotated();
+    const o = baseOpts(); withRotatedX(o);
     o.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:false };
     o.plugins.tooltip.callbacks = { title: i => i[0].label + ' · ' + periodLabel,
       afterBody: i => { const r=rows[i[0].dataIndex]; return [`${r.per_day} / jour ouvré`, `${r.recv} mails entrants`]; } };
@@ -8161,14 +8189,25 @@ function buildN1CareBars(){
   destroyIfExists('chartN1Calls');
   const K = (DATA.CARE_CALLS && DATA.CARE_CALLS[n1Period]) || null;
   if (!K || !K.ics) { emptyChart('chartN1Calls', "Appels non collectés sur cette période"); return; }
-  const _names = new Set(careOnly(IC_DATA['30d']||[]).filter(inIcScope).map(a=>a.name));
-  const rows = K.ics.filter(r=>_names.has(r.name)).sort((a,b)=>b.n-a.n);
-  const o = baseOpts(); o.scales.x = xAxisRotated();
+  /* On part des IC du périmètre, pas de la liste renvoyée par le module :
+     si un IC manque côté appels on affiche 0 explicitement au lieu de le
+     faire disparaître du graphe. */
+  const _scope = careOnly(IC_DATA['30d']||[]).filter(inIcScope).map(a=>a.name);
+  const _byName = {};
+  (K.ics||[]).forEach(r => { _byName[r.name] = r; });
+  const rows = _scope.map(n => _byName[n] || {name:n, n:0, tries:0, median_s:null, total_min:0, missing:true})
+                     .sort((a,b)=>(b.n||0)-(a.n||0));
+  const _missing = rows.filter(r=>r.missing).map(r=>r.name);
+  if (_missing.length) console.warn('CARE_CALLS : aucune donnée pour', _missing.join(', '));
+  const o = baseOpts(); withRotatedX(o);
   o.scales.y.stacked = true; o.scales.x.stacked = true;
   o.plugins.legend = {display:true, labels:{color:C.tick, font:{family:'JetBrains Mono',size:10}, boxWidth:10, boxHeight:10, padding:8}};
   o.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:false };
   o.plugins.tooltip.callbacks = { title: i => i[0].label + ' · ' + periodLabel,
-    afterBody: i => { const r=rows[i[0].dataIndex]; return [`durée médiane ${r.median_s?r.median_s+' s':'—'}`, `${r.total_min} min cumulées`]; } };
+    afterBody: i => { const r=rows[i[0].dataIndex];
+      if (r.missing) return ['aucune donnée sur cette période'];
+      return [`durée médiane ${r.median_s?r.median_s+' s':'—'}`, `${r.total_min} min cumulées`,
+              `${r.tries||0} tentatives`]; } };
   chartInstances['chartN1Calls'] = new Chart(document.getElementById('chartN1Calls'), {
     type:'bar',
     data:{ labels: rows.map(r=>r.name), datasets:[
@@ -8188,7 +8227,7 @@ function buildICCareWeekly(){
   destroyIfExists('chartICTouchWeekly');
   if (!H || !H.weeks || !H.weeks.length) { emptyChart('chartICTouchWeekly', msg); }
   else {
-    const o = legendOn(baseOpts()); o.scales.x = xAxisRotated();
+    const o = legendOn(baseOpts()); withRotatedX(o);
     chartInstances['chartICTouchWeekly'] = new Chart(document.getElementById('chartICTouchWeekly'), {
       type:'bar',
       data:{ labels:H.weeks, datasets:[
@@ -8201,7 +8240,7 @@ function buildICCareWeekly(){
 
   destroyIfExists('chartICCallsWeekly');
   if (!H || !H.weeks || !H.weeks.length) { emptyChart('chartICCallsWeekly', msg); return; }
-  const o2 = legendOn(baseOpts()); o2.scales.x = xAxisRotated();
+  const o2 = legendOn(baseOpts()); withRotatedX(o2);
   o2.scales.y.stacked = true; o2.scales.x.stacked = true;
   chartInstances['chartICCallsWeekly'] = new Chart(document.getElementById('chartICCallsWeekly'), {
     type:'bar',

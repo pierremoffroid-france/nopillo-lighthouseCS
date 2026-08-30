@@ -1279,15 +1279,15 @@
     </div>
     <div class="two-col">
       <div><div class="block-sub" style="margin-bottom:6px">Tickets fermés</div><div class="chart-wrap"><canvas id="chartN1Closed"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">SLA 1er touchpoint</div><div class="chart-wrap"><canvas id="chartN1SLA"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés</div><div class="chart-wrap"><canvas id="chartN1Touch"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">CES promoteurs (% notes 6-7)</div><div class="chart-wrap"><canvas id="chartN1CES"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">% Lost</div><div class="chart-wrap"><canvas id="chartN1LostEsc"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis</div><div class="chart-wrap"><canvas id="chartN1Calls"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
-      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés</div><div class="chart-wrap"><canvas id="chartN1Touch"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis</div><div class="chart-wrap"><canvas id="chartN1Calls"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">SLA 1er touchpoint</div><div class="chart-wrap"><canvas id="chartN1SLA"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">% Lost</div><div class="chart-wrap"><canvas id="chartN1LostEsc"></canvas></div></div>
     </div>
   </div>
 
@@ -1303,15 +1303,15 @@
     </div>
     <div class="two-col">
       <div><div class="block-sub" style="margin-bottom:6px">Tickets fermés</div><div class="chart-wrap"><canvas id="chartICWeekly"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">% Lost (évolution hebdo · seuils : vert &lt;5% · orange 5-15% · rouge &gt;15%)</div><div class="chart-wrap"><canvas id="chartICLost"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés vs mails entrants</div><div class="chart-wrap"><canvas id="chartICTouchWeekly"></canvas></div></div>
+    </div>
+    <div class="two-col" style="margin-top:1rem">
+      <div><div class="block-sub" style="margin-bottom:6px">CES promoteurs <span style="color:var(--muted);font-size:10px">· par IC dès W13 2026</span></div><div class="chart-wrap"><canvas id="chartICCES"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis vs tentatives</div><div class="chart-wrap"><canvas id="chartICCallsWeekly"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">SLA 1er touchpoint</div><div class="chart-wrap"><canvas id="chartICSLA"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">CES promoteurs <span style="color:var(--muted);font-size:10px">· dispo par IC dès W13 2026 (lancement nouveau survey CES le 20 mars 2026)</span></div><div class="chart-wrap"><canvas id="chartICCES"></canvas></div></div>
-    </div>
-    <div class="two-col" style="margin-top:1rem">
-      <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés vs mails entrants</div><div class="chart-wrap"><canvas id="chartICTouchWeekly"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">Appels aboutis vs tentatives</div><div class="chart-wrap"><canvas id="chartICCallsWeekly"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">% Lost <span style="color:var(--muted);font-size:10px">· vert &lt;5% · orange 5-15% · rouge &gt;15%</span></div><div class="chart-wrap"><canvas id="chartICLost"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">Appels passés vs demandes de callback</div><div class="chart-wrap"><canvas id="chartICCalls"></canvas></div></div>
@@ -6827,7 +6827,7 @@ document.querySelectorAll('[data-n1period]').forEach(chip=>{
   chip.addEventListener('click',()=>{
     document.querySelectorAll('[data-n1period]').forEach(c=>c.classList.remove('active'));
     chip.classList.add('active');
-    n1Period = chip.dataset.n1period; buildN1Bars();
+    n1Period = chip.dataset.n1period; buildN1Bars(); buildN1CareBars();
   });
 });
 
@@ -8039,17 +8039,27 @@ function seriesFor(kind, period){
   /* kind : 'touch' | 'call' · period : days | weeks | months
      Renvoie {labels, a, b, note} ; note explique une absence d'historique. */
   const D = DATA || {};
+  /* "Semaines 2026 YTD" veut dire 2026, pas toutes les semaines depuis
+     janvier 2025 : sans ce filtre l'axe est saturé et illisible. */
+  const yy = String(new Date().getFullYear()).slice(2);
+  const ytd = (src, ka, kb) => {
+    const keep = [];
+    (src.weeks || []).forEach((w, i) => { if (String(w).indexOf(yy + 'W') === 0) keep.push(i); });
+    const idx = keep.length ? keep : (src.weeks || []).map((_, i) => i);
+    return { labels: idx.map(i => src.weeks[i]),
+             a: idx.map(i => src[ka][i]), b: idx.map(i => src[kb][i]) };
+  };
+  const noHist = "Profondeur non disponible : l'historique Care se construit par le backfill puis s'incrémente à chaque refresh.";
   if (kind === 'touch'){
     if (period === 'days'  && D.CARE_TOUCH_DAYS)   return {labels:D.CARE_TOUCH_DAYS.days,  a:D.CARE_TOUCH_DAYS.sent,  b:D.CARE_TOUCH_DAYS.recv};
-    if (period === 'weeks' && D.CARE_TOUCH_WEEKS)  return {labels:D.CARE_TOUCH_WEEKS.weeks, a:D.CARE_TOUCH_WEEKS.sent, b:D.CARE_TOUCH_WEEKS.recv,
-      note:(D.CARE_TOUCH_WEEKS.weeks||[]).length < 20 ? "Historique limité à la fenêtre de collecte. Le backfill depuis janvier 2025 se fait en une passe, puis l'historique s'incrémente à chaque refresh." : null};
+    if (period === 'weeks' && D.CARE_TOUCH_WEEKS)  return ytd(D.CARE_TOUCH_WEEKS, 'sent', 'recv');
     if (period === 'months'&& D.CARE_TOUCH_MONTHS) return {labels:D.CARE_TOUCH_MONTHS.months, a:D.CARE_TOUCH_MONTHS.sent, b:D.CARE_TOUCH_MONTHS.recv};
-    return {labels:[], a:[], b:[], note:"Pas encore d'historique sur cette profondeur. Les touchpoints sont collectés sur une fenêtre glissante ; le backfill historique est à lancer une fois."};
+    return {labels:[], a:[], b:[], note:noHist};
   }
   if (period === 'days'  && D.CARE_CALL_DAYS)   return {labels:D.CARE_CALL_DAYS.days,   a:D.CARE_CALL_DAYS.ok,   b:D.CARE_CALL_DAYS.tries};
-  if (period === 'weeks' && D.CARE_CALL_WEEKS)  return {labels:D.CARE_CALL_WEEKS.weeks, a:D.CARE_CALL_WEEKS.ok,  b:D.CARE_CALL_WEEKS.tries};
+  if (period === 'weeks' && D.CARE_CALL_WEEKS)  return ytd(D.CARE_CALL_WEEKS, 'ok', 'tries');
   if (period === 'months'&& D.CARE_CALL_MONTHS) return {labels:D.CARE_CALL_MONTHS.months,a:D.CARE_CALL_MONTHS.ok, b:D.CARE_CALL_MONTHS.tries};
-  return {labels:[], a:[], b:[], note:"Pas encore d'historique sur cette profondeur pour les appels."};
+  return {labels:[], a:[], b:[], note:noHist};
 }
 
 function emptyChart(id, msg){
@@ -8158,17 +8168,57 @@ document.querySelectorAll('[data-callperiod]').forEach(chip=>{
 
 
 /* ===== Team & ICs · touchpoints et appels par IC (chips n1Period) ===== */
+/* CARE_TOUCH et CARE_CALLS ne couvrent que la fenêtre glissante (35 jours) :
+   ils n'ont ni "3m", ni les périodes longues. CARE_IC_HISTORY, lui, porte
+   l'hebdo par IC sur tout l'historique. On y recalcule donc n'importe quelle
+   période, ce qui règle à la fois le "3 derniers mois" vide et les IC qui
+   disparaissaient du graphe faute de ligne. */
+function icHistoryWindow(period){
+  const H = (typeof DATA !== 'undefined') ? DATA.CARE_IC_HISTORY : null;
+  if (!H) return null;
+  const nWeeks = {'3m':13, '30d':5, 'lastweek':1, 'thisweek':1, 'today':1, 'yesterday':1}[period];
+  if (!nWeeks) return null;
+  const out = {};
+  Object.keys(H).forEach(name => {
+    const h = H[name] || {};
+    const n = Math.min(nWeeks, (h.weeks || []).length);
+    const tail = arr => (arr || []).slice(-n).reduce((a, b) => a + (b || 0), 0);
+    out[name] = { sent: tail(h.sent), recv: tail(h.recv),
+                  ok: tail(h.calls_ok), tries: tail(h.calls_try), weeks: n };
+  });
+  return out;
+}
+
+function careRowsFor(period){
+  /* Renvoie {touch:{nom:{sent,recv}}, calls:{nom:{n,tries,median_s,total_min}}}
+     en privilégiant la mesure directe, avec repli sur l'historique. */
+  const T = {}, K = {};
+  const t = (DATA.CARE_TOUCH || {})[period];
+  const k = (DATA.CARE_CALLS || {})[period];
+  if (t) t.forEach(r => T[r.name] = r);
+  if (k && k.ics) k.ics.forEach(r => K[r.name] = r);
+  if (!t || !k){
+    const H = icHistoryWindow(period);
+    if (H) Object.keys(H).forEach(n => {
+      if (!T[n]) T[n] = {name:n, sent:H[n].sent, recv:H[n].recv, per_day:null, fromHistory:true};
+      if (!K[n]) K[n] = {name:n, n:H[n].ok, tries:H[n].tries, median_s:null, total_min:0, fromHistory:true};
+    });
+  }
+  return {touch:T, calls:K};
+}
+
 function buildN1CareBars(){
   const periodLabel = {today:"aujourd'hui", yesterday:'hier', thisweek:`cette semaine (${CURRENT_WEEK_LABEL})`,
     lastweek:`semaine dernière (${LAST_FULL_WEEK_LABEL})`, '30d':'30 derniers jours', '3m':'3 derniers mois'}[n1Period];
 
   /* --- Touchpoints envoyés --- */
+  const SRC = careRowsFor(n1Period);
+  const _scopeT = careOnly(IC_DATA['30d']||[]).filter(inIcScope);
+
   destroyIfExists('chartN1Touch');
-  const T = (DATA.CARE_TOUCH && DATA.CARE_TOUCH[n1Period]) || null;
-  if (!T) { emptyChart('chartN1Touch', "Touchpoints non collectés sur cette période"); }
+  if (!Object.keys(SRC.touch).length) { emptyChart('chartN1Touch', "Touchpoints non collectés sur cette période"); }
   else {
-    const _scopeT = careOnly(IC_DATA['30d']||[]).filter(inIcScope);
-    const _byT = {}; T.forEach(r => { _byT[r.name] = r; });
+    const _byT = SRC.touch;
     const rows = _scopeT.map(a => Object.assign({name:a.name, tl:a.tl, sent:0, recv:0, per_day:0, missing:true},
                                                 _byT[a.name] || {}))
                         .sort((a,b)=>b.sent-a.sent);
@@ -8188,18 +8238,12 @@ function buildN1CareBars(){
 
   /* --- Appels aboutis vs tentatives --- */
   destroyIfExists('chartN1Calls');
-  const K = (DATA.CARE_CALLS && DATA.CARE_CALLS[n1Period]) || null;
-  if (!K || !K.ics) { emptyChart('chartN1Calls', "Appels non collectés sur cette période"); return; }
-  /* On part des IC du périmètre, pas de la liste renvoyée par le module :
-     si un IC manque côté appels on affiche 0 explicitement au lieu de le
-     faire disparaître du graphe. */
-  const _scope = careOnly(IC_DATA['30d']||[]).filter(inIcScope).map(a=>a.name);
-  const _byName = {};
-  (K.ics||[]).forEach(r => { _byName[r.name] = r; });
-  const rows = _scope.map(n => _byName[n] || {name:n, n:0, tries:0, median_s:null, total_min:0, missing:true})
-                     .sort((a,b)=>(b.n||0)-(a.n||0));
+  if (!Object.keys(SRC.calls).length) { emptyChart('chartN1Calls', "Appels non collectés sur cette période"); return; }
+  const _byName = SRC.calls;
+  const rows = _scopeT.map(a => _byName[a.name] || {name:a.name, n:0, tries:0, median_s:null, total_min:0, missing:true})
+                      .sort((a,b)=>(b.n||0)-(a.n||0));
   const _missing = rows.filter(r=>r.missing).map(r=>r.name);
-  if (_missing.length) console.warn('CARE_CALLS : aucune donnée pour', _missing.join(', '));
+  if (_missing.length) console.warn('[Lighthouse] appels sans donnée sur', n1Period, ':', _missing.join(', '));
   const o = baseOpts(); withRotatedX(o);
   o.scales.y.stacked = true; o.scales.x.stacked = true;
   o.plugins.legend = {display:true, labels:{color:C.tick, font:{family:'JetBrains Mono',size:10}, boxWidth:10, boxHeight:10, padding:8}};

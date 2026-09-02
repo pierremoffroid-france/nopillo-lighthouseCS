@@ -3,29 +3,101 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-09-01",
- "days_left": 29,
- "weeks_left": 4.1,
- "working_days_left": 22,
+ "today": "2026-09-02",
+ "days_left": 28,
+ "weeks_left": 4.0,
+ "working_days_left": 21,
  "remaining": 901,
- "rate_needed": 217,
+ "rate_needed": 225,
  "counts": {
-  "active_total": 9365,
-  "active_v2": 5128,
+  "active_total": 9379,
+  "active_v2": 5125,
   "active_v3": 3901,
-  "active_unknown": 336,
+  "active_unknown": 353,
   "all_v3": 4099
  },
  "pct_target": 82.0,
- "pct_base": 41.7,
+ "pct_base": 41.6,
  "history_ok": true,
- "n_born_v3": 14,
+ "n_born_v3": 15,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "431263785168",
+   "date": "2026-09-02",
+   "created": "02/09/2026 à 09h24",
+   "week": "W36"
+  },
+  {
+   "id": "431230633162",
+   "date": "2026-09-02",
+   "created": "02/09/2026 à 09h48",
+   "week": "W36"
+  },
+  {
+   "id": "431230594265",
+   "date": "2026-09-02",
+   "created": "02/09/2026 à 08h03",
+   "week": "W36"
+  },
+  {
+   "id": "431230588108",
+   "date": "2026-09-02",
+   "created": "02/09/2026 à 07h50",
+   "week": "W36"
+  },
+  {
+   "id": "431218499791",
+   "date": "2026-09-02",
+   "created": "02/09/2026 à 08h44",
+   "week": "W36"
+  },
+  {
+   "id": "431166223578",
+   "date": "2026-09-02",
+   "created": "02/09/2026 à 09h16",
+   "week": "W36"
+  },
+  {
+   "id": "431320886472",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 13h59",
+   "week": "W36"
+  },
+  {
+   "id": "431304813797",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 19h42",
+   "week": "W36"
+  },
+  {
+   "id": "431268676832",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 18h51",
+   "week": "W36"
+  },
+  {
+   "id": "431268639939",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 15h53",
+   "week": "W36"
+  },
   {
    "id": "431268477148",
    "date": "2026-09-01",
    "created": "01/09/2026 à 08h22",
+   "week": "W36"
+  },
+  {
+   "id": "431258149079",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 15h50",
+   "week": "W36"
+  },
+  {
+   "id": "431254472922",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 13h23",
    "week": "W36"
   },
   {
@@ -35,15 +107,69 @@
    "week": "W36"
   },
   {
-   "id": "431214350528",
+   "id": "431252649207",
    "date": "2026-09-01",
-   "created": "01/09/2026 à 08h36",
+   "created": "01/09/2026 à 13h18",
+   "week": "W36"
+  },
+  {
+   "id": "431250887882",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 13h09",
+   "week": "W36"
+  },
+  {
+   "id": "431225473267",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 15h45",
+   "week": "W36"
+  },
+  {
+   "id": "431221946614",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 19h39",
+   "week": "W36"
+  },
+  {
+   "id": "431212654778",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 13h21",
+   "week": "W36"
+  },
+  {
+   "id": "431171317951",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 14h43",
+   "week": "W36"
+  },
+  {
+   "id": "431171276004",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 13h01",
+   "week": "W36"
+  },
+  {
+   "id": "431169492166",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 15h26",
+   "week": "W36"
+  },
+  {
+   "id": "431169438947",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 12h52",
    "week": "W36"
   },
   {
    "id": "431169367250",
    "date": "2026-09-01",
    "created": "01/09/2026 à 09h30",
+   "week": "W36"
+  },
+  {
+   "id": "431149800682",
+   "date": "2026-09-01",
+   "created": "01/09/2026 à 15h36",
    "week": "W36"
   },
   {
@@ -71,6 +197,12 @@
    "week": "W36"
   },
   {
+   "id": "431179980003",
+   "date": "2026-08-31",
+   "created": "31/08/2026 à 14h12",
+   "week": "W36"
+  },
+  {
    "id": "431163786440",
    "date": "2026-08-31",
    "created": "31/08/2026 à 20h13",
@@ -86,6 +218,12 @@
    "id": "431131417832",
    "date": "2026-08-31",
    "created": "31/08/2026 à 17h38",
+   "week": "W36"
+  },
+  {
+   "id": "431095636190",
+   "date": "2026-08-31",
+   "created": "31/08/2026 à 14h15",
    "week": "W36"
   },
   {
@@ -134,12 +272,6 @@
    "id": "430960493791",
    "date": "2026-08-31",
    "created": "31/08/2026 à 16h42",
-   "week": "W36"
-  },
-  {
-   "id": "430956950753",
-   "date": "2026-08-31",
-   "created": "31/08/2026 à 14h12",
    "week": "W36"
   },
   {
@@ -770,12 +902,6 @@
    "id": "430619307239",
    "date": "2026-08-27",
    "created": "27/08/2026 à 09h41",
-   "week": "W35"
-  },
-  {
-   "id": "430617692363",
-   "date": "2026-08-27",
-   "created": "27/08/2026 à 21h53",
    "week": "W35"
   },
   {
@@ -2197,7 +2323,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 9029,
+   "clients_v2": 9026,
    "clients_v3": 0,
    "tickets_v2": 253,
    "tickets_v3": 0,
@@ -2219,7 +2345,7 @@
    "cum": 288,
    "pct_target": 5.8,
    "pct_base": 3.1,
-   "clients_v2": 8741,
+   "clients_v2": 8738,
    "clients_v3": 288,
    "tickets_v2": 234,
    "tickets_v3": 1,
@@ -2241,13 +2367,13 @@
    "cum": 669,
    "pct_target": 13.4,
    "pct_base": 7.5,
-   "clients_v2": 7866,
+   "clients_v2": 7849,
    "clients_v3": 669,
    "tickets_v2": 281,
    "tickets_v3": 2,
-   "ratio_v2": 0.0357,
+   "ratio_v2": 0.0358,
    "ratio_v3": 0.003,
-   "delta": -0.0327,
+   "delta": -0.0328,
    "target_cum": 500
   },
   {
@@ -2258,18 +2384,18 @@
    "end": "2026-08-09",
    "future": false,
    "partial": false,
-   "migrated": 728,
+   "migrated": 727,
    "born": 3,
-   "cum": 1400,
+   "cum": 1399,
    "pct_target": 28.0,
    "pct_base": 15.7,
-   "clients_v2": 7165,
-   "clients_v3": 1400,
+   "clients_v2": 7149,
+   "clients_v3": 1399,
    "tickets_v2": 316,
    "tickets_v3": 25,
-   "ratio_v2": 0.0441,
+   "ratio_v2": 0.0442,
    "ratio_v3": 0.0179,
-   "delta": -0.0262,
+   "delta": -0.0263,
    "target_cum": 1000
   },
   {
@@ -2282,16 +2408,16 @@
    "partial": false,
    "migrated": 738,
    "born": 2,
-   "cum": 2140,
+   "cum": 2139,
    "pct_target": 42.8,
    "pct_base": 23.1,
-   "clients_v2": 6794,
-   "clients_v3": 2140,
+   "clients_v2": 6778,
+   "clients_v3": 2139,
    "tickets_v2": 236,
    "tickets_v3": 40,
-   "ratio_v2": 0.0347,
+   "ratio_v2": 0.0348,
    "ratio_v3": 0.0187,
-   "delta": -0.016,
+   "delta": -0.0161,
    "target_cum": 1500
   },
   {
@@ -2304,16 +2430,16 @@
    "partial": false,
    "migrated": 601,
    "born": 0,
-   "cum": 2741,
+   "cum": 2740,
    "pct_target": 54.8,
-   "pct_base": 29.4,
-   "clients_v2": 6262,
-   "clients_v3": 2741,
-   "tickets_v2": 233,
+   "pct_base": 29.3,
+   "clients_v2": 6246,
+   "clients_v3": 2740,
+   "tickets_v2": 232,
    "tickets_v3": 50,
-   "ratio_v2": 0.0372,
+   "ratio_v2": 0.0371,
    "ratio_v3": 0.0182,
-   "delta": -0.019,
+   "delta": -0.0189,
    "target_cum": 2000
   },
   {
@@ -2326,16 +2452,16 @@
    "partial": false,
    "migrated": 1358,
    "born": 0,
-   "cum": 4099,
+   "cum": 4098,
    "pct_target": 82.0,
-   "pct_base": 43.8,
-   "clients_v2": 4933,
-   "clients_v3": 4099,
-   "tickets_v2": 464,
-   "tickets_v3": 205,
-   "ratio_v2": 0.0941,
-   "ratio_v3": 0.05,
-   "delta": -0.0441,
+   "pct_base": 43.7,
+   "clients_v2": 4917,
+   "clients_v3": 4098,
+   "tickets_v2": 461,
+   "tickets_v3": 204,
+   "ratio_v2": 0.0938,
+   "ratio_v3": 0.0498,
+   "delta": -0.044,
    "target_cum": 2500
   },
   {
@@ -2347,17 +2473,17 @@
    "future": false,
    "partial": true,
    "migrated": 0,
-   "born": 0,
+   "born": 1,
    "cum": 4099,
    "pct_target": 82.0,
-   "pct_base": 43.8,
-   "clients_v2": 4930,
+   "pct_base": 43.7,
+   "clients_v2": 4927,
    "clients_v3": 4099,
-   "tickets_v2": 58,
-   "tickets_v3": 37,
-   "ratio_v2": 0.0118,
-   "ratio_v3": 0.009,
-   "delta": -0.0028,
+   "tickets_v2": 106,
+   "tickets_v3": 59,
+   "ratio_v2": 0.0215,
+   "ratio_v3": 0.0144,
+   "delta": -0.0071,
    "target_cum": 3000
   },
   {
@@ -2439,6 +2565,6 @@
   "W35",
   "W36"
  ],
- "refreshed_at": "01/09/2026 à 12h40",
- "refreshed_iso": "2026-09-01T12:40:20"
+ "refreshed_at": "02/09/2026 à 12h06",
+ "refreshed_iso": "2026-09-02T12:06:19"
 }

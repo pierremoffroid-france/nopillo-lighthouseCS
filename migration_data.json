@@ -3,25 +3,127 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-09-03",
- "days_left": 27,
- "weeks_left": 3.9,
- "working_days_left": 20,
- "remaining": 901,
- "rate_needed": 234,
+ "today": "2026-09-04",
+ "days_left": 26,
+ "weeks_left": 3.7,
+ "working_days_left": 19,
+ "remaining": 903,
+ "rate_needed": 243,
  "counts": {
-  "active_total": 9436,
-  "active_v2": 5137,
-  "active_v3": 3908,
-  "active_unknown": 391,
-  "all_v3": 4099
+  "active_total": 9448,
+  "active_v2": 5138,
+  "active_v3": 3909,
+  "active_unknown": 401,
+  "all_v3": 4097
  },
- "pct_target": 82.0,
+ "pct_target": 81.9,
  "pct_base": 41.4,
  "history_ok": true,
  "n_born_v3": 15,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "431906626787",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 08h12",
+   "week": "W36"
+  },
+  {
+   "id": "431879493856",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 07h32",
+   "week": "W36"
+  },
+  {
+   "id": "431859704027",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 07h50",
+   "week": "W36"
+  },
+  {
+   "id": "431809688774",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 07h00",
+   "week": "W36"
+  },
+  {
+   "id": "431806126286",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 09h11",
+   "week": "W36"
+  },
+  {
+   "id": "431799332087",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 09h10",
+   "week": "W36"
+  },
+  {
+   "id": "431797489860",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 07h05",
+   "week": "W36"
+  },
+  {
+   "id": "431792087275",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 06h37",
+   "week": "W36"
+  },
+  {
+   "id": "431786616036",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 04h55",
+   "week": "W36"
+  },
+  {
+   "id": "431783954665",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 07h21",
+   "week": "W36"
+  },
+  {
+   "id": "431760200890",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 09h56",
+   "week": "W36"
+  },
+  {
+   "id": "431760179394",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 08h59",
+   "week": "W36"
+  },
+  {
+   "id": "431760168138",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 08h12",
+   "week": "W36"
+  },
+  {
+   "id": "431758320870",
+   "date": "2026-09-04",
+   "created": "04/09/2026 à 06h06",
+   "week": "W36"
+  },
+  {
+   "id": "431663536336",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 18h46",
+   "week": "W36"
+  },
+  {
+   "id": "431661755596",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 20h45",
+   "week": "W36"
+  },
+  {
+   "id": "431618374845",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 15h06",
+   "week": "W36"
+  },
   {
    "id": "431557406923",
    "date": "2026-09-03",
@@ -35,9 +137,39 @@
    "week": "W36"
   },
   {
+   "id": "431553745136",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 11h18",
+   "week": "W36"
+  },
+  {
+   "id": "431527335104",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 16h10",
+   "week": "W36"
+  },
+  {
+   "id": "431518338252",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 13h05",
+   "week": "W36"
+  },
+  {
+   "id": "431507476725",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 10h45",
+   "week": "W36"
+  },
+  {
    "id": "431494586603",
    "date": "2026-09-03",
    "created": "03/09/2026 à 01h32",
+   "week": "W36"
+  },
+  {
+   "id": "431444173044",
+   "date": "2026-09-03",
+   "created": "03/09/2026 à 13h54",
    "week": "W36"
   },
   {
@@ -2419,7 +2551,7 @@
    "cum": 0,
    "pct_target": 0.0,
    "pct_base": 0.0,
-   "clients_v2": 9045,
+   "clients_v2": 9047,
    "clients_v3": 0,
    "tickets_v2": 253,
    "tickets_v3": 0,
@@ -2440,8 +2572,8 @@
    "born": 1,
    "cum": 288,
    "pct_target": 5.8,
-   "pct_base": 3.1,
-   "clients_v2": 8757,
+   "pct_base": 3.0,
+   "clients_v2": 8759,
    "clients_v3": 288,
    "tickets_v2": 234,
    "tickets_v3": 1,
@@ -2463,7 +2595,7 @@
    "cum": 669,
    "pct_target": 13.4,
    "pct_base": 7.5,
-   "clients_v2": 7811,
+   "clients_v2": 7801,
    "clients_v3": 669,
    "tickets_v2": 281,
    "tickets_v3": 2,
@@ -2480,18 +2612,18 @@
    "end": "2026-08-09",
    "future": false,
    "partial": false,
-   "migrated": 727,
+   "migrated": 726,
    "born": 3,
-   "cum": 1399,
+   "cum": 1398,
    "pct_target": 28.0,
    "pct_base": 15.7,
-   "clients_v2": 7111,
-   "clients_v3": 1399,
+   "clients_v2": 7102,
+   "clients_v3": 1398,
    "tickets_v2": 316,
    "tickets_v3": 25,
-   "ratio_v2": 0.0444,
+   "ratio_v2": 0.0445,
    "ratio_v3": 0.0179,
-   "delta": -0.0265,
+   "delta": -0.0266,
    "target_cum": 1000
   },
   {
@@ -2502,18 +2634,18 @@
    "end": "2026-08-16",
    "future": false,
    "partial": false,
-   "migrated": 738,
+   "migrated": 737,
    "born": 2,
-   "cum": 2139,
-   "pct_target": 42.8,
+   "cum": 2137,
+   "pct_target": 42.7,
    "pct_base": 23.1,
-   "clients_v2": 6740,
-   "clients_v3": 2139,
+   "clients_v2": 6732,
+   "clients_v3": 2137,
    "tickets_v2": 236,
    "tickets_v3": 40,
-   "ratio_v2": 0.035,
+   "ratio_v2": 0.0351,
    "ratio_v3": 0.0187,
-   "delta": -0.0163,
+   "delta": -0.0164,
    "target_cum": 1500
   },
   {
@@ -2526,16 +2658,16 @@
    "partial": false,
    "migrated": 601,
    "born": 0,
-   "cum": 2740,
+   "cum": 2738,
    "pct_target": 54.8,
    "pct_base": 29.3,
-   "clients_v2": 6208,
-   "clients_v3": 2740,
+   "clients_v2": 6200,
+   "clients_v3": 2738,
    "tickets_v2": 232,
    "tickets_v3": 50,
    "ratio_v2": 0.0374,
-   "ratio_v3": 0.0182,
-   "delta": -0.0192,
+   "ratio_v3": 0.0183,
+   "delta": -0.0191,
    "target_cum": 2000
   },
   {
@@ -2548,16 +2680,16 @@
    "partial": false,
    "migrated": 1358,
    "born": 0,
-   "cum": 4098,
-   "pct_target": 82.0,
+   "cum": 4096,
+   "pct_target": 81.9,
    "pct_base": 43.7,
-   "clients_v2": 4879,
-   "clients_v3": 4098,
+   "clients_v2": 4871,
+   "clients_v3": 4096,
    "tickets_v2": 459,
    "tickets_v3": 204,
-   "ratio_v2": 0.0941,
+   "ratio_v2": 0.0942,
    "ratio_v3": 0.0498,
-   "delta": -0.0443,
+   "delta": -0.0444,
    "target_cum": 2500
   },
   {
@@ -2570,16 +2702,16 @@
    "partial": true,
    "migrated": 0,
    "born": 1,
-   "cum": 4099,
-   "pct_target": 82.0,
+   "cum": 4097,
+   "pct_target": 81.9,
    "pct_base": 43.4,
-   "clients_v2": 4946,
-   "clients_v3": 4099,
-   "tickets_v2": 144,
-   "tickets_v3": 75,
-   "ratio_v2": 0.0291,
-   "ratio_v3": 0.0183,
-   "delta": -0.0108,
+   "clients_v2": 4950,
+   "clients_v3": 4097,
+   "tickets_v2": 170,
+   "tickets_v3": 97,
+   "ratio_v2": 0.0343,
+   "ratio_v3": 0.0237,
+   "delta": -0.0106,
    "target_cum": 3000
   },
   {
@@ -2661,6 +2793,6 @@
   "W35",
   "W36"
  ],
- "refreshed_at": "03/09/2026 à 12h15",
- "refreshed_iso": "2026-09-03T12:15:41"
+ "refreshed_at": "04/09/2026 à 12h05",
+ "refreshed_iso": "2026-09-04T12:05:13"
 }

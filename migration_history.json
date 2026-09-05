@@ -302,5 +302,13 @@
   "active_v3": 3909,
   "active_unknown": 401,
   "all_v3": 4097
+ },
+ {
+  "date": "2026-09-05",
+  "active_total": 9710,
+  "active_v2": 5293,
+  "active_v3": 3928,
+  "active_unknown": 489,
+  "all_v3": 4096
  }
 ]

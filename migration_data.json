@@ -3,12 +3,12 @@
  "deadline": "2026-09-30",
  "kickoff": "2026-07-22",
  "series_start": "2026-07-13",
- "today": "2026-09-05",
- "days_left": 25,
- "weeks_left": 3.6,
+ "today": "2026-09-06",
+ "days_left": 24,
+ "weeks_left": 3.4,
  "working_days_left": 18,
  "remaining": 904,
- "rate_needed": 253,
+ "rate_needed": 264,
  "counts": {
   "active_total": 9710,
   "active_v2": 5293,
@@ -22,6 +22,36 @@
  "n_born_v3": 15,
  "portal_id": "26173790",
  "v3_tickets": [
+  {
+   "id": "432013203649",
+   "date": "2026-09-06",
+   "created": "06/09/2026 à 06h45",
+   "week": "W36"
+  },
+  {
+   "id": "432004273364",
+   "date": "2026-09-06",
+   "created": "06/09/2026 à 07h27",
+   "week": "W36"
+  },
+  {
+   "id": "431983011061",
+   "date": "2026-09-06",
+   "created": "06/09/2026 à 08h24",
+   "week": "W36"
+  },
+  {
+   "id": "431964874977",
+   "date": "2026-09-05",
+   "created": "05/09/2026 à 12h34",
+   "week": "W36"
+  },
+  {
+   "id": "431961337062",
+   "date": "2026-09-05",
+   "created": "05/09/2026 à 20h01",
+   "week": "W36"
+  },
   {
    "id": "431920647360",
    "date": "2026-09-04",
@@ -2755,11 +2785,11 @@
    "pct_base": 42.2,
    "clients_v2": 5125,
    "clients_v3": 4096,
-   "tickets_v2": 188,
-   "tickets_v3": 105,
-   "ratio_v2": 0.0367,
-   "ratio_v3": 0.0256,
-   "delta": -0.0111,
+   "tickets_v2": 201,
+   "tickets_v3": 110,
+   "ratio_v2": 0.0392,
+   "ratio_v3": 0.0269,
+   "delta": -0.0123,
    "target_cum": 3000
   },
   {
@@ -2841,6 +2871,6 @@
   "W35",
   "W36"
  ],
- "refreshed_at": "05/09/2026 à 11h34",
- "refreshed_iso": "2026-09-05T11:34:42"
+ "refreshed_at": "06/09/2026 à 11h49",
+ "refreshed_iso": "2026-09-06T11:49:08"
 }

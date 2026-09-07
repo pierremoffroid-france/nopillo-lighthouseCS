@@ -1290,8 +1290,8 @@
       <div><div class="block-sub" style="margin-bottom:6px">% Lost</div><div class="chart-wrap"><canvas id="chartN1LostEsc"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
-      <div><div class="block-sub" style="margin-bottom:6px">Délai médian de 1re réponse <span style="color:var(--muted);font-size:10px">· heures ouvrées</span></div><div class="chart-wrap"><canvas id="chartN1First"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">Délai médian entre touches <span style="color:var(--muted);font-size:10px">· échanges 2, 3, 4... · heures ouvrées</span></div><div class="chart-wrap"><canvas id="chartN1Next"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Délai médian de 1re réponse <span style="color:var(--muted);font-size:10px">· heures ouvrées · hors Immat</span></div><div class="chart-wrap"><canvas id="chartN1First"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Délai médian entre touches <span style="color:var(--muted);font-size:10px">· échanges 2, 3, 4... · heures ouvrées · hors Immat</span></div><div class="chart-wrap"><canvas id="chartN1Next"></canvas></div></div>
     </div>
   </div>
 
@@ -1323,7 +1323,7 @@
     </div>
     <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">Appels passés vs demandes de callback</div><div class="chart-wrap"><canvas id="chartICCalls"></canvas></div></div>
-      <div><div class="block-sub" style="margin-bottom:6px">Temps médian (heures) <span style="color:var(--muted);font-size:10px">· 1re réponse (ouvré) &amp; résolution complète</span></div><div class="chart-wrap"><canvas id="chartICResp"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Temps médian (heures) <span style="color:var(--muted);font-size:10px">· 1re réponse en ouvré · résolution hors apurement de backlog</span></div><div class="chart-wrap"><canvas id="chartICResp"></canvas></div></div>
     </div>
   </div>
 
@@ -7106,9 +7106,20 @@ function buildICDetail(){
     const rec = (IC_DATA[p]||[]).find(i=>i.name===name);
     return rec ? rec.resp_median_h : null;
   });
+  /* Médiane de résolution sur le RUN uniquement (fermetures < 30 j) et
+     seulement à partir de 5 fermetures. Sans ces deux garde-fous, une seule
+     vieille fermeture un jour creux affichait 2 228 h (Aaron, 06/09). */
+  const MIN_CLOSE = 5;
   const closeMedByPeriod = PERIOD_KEYS.map(p => {
     const rec = (IC_DATA[p]||[]).find(i=>i.name===name);
-    return rec ? rec.close_median_h : null;
+    if (!rec) return null;
+    const v = (rec.close_median_h_run !== undefined) ? rec.close_median_h_run : rec.close_median_h;
+    const n = (rec.close_n_run !== undefined) ? rec.close_n_run : (rec.closed || 0);
+    return n >= MIN_CLOSE ? v : null;
+  });
+  const backlogByPeriod = PERIOD_KEYS.map(p => {
+    const rec = (IC_DATA[p]||[]).find(i=>i.name===name);
+    return rec ? (rec.backlog_closed || 0) : 0;
   });
 
   destroyIfExists('chartICResp');
@@ -7116,7 +7127,14 @@ function buildICDetail(){
   or_.scales.y = { beginAtZero:true, ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, callback:v=>v+'h'}, grid:{color:C.grid}, border:{color:C.axis} };
   or_.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:false, onlyDataset:0, formatter:v=>v==null?'':v+'h' };
   or_.plugins.tooltip.callbacks = {
-    label: ctx => ` ${ctx.dataset.label} : ${ctx.parsed.y==null?'n/a':ctx.parsed.y+' h'}`
+    label: ctx => {
+      if (ctx.parsed.y == null) return ` ${ctx.dataset.label} : moins de ${MIN_CLOSE} fermetures`;
+      return ` ${ctx.dataset.label} : ${ctx.parsed.y} h`;
+    },
+    afterBody: i => {
+      const b = backlogByPeriod[i[0].dataIndex];
+      return b ? [`+ ${b} ticket${b>1?'s':''} de plus de 30 j fermé${b>1?'s':''} (apurement, hors médiane)`] : [];
+    }
   };
   chartInstances['chartICResp'] = new Chart(document.getElementById('chartICResp'), {
     data:{ labels: PERIOD_KEYS.map(p=>PERIOD_LBL[p]), datasets:[
@@ -8337,7 +8355,12 @@ function delayRows(period){
 
 function buildN1Delays(){
   const D = delayRows(n1Period);
-  const scope = careOnly(IC_DATA['30d'] || []).filter(inIcScope);
+  /* L'Immatriculation dépend de délais administratifs externes : la comparer
+     aux N1 n'a pas de sens et écrase l'échelle (Hamda, 38,5 h contre 0,3 à
+     3,7 h pour les N1). Elle est donc hors de ces deux graphes, comme elle
+     l'est déjà des graphes de tickets. */
+  const scope = careOnly(IC_DATA['30d'] || []).filter(inIcScope)
+                  .filter(a => (a.level || '').indexOf('Immat') < 0);
   const minN = (DATA.CARE_DELAYS || {}).min_n || 5;
 
   [['chartN1First', 'first_biz_h', 'first_n', 'Délai 1re réponse', SEM.sla],

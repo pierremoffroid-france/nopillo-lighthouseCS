@@ -779,6 +779,8 @@ def compute_ic_stats_split(created_tickets: list, closed_tickets: list, ic_name:
             'email_lost_pct': 0, 'callback_lost_pct': 0,
             'sla_pct': None, 'sla_n': 0, 'ces_pct': None, 'ces_n': 0,
             'touch_avg': None, 'resp_median_h': None, 'close_median_h': None,
+            'close_median_h_run': None, 'close_n_run': 0,
+            'backlog_closed': 0, 'backlog_max_days': 0,
             'callback_req': 0,
             'tl': None, 'level': None,
         }
@@ -810,6 +812,19 @@ def compute_ic_stats_split(created_tickets: list, closed_tickets: list, ic_name:
     close_vals.sort()
     close_median_h = round(_median(close_vals), 1) if close_vals else None
 
+# === BACKLOG vs RUN (patch_refresh_backlog) ===
+    # Un ticket de six mois fermé aujourd'hui n'est pas une résolution, c'est
+    # de l'apurement. On sépare les deux : sans ça, une seule vieille fermeture
+    # un jour creux fait exploser la médiane (Aaron, 06/09 : 2 228,8 h sur
+    # 2 fermetures dont une de 186 jours).
+    RUN_MAX_H = 30 * 24
+    run_vals = [v for v in close_vals if v <= RUN_MAX_H]
+    backlog_vals = [v for v in close_vals if v > RUN_MAX_H]
+    close_median_h_run = round(_median(run_vals), 1) if run_vals else None
+    close_n_run = len(run_vals)
+    backlog_closed = len(backlog_vals)
+    backlog_max_days = round(max(backlog_vals) / 24) if backlog_vals else 0
+
     return {
         'name': ic_name,
         'total': created_count,
@@ -829,6 +844,10 @@ def compute_ic_stats_split(created_tickets: list, closed_tickets: list, ic_name:
         'touch_avg': round(sum(touch_vals) / len(touch_vals), 1) if touch_vals else None,
         'resp_median_h': resp_median_h,
         'close_median_h': close_median_h,
+        'close_median_h_run': close_median_h_run,
+        'close_n_run': close_n_run,
+        'backlog_closed': backlog_closed,
+        'backlog_max_days': backlog_max_days,
         'callback_req': callback_req,
     }
 

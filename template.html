@@ -1156,11 +1156,11 @@
 
   <div class="block">
     <div class="block-header">
-      <div><h3 class="block-title">Délais de réponse · département<span class="source-tag">engagement email · heures ouvrées</span></h3><div class="block-sub">1re réponse = SLA · entre touches = échanges 2, 3, 4... d'un même ticket · hors Immat</div></div>
+      <div><h3 class="block-title">Délais de réponse · département<span class="source-tag">engagement email · heures ouvrées</span></h3><div class="block-sub">Médiane département · 1re réponse = SLA · entre touches = échanges 2, 3, 4... d'un même ticket</div></div>
       <div class="block-actions">
-        <span class="chip active" data-delayperiod="periods">Par période</span>
-        <span class="chip" data-delayperiod="ic">Par IC · 30 jours</span>
-        <span class="chip" data-delayperiod="ic3m">Par IC · 3 mois</span>
+        <span class="chip active" data-delayperiod="days">30 derniers jours</span>
+        <span class="chip" data-delayperiod="weeks">Semaines 2026 YTD</span>
+        <span class="chip" data-delayperiod="months">Mois depuis jan 2025</span>
       </div>
     </div>
     <div class="chart-wrap lg"><canvas id="chartDelayVolume"></canvas></div>
@@ -8363,7 +8363,7 @@ function buildN1CareBars(){
 
 
 /* ===== Onglet Volume · délais de réponse, département ===== */
-let delayPeriod = 'periods';
+let delayPeriod = 'days';
 document.querySelectorAll('[data-delayperiod]').forEach(function(chip){
   chip.addEventListener('click', function(){
     document.querySelectorAll('[data-delayperiod]').forEach(function(c){ c.classList.remove('active'); });
@@ -8375,60 +8375,43 @@ function buildDelayVolume(){
   const id = 'chartDelayVolume'; destroyIfExists(id);
   const el = document.getElementById(id); if (!el) return;
   const note = document.getElementById('delayVolumeNote');
-  const DL = (DATA.CARE_DELAYS || {});
-  const minN = DL.min_n || 5;
-  if (!DL.by_period){ emptyChart(id, "Délais non collectés"); if (note) note.textContent = ''; return; }
+  /* Séries datées produites par care_activity : les écarts sont stockés jour
+     par jour dans care_history.json, seule façon d'avoir une vraie médiane
+     département en quotidien, hebdo et mensuel. */
+  const SRC = { days:   [DATA.CARE_DELAY_DAYS,   'days'],
+                weeks:  [DATA.CARE_DELAY_WEEKS,  'weeks'],
+                months: [DATA.CARE_DELAY_MONTHS, 'months'] }[delayPeriod];
+  const D = SRC && SRC[0], key = SRC && SRC[1];
 
-  /* Médiane département : médiane des médianes par IC. Les écarts individuels
-     ne sont pas exposés, c'est donc la meilleure approche disponible. */
-  const medOf = function(arr){
-    const v = arr.filter(function(x){ return x != null; }).sort(function(a,b){ return a-b; });
-    if (!v.length) return null;
-    const n = v.length;
-    return +((n % 2) ? v[(n-1)/2] : (v[n/2-1] + v[n/2]) / 2).toFixed(1);
-  };
-  const notImmat = function(r){ return (r.level || '').indexOf('Immat') < 0; };
-
-  let labels, first, next, footer;
-
-  if (delayPeriod === 'periods'){
-    const per = ['lastbizday','thisweek','lastweek','30d','3m'];
-    const lbl = {lastbizday:'Dernier j. ouvré', thisweek:'Cette semaine',
-                 lastweek:'Semaine dernière', '30d':'30 derniers jours', '3m':'3 derniers mois'};
-    labels = per.map(function(p){ return lbl[p]; });
-    first = per.map(function(p){ return medOf((DL.by_period[p]||[]).filter(notImmat).map(function(r){ return r.first_biz_h; })); });
-    next  = per.map(function(p){ return medOf((DL.by_period[p]||[]).filter(notImmat).map(function(r){ return r.next_biz_h; })); });
-    const n30 = (DL.by_period['30d']||[]).filter(notImmat);
-    footer = 'Médiane des médianes par IC · ' +
-             n30.reduce(function(a,r){ return a + (r.first_n||0); }, 0) + ' premières réponses et ' +
-             n30.reduce(function(a,r){ return a + (r.next_n||0); }, 0) + ' réponses suivantes sur 30 jours.';
-  } else {
-    const p = (delayPeriod === 'ic3m') ? '3m' : '30d';
-    const rows = (DL.by_period[p]||[]).filter(notImmat)
-      .slice().sort(function(a,b){ return (a.next_biz_h == null) - (b.next_biz_h == null) || (a.next_biz_h||0) - (b.next_biz_h||0); });
-    labels = rows.map(function(r){ return r.name; });
-    first = rows.map(function(r){ return r.first_biz_h; });
-    next  = rows.map(function(r){ return r.next_biz_h; });
-    footer = 'Une barre vide signifie moins de ' + minN + ' mesures sur la période.';
+  if (!D || !D[key] || !D[key].length){
+    emptyChart(id, "Écarts de réponse non encore collectés sur cette profondeur");
+    if (note) note.textContent = "L'historique des délais se construit jour par jour. "
+      + "Lance une fois `python3 care_activity.py --backfill-delays` pour rattraper le passé.";
+    return;
   }
 
   const o = withRotatedX(legendOn(baseOpts()));
-  o.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:false,
-    formatter: function(v){ return v == null ? '' : v + 'h'; } };
+  o.plugins.dataLabels = { enabled: D[key].length <= 24, fontSize:8, color:C.labelText,
+    rotate:true, formatter: function(v){ return v == null ? '' : v + 'h'; } };
   o.scales.y = { beginAtZero:true, grid:{color:C.grid}, border:{color:C.axis},
     ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, callback:function(v){ return v+'h'; }} };
   o.plugins.tooltip.callbacks = { label: function(ctx){
-    return ctx.parsed.y == null
-      ? (' ' + ctx.dataset.label + ' : moins de ' + minN + ' mesures')
-      : (' ' + ctx.dataset.label + ' : ' + ctx.parsed.y + ' h ouvrées');
+      const i = ctx.dataIndex;
+      const n = (ctx.datasetIndex === 0 ? D.n_first : D.n_next)[i];
+      if (ctx.parsed.y == null) return ' ' + ctx.dataset.label + ' : aucune mesure';
+      return ' ' + ctx.dataset.label + ' : ' + ctx.parsed.y + ' h ouvrées · ' + n + ' mesures';
   }};
-  if (note) note.textContent = footer;
+
+  const tf = D.n_first.reduce(function(a,b){ return a+b; }, 0);
+  const tn = D.n_next.reduce(function(a,b){ return a+b; }, 0);
+  if (note) note.textContent = D[key].length + ' points · ' + tf
+    + ' premières réponses et ' + tn + ' réponses suivantes mesurées.';
 
   chartInstances[id] = new Chart(el, {
     type:'bar',
-    data:{ labels: labels, datasets:[
-      { label:'1re réponse', data: first, backgroundColor: semBg(SEM.sla), borderColor: SEM.sla, borderWidth:1.5, borderRadius:3 },
-      { label:'Entre touches', data: next, backgroundColor: semBg(C.orange), borderColor: C.orange, borderWidth:1.5, borderRadius:3 }
+    data:{ labels: D[key], datasets:[
+      { label:'1re réponse', data: D.first, backgroundColor: semBg(SEM.sla), borderColor: SEM.sla, borderWidth:1.5, borderRadius:3 },
+      { label:'Entre touches', data: D.next, backgroundColor: semBg(C.orange), borderColor: C.orange, borderWidth:1.5, borderRadius:3 }
     ]},
     options: o
   });

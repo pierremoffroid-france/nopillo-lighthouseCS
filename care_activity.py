@@ -64,6 +64,12 @@ CALL_OK_MIN_S = 30
 HISTORY_FILE = 'care_history.json'
 HISTORY_FROM = '2025-01-01'
 HISTORY_BACKFILL_MAX_DAYS = 45   # plafond par run hors --backfill
+
+# Écarts de réponse stockés jour par jour dans l'historique. Nécessaire pour
+# afficher le délai du département au jour le jour, en hebdo et en mensuel :
+# un délai se mesure par ticket et ne peut pas être déduit d'un agrégat.
+# Coût : une recherche et un lot d'associations de plus par jour collecté.
+COLLECT_DAY_DELAYS = True
 PAGE_LIMIT = 200          # pagination search (100 -> 200 : moitié moins d'appels)
 
 # Plancher de relance. Deux mails sortants séparés de moins de ce délai
@@ -378,9 +384,58 @@ def missing_days(hist, start, end):
     return out
 
 
-def fetch_day_counts(api, care_ids, day):
+def day_delays(api, care_ids, day, lookback=3):
+    """Écarts de réponse dont le mail SORTANT tombe sur `day`.
+
+    Un délai se mesure entre un mail client entrant et la réponse de l'IC :
+    l'entrant peut être antérieur, d'où la fenêtre de rattrapage. On ne garde
+    que les paires dont le sortant est sur le jour demandé, pour éviter tout
+    double comptage entre jours voisins.
+
+    Renvoie {'first': [heures ouvrées...], 'next': [...]}.
+    """
+    d0 = datetime.datetime.combine(day, datetime.time.min)
+    start = d0 - datetime.timedelta(days=lookback)
+    end = d0 + datetime.timedelta(days=1)
+
+    rows = api.search('emails', [
+        {'propertyName': 'hs_email_direction', 'operator': 'IN',
+         'values': ['EMAIL', 'INCOMING_EMAIL']},
+        {'propertyName': 'hubspot_owner_id', 'operator': 'IN', 'values': care_ids},
+        {'propertyName': 'hs_timestamp', 'operator': 'GTE', 'value': ms(start)},
+        {'propertyName': 'hs_timestamp', 'operator': 'LT', 'value': ms(end)},
+    ], ['hs_timestamp', 'hubspot_owner_id', 'hs_email_direction'])
+    if not rows:
+        return {'first': [], 'next': []}
+
+    e2t = api.assoc('emails', 'tickets', [r['id'] for r in rows])[0]
+    by_ticket = defaultdict(list)
+    for r in rows:
+        tid = e2t.get(r['id'])
+        ts = parse_ts(r['properties'].get('hs_timestamp'))
+        if tid and ts:
+            by_ticket[tid].append((ts, r['properties'].get('hs_email_direction') == 'EMAIL'))
+
+    out = {'first': [], 'next': []}
+    for evts in by_ticket.values():
+        evts.sort(key=lambda x: x[0])
+        pending, answered = None, False
+        for ts, is_out in evts:
+            if not is_out:
+                pending = ts
+                continue
+            if pending is not None:
+                if ts.date() == day:          # seul le sortant du jour compte
+                    h = biz_hours_between(pending, ts)
+                    out['next' if answered else 'first'].append(round(h, 2))
+                answered = True
+                pending = None
+    return out
+
+
+def fetch_day_counts(api, care_ids, day, with_delays=False):
     """Compteurs d'un seul jour : emails sortants/entrants et appels par IC,
-    plus la ventilation horaire. Un seul appel de recherche par objet."""
+    plus la ventilation horaire, et si demandé les écarts de réponse."""
     d0 = datetime.datetime.combine(day, datetime.time.min)
     d1 = d0 + datetime.timedelta(days=1)
     ic = defaultdict(lambda: {'sent': 0, 'recv': 0, 'call_ok': 0, 'call_try': 0})
@@ -419,8 +474,10 @@ def fetch_day_counts(api, care_ids, day):
         if ts:
             hours['calls'][ts.hour] += 1
 
+    delays = day_delays(api, care_ids, day) if with_delays else None
     return ({k: v for k, v in ic.items()},
-            {'mails': dict(hours['mails']), 'calls': dict(hours['calls'])})
+            {'mails': dict(hours['mails']), 'calls': dict(hours['calls'])},
+            delays)
 
 
 def build_history_series(hist, name_of, ref):
@@ -507,6 +564,36 @@ def build_history_series(hist, name_of, ref):
                 'out_of_range_pct': round(sum(n for h, n in m.items()
                                               if h < 8 or h >= 19) / tot * 100, 1)}
 
+    # --- délais du département : jour, semaine, mois (vraies médianes)
+    def med_of(vals):
+        v = sorted(x for x in vals if x is not None)
+        if not v:
+            return None
+        n = len(v)
+        return round(v[n // 2] if n % 2 else (v[n // 2 - 1] + v[n // 2]) / 2, 1)
+
+    def delay_block(groups, label_key):
+        labels, first, nxt, nf, nn = [], [], [], [], []
+        for lbl, keys in groups:
+            f, x = [], []
+            for k in keys:
+                dd = hist['days'][k].get('delays') or {}
+                f += dd.get('first') or []
+                x += dd.get('next') or []
+            labels.append(lbl)
+            first.append(med_of(f)); nxt.append(med_of(x))
+            nf.append(len(f)); nn.append(len(x))
+        return {label_key: labels, 'first': first, 'next': nxt,
+                'n_first': nf, 'n_next': nn}
+
+    d30_keys = [(datetime.date.fromisoformat(k).strftime('%d/%m'), [k])
+                for k in d30 if k in hist['days']]
+    delay_days = delay_block(d30_keys, 'days')
+    delay_weeks = delay_block([(w, byw[w]) for w in weeks
+                               if w.startswith(str(ref.year)[2:])], 'weeks')
+    delay_months = delay_block([(m, bym[m]) for m in months], 'months')
+    has_delays = any(v is not None for v in delay_months['first'])
+
     y = ref.year
     hourly_by_period = {
         'weeks': hours_for([k for k in days if datetime.date.fromisoformat(k).year == y]),
@@ -517,6 +604,10 @@ def build_history_series(hist, name_of, ref):
         'CARE_CALL_DAYS': call_days, 'CARE_CALL_WEEKS': cw, 'CARE_CALL_MONTHS': cm,
         'CARE_IC_HISTORY': per_ic,
         'CARE_HOURLY_BY_PERIOD': hourly_by_period,
+        'CARE_DELAY_DAYS': delay_days if has_delays else None,
+        'CARE_DELAY_WEEKS': delay_weeks if has_delays else None,
+        'CARE_DELAY_MONTHS': delay_months if has_delays else None,
+        'CARE_DELAY_HISTORY_DAYS': sum(1 for k in hist['days'] if hist['days'][k].get('delays')),
     }
 
 # ============================================================
@@ -879,7 +970,7 @@ def compute_ces(subs, ic, ref, ic_all=None):
 # ORCHESTRATION
 # ============================================================
 def compute_care_activity(token, ic_map_raw, ref_now=None, verbose=False,
-                          history_dir=None, backfill=False):
+                          history_dir=None, backfill=False, backfill_delays=False):
     """ic_map_raw : liste de dicts {owner_id, name, tl, level, active}
     (le contenu de ic_config.json, ou la table reconstruite par refresh.py)."""
     ref = ref_now or datetime.datetime.now()
@@ -945,14 +1036,25 @@ def compute_care_activity(token, ic_map_raw, ref_now=None, verbose=False,
     h_start = max(datetime.datetime.fromisoformat(HISTORY_FROM),
                   ref - datetime.timedelta(days=365 * 3))
     todo = missing_days(hist, h_start, ref)
-    cap = len(todo) if backfill else min(len(todo), HISTORY_BACKFILL_MAX_DAYS)
+    if backfill_delays:
+        # Jours déjà collectés mais sans écarts de réponse : on les rejoue.
+        extra = [datetime.date.fromisoformat(k) for k in sorted(hist['days'])
+                 if not hist['days'][k].get('delays')
+                 and datetime.date.fromisoformat(k) >= h_start.date()]
+        todo = sorted(set(todo) | set(extra))
+        log(f"  rattrapage délais  {len(extra)} jours sans écarts en base")
+    cap = len(todo) if (backfill or backfill_delays) else min(len(todo), HISTORY_BACKFILL_MAX_DAYS)
     if cap < len(todo):
         todo = todo[-cap:] if not backfill else todo
     log(f"  historique        {len(hist['days'])} jours en base · {len(todo)} à compléter"
         + ("  (backfill)" if backfill else ""))
     for n, day in enumerate(todo, 1):
-        ic_counts, hours = fetch_day_counts(api, care_ids, day)
-        hist['days'][day.isoformat()] = {'ic': ic_counts, 'hours': hours}
+        ic_counts, hours, delays = fetch_day_counts(api, care_ids, day,
+                                                    with_delays=COLLECT_DAY_DELAYS)
+        rec = {'ic': ic_counts, 'hours': hours}
+        if delays is not None:
+            rec['delays'] = delays
+        hist['days'][day.isoformat()] = rec
         if verbose and (n % 20 == 0 or n == len(todo)):
             log(f"    {n}/{len(todo)} jours ({day})")
     hist['meta'] = {'updated_at': ref.strftime('%Y-%m-%d %H:%M'),
@@ -1010,7 +1112,9 @@ def _standalone():
     ic_raw = json.loads(ic_path.read_text(encoding='utf-8'))['ic_map']
 
     backfill = '--backfill' in sys.argv
-    data = compute_care_activity(token, ic_raw, verbose=True, backfill=backfill)
+    bfd = '--backfill-delays' in sys.argv
+    data = compute_care_activity(token, ic_raw, verbose=True,
+                                 backfill=backfill, backfill_delays=bfd)
 
     outp = SCRIPT_DIR / 'care_activity.json'
     outp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')

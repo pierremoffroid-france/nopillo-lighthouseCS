@@ -963,7 +963,7 @@
       </div>
       <!-- M4 : Touchpoints envoyés aujourd'hui / IC -->
       <div class="charge-metric charge-metric-no-status">
-        <div class="charge-metric-label">✉️ Touchpoints envoyés<br>(par IC actif hier)</div>
+        <div class="charge-metric-label">✉️ Touchpoints envoyés<br>(par IC actif)</div>
         <div class="charge-metric-value-row">
           <div class="charge-metric-value" id="chargeM4Value">—</div>
           <div class="charge-metric-unit">/ IC</div>
@@ -972,7 +972,7 @@
       </div>
       <!-- M5 : Appels aboutis aujourd'hui / IC -->
       <div class="charge-metric charge-metric-no-status">
-        <div class="charge-metric-label">📞 Appels aboutis<br>(par IC actif hier)</div>
+        <div class="charge-metric-label">📞 Appels aboutis<br>(par IC actif)</div>
         <div class="charge-metric-value-row">
           <div class="charge-metric-value" id="chargeM5Value">—</div>
           <div class="charge-metric-unit">/ IC</div>
@@ -1336,7 +1336,7 @@
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th class="left">IC</th><th class="left">TL</th><th class="left">Niveau</th><th>Créés</th><th>Fermés</th><th>SLA 1st</th><th>CES prom.</th><th title="Nombre moyen d'échanges enregistrés par ticket fermé">Touch/ticket</th><th title="Emails sortants envoyés sur la période (volume de travail réel)">Envoyés</th><th title="Appels sortants aboutis, durée ≥ 30 s">Appels</th><th title="% tickets clos en stage LOST [NE PAS UTILISER] · stage banni depuis 22/04/2026">% Lost</th></tr></thead>
+        <thead><tr><th class="left">IC</th><th class="left">TL</th><th class="left">Niveau</th><th>Créés</th><th>Fermés</th><th>SLA 1st</th><th title="Médiane du délai de 1re réponse, heures ouvrées">1re rép.</th><th title="Médiane du délai de réponse sur les échanges 2, 3, 4... d'un même ticket, heures ouvrées">Entre touches</th><th>CES prom.</th><th title="Nombre de réponses CES reçues sur la période">n CES</th><th title="Notes 6 et 7">Prom.</th><th title="Note 5">Neutres</th><th title="Notes 1 à 4">Détract.</th><th title="Nombre moyen d'échanges enregistrés par ticket fermé">Touch/ticket</th><th title="Emails sortants envoyés sur la période">Envoyés</th><th title="Appels sortants aboutis, durée ≥ 30 s">Appels</th><th title="% tickets clos en stage LOST · stage banni depuis 22/04/2026">% Lost</th></tr></thead>
         <tbody id="icN1TableBody"></tbody>
       </table>
     </div>
@@ -5937,14 +5937,21 @@ function icScopeRefresh(){
     info.textContent = `${n} IC · ${scopeLabel()}`;
   }
 }
-document.querySelectorAll('[data-icscope]').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('[data-icscope]').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    IC_SCOPE = chip.dataset.icscope;
-    icScopeRefresh();
-  });
-});
+/* Deux jeux de puces existent : le périmètre en haut de l'onglet et le filtre
+   TL du tableau détaillé, plus bas. Ils commandent la MÊME variable et se
+   synchronisent, sinon l'un des deux ne répond plus (bug constaté le 07/09). */
+function setIcScope(v){
+  IC_SCOPE = v; IC_PICK = '';
+  document.querySelectorAll('[data-icscope]').forEach(c =>
+    c.classList.toggle('active', c.dataset.icscope === v));
+  document.querySelectorAll('[data-team]').forEach(c =>
+    c.classList.toggle('active', c.dataset.team === v));
+  icScopeRefresh();
+}
+document.querySelectorAll('[data-icscope]').forEach(chip =>
+  chip.addEventListener('click', () => setIcScope(chip.dataset.icscope)));
+document.querySelectorAll('[data-team]').forEach(chip =>
+  chip.addEventListener('click', () => setIcScope(chip.dataset.team)));
 
 
 /* ============ #4 PARAMÈTRES — éditeur affectation IC ============ */
@@ -7103,12 +7110,7 @@ document.querySelectorAll('[data-tableperiod]').forEach(chip=>{
     chip.classList.add('active'); n1TablePeriod = chip.dataset.tableperiod; renderICTable();
   });
 });
-document.querySelectorAll('[data-team]').forEach(chip=>{
-  chip.addEventListener('click',()=>{
-    document.querySelectorAll('[data-team]').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active'); n1TeamFilter = chip.dataset.team; renderICTable();
-  });
-});
+/* ancien handler data-team retiré : voir setIcScope() plus haut */
 
 function renderICTable(){
   const tbody = document.getElementById('icN1TableBody'); if (!tbody) return;
@@ -7121,11 +7123,39 @@ function renderICTable(){
   let T = {created:0,closed:0,slaS:0,slaN:0,cesS:0,cesN:0,touchS:0,touchN:0,lost:0,sent:0,calls:0};
   /* Touchpoints et appels viennent du module Care, indexés par nom d'IC sur la
      même période que le tableau. Un tiret = période non collectée, pas zéro. */
-  const _tMap = {}, _cMap = {};
-  ((DATA.CARE_TOUCH && DATA.CARE_TOUCH[n1TablePeriod]) || []).forEach(r => _tMap[r.name] = r.sent);
-  (((DATA.CARE_CALLS && DATA.CARE_CALLS[n1TablePeriod]) || {}).ics || []).forEach(r => _cMap[r.name] = r.n);
-  const _sent  = n => { const v=_tMap[n]; if(v==null) return '<span style="color:var(--muted)">—</span>'; T.sent+=v; return v; };
-  const _calls = n => { const v=_cMap[n]; if(v==null) return '<span style="color:var(--muted)">—</span>'; T.calls+=v; return v; };
+  const _tMap = {}, _cMap = {}, _dMap = {};
+  const _SRC = (typeof careRowsFor === 'function') ? careRowsFor(n1TablePeriod) : {touch:{}, calls:{}};
+  Object.keys(_SRC.touch).forEach(n => _tMap[n] = _SRC.touch[n].sent);
+  Object.keys(_SRC.calls).forEach(n => _cMap[n] = _SRC.calls[n].n);
+  (((DATA.CARE_DELAYS || {}).by_period || {})[n1TablePeriod] || []).forEach(r => _dMap[r.name] = r);
+  const dash = '<span style="color:var(--muted)">—</span>';
+  const _sent  = n => { const v=_tMap[n]; if(v==null) return dash; T.sent+=v; return v; };
+  const _calls = n => { const v=_cMap[n]; if(v==null) return dash; T.calls+=v; return v; };
+  /* Délais : médiane par IC en heures ouvrées, tiret sous 5 mesures. */
+  const _delay = (n, key) => {
+    const r = _dMap[n]; if (!r || r[key] == null) return dash;
+    return `<span title="${r[key.replace('_biz_h','_n')] || ''} mesures">${r[key]}h</span>`;
+  };
+  /* CES par IC : recalculé depuis le détail des réponses pour suivre la
+     période du tableau, alors que CARE_CES.by_ic porte sur 90 jours fixes. */
+  const _ces = (function(){
+    const out = {};
+    const rows = ((DATA.CARE_CES || {}).responses) || [];
+    const bounds = { today:0, yesterday:1, thisweek:7, lastweek:14, '30d':30, '3m':92 }[n1TablePeriod] || 30;
+    const limit = new Date(Date.now() - bounds * 864e5);
+    rows.forEach(r => {
+      if (bounds && new Date(r.ts) < limit) return;
+      const v = out[r.ic] || (out[r.ic] = {n:0, prom:0, neut:0, detr:0});
+      v.n++;
+      if (r.note >= 6) v.prom++; else if (r.note === 5) v.neut++; else v.detr++;
+    });
+    return out;
+  })();
+  const _cesCell = (n, key) => {
+    const v = _ces[n]; if (!v) return dash;
+    T['ces_' + key] = (T['ces_' + key] || 0) + v[key];
+    return v[key];
+  };
   tbody.innerHTML = filtered.map(a => {
     T.created += a.created; T.closed += a.closed; T.lost += a.lost;
     if(a.sla_pct != null && a.sla_n>0){T.slaS+=a.sla_pct*a.sla_n; T.slaN+=a.sla_n;}
@@ -7136,7 +7166,14 @@ function renderICTable(){
       <td><span class="tl-pill ${a.tl}">${a.tl === 'cyrielle' ? 'Cyrielle' : 'Noémie'}</span></td>
       <td><span class="level-pill">${a.level}</span></td>
       <td>${a.created}</td><td>${a.closed}</td>
-      ${cellSLA(a.sla_pct)}${cellCES(a.ces_pct, a.ces_n)}
+      ${cellSLA(a.sla_pct)}
+      <td>${_delay(a.name,'first_biz_h')}</td>
+      <td>${_delay(a.name,'next_biz_h')}</td>
+      ${cellCES(a.ces_pct, a.ces_n)}
+      <td>${_cesCell(a.name,'n')}</td>
+      <td>${_cesCell(a.name,'prom')}</td>
+      <td>${_cesCell(a.name,'neut')}</td>
+      <td>${_cesCell(a.name,'detr')}</td>
       <td>${a.touch_avg == null?'—':a.touch_avg.toFixed(1)}</td>
       <td>${_sent(a.name)}</td>
       <td>${_calls(a.name)}</td>
@@ -7147,7 +7184,13 @@ function renderICTable(){
     <td></td><td></td>
     <td>${T.created}</td><td>${T.closed}</td>
     <td>${T.slaN ? (T.slaS/T.slaN).toFixed(1)+'%' : '—'}</td>
-    <td>${T.cesN ? (T.cesS/T.cesN).toFixed(0)+'%' : '—'}</td>
+    <td>${dash}</td>
+    <td>${dash}</td>
+    ${T.cesN ? cellCES(T.cesS/T.cesN, T.cesN) : '<td class="cell-muted">—</td>'}
+    <td>${T.ces_n || '—'}</td>
+    <td>${T.ces_prom || '—'}</td>
+    <td>${T.ces_neut || '—'}</td>
+    <td>${T.ces_detr || '—'}</td>
     <td>${T.touchN ? (T.touchS/T.touchN).toFixed(1) : '—'}</td>
     <td>${T.sent || '—'}</td>
     <td>${T.calls || '—'}</td>
@@ -8317,22 +8360,24 @@ function renderHeroCare(){
 function renderChargeCare(){
   const T = careTouch(), K = careCalls();
   const set = (id, v) => { const e=document.getElementById(id); if(e) e.textContent = v; };
-  /* Dénominateur : IC ayant réellement produit hier. Même logique que M1/M3,
-     sinon les congés écrasent la moyenne. */
-  const activeYesterday = (T && T.yesterday) ? T.yesterday.filter(r=>r.sent>0).length : 0;
+  /* Référence = dernier jour OUVRÉ, pas la veille calendaire : un lundi, "hier"
+     doit renvoyer au vendredi. Repli sur 'yesterday' si le module est ancien. */
+  const REF = (T && T.lastbizday) ? 'lastbizday' : 'yesterday';
+  const refRows = (T && T[REF]) || [];
+  const activeRef = refRows.filter(r=>r.sent>0).length;
 
-  if (T && T.today && activeYesterday){
-    const tot = T.today.reduce((s,r)=>s+r.sent,0);
-    const totY = (T.yesterday||[]).reduce((s,r)=>s+r.sent,0);
-    set('chargeM4Value', (tot/activeYesterday).toFixed(1));
-    set('chargeM4Ref', `${tot} envois au total · ${activeYesterday} IC actifs hier · hier ${(totY/activeYesterday).toFixed(1)}/IC`);
+  if (T && T.today && activeRef){
+    const tot  = T.today.reduce((s,r)=>s+r.sent,0);
+    const totR = refRows.reduce((s,r)=>s+r.sent,0);
+    set('chargeM4Value', (tot/activeRef).toFixed(1));
+    set('chargeM4Ref', `${tot} envois au total · ${activeRef} IC actifs · réf. ${(totR/activeRef).toFixed(1)}/IC`);
   } else { set('chargeM4Value','—'); set('chargeM4Ref','en attente du module Care'); }
 
-  if (K && K.today && activeYesterday){
-    const tot = K.today.total || 0;
-    const totY = (K.yesterday && K.yesterday.total) || 0;
-    set('chargeM5Value', (tot/activeYesterday).toFixed(1));
-    set('chargeM5Ref', `${tot} appels au total · ${activeYesterday} IC actifs hier · hier ${(totY/activeYesterday).toFixed(1)}/IC`);
+  if (K && K.today && activeRef){
+    const tot  = K.today.total || 0;
+    const totR = (K[REF] && K[REF].total) || 0;
+    set('chargeM5Value', (tot/activeRef).toFixed(1));
+    set('chargeM5Ref', `${tot} appels au total · ${activeRef} IC actifs · réf. ${(totR/activeRef).toFixed(1)}/IC`);
   } else { set('chargeM5Value','—'); set('chargeM5Ref','en attente du module Care'); }
 }
 

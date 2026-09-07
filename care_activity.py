@@ -74,7 +74,7 @@ PORTAL_ID = '26173790'
 TICKET_URL = 'https://app.hubspot.com/contacts/' + PORTAL_ID + '/record/0-5/{}'
 
 CARE_LEVELS = ('N1', 'N2', 'Immat', 'N1+Liasses')
-PERIODS = ('today', 'yesterday', 'thisweek', 'lastweek', '30d')
+PERIODS = ('today', 'yesterday', 'lastbizday', 'thisweek', 'lastweek', '30d')
 
 # Fallback des libellés de disposition si /calling/v1/dispositions échoue.
 # Les GUID non résolus sont affichés tronqués plutôt que devinés.
@@ -229,6 +229,14 @@ def period_bounds(period, ref):
         return d0, None
     if period == 'yesterday':
         return d0 - datetime.timedelta(days=1), d0
+    if period == 'lastbizday':
+        # Dernier jour ouvré strictement avant aujourd'hui : un lundi, "hier"
+        # doit renvoyer au vendredi, sinon le dénominateur "IC actif hier"
+        # tombe sur un week-end et la moyenne par IC n'a plus de sens.
+        d = d0 - datetime.timedelta(days=1)
+        while d.weekday() >= 5:
+            d -= datetime.timedelta(days=1)
+        return d, d + datetime.timedelta(days=1)
     if period == 'thisweek':
         return d0 - datetime.timedelta(days=d0.weekday()), None
     if period == 'lastweek':
@@ -272,7 +280,9 @@ def fetch_emails(api, care_ids, start, days):
     'temps entre touchpoints' mesure le délai de réponse du CLIENT, pas celui
     de l'IC (constat de l'audit du 28/08 : Aaron 0,8h vs Athalia 26,8h)."""
     out = []
-    for d in range(days):
+    # range(days + 1) : sans le +1 la boucle s'arrête la veille et la période
+    # "today" ressort toujours à zéro (bug constaté le 31/08).
+    for d in range(days + 1):
         d0 = start + datetime.timedelta(days=d)
         d1 = d0 + datetime.timedelta(days=1)
         out += api.search('emails', [
@@ -287,7 +297,7 @@ def fetch_emails(api, care_ids, start, days):
 
 def fetch_calls(api, care_ids, start, days):
     out = []
-    for d in range(days):
+    for d in range(days + 1):        # idem : la journée en cours doit être couverte
         d0 = start + datetime.timedelta(days=d)
         d1 = d0 + datetime.timedelta(days=1)
         out += api.search('calls', [
@@ -348,8 +358,9 @@ def save_history(path, hist):
 
 
 def missing_days(hist, start, end):
-    """Jours ouvrés absents de l'historique entre start et end (exclus du jour même,
-    qui est toujours recalculé depuis la fenêtre glissante)."""
+    """Jours ouvrés absents de l'historique entre start et end. Le jour en cours
+    est exclu : il n'est pas terminé, on le recalcule à chaque refresh depuis la
+    fenêtre glissante plutôt que de figer une valeur partielle."""
     out, d = [], start.date()
     last = end.date()
     while d < last:
@@ -680,21 +691,30 @@ def compute_delays(emails, e2t, ic, care_ids, ref):
             by_ticket[tid].append((ts, p.get('hubspot_owner_id'),
                                    p.get('hs_email_direction') == 'EMAIL'))
 
-    reply = defaultdict(list)      # oid → [(ts, raw_h, biz_h)]
+    reply = defaultdict(list)       # toutes les réponses : oid → [(ts, raw_h, biz_h)]
+    reply_first = defaultdict(list)  # 1re réponse du ticket (= SLA)
+    reply_next = defaultdict(list)   # réponses 2, 3, 4... : le "délai entre touches"
     relance = defaultdict(list)
     skipped = {'n': 0}             # doubles envois écartés par le plancher
     for evts in by_ticket.values():
         evts.sort(key=lambda x: x[0])
         pending_in = None
         prev_out = None
+        answered_once = False     # la 1re réponse du ticket est déjà comptée ?
         for ts, oid, is_out in evts:
             if not is_out:
                 pending_in = ts
                 prev_out = None
                 continue
             if pending_in is not None:
-                reply[oid].append((ts, (ts - pending_in).total_seconds() / 3600,
-                                   biz_hours_between(pending_in, ts)))
+                pair = (ts, (ts - pending_in).total_seconds() / 3600,
+                        biz_hours_between(pending_in, ts))
+                reply[oid].append(pair)
+                # Séparation demandée le 07/09 : la 1re réponse est déjà suivie
+                # par le SLA. Le "délai entre touches" ne doit mesurer que les
+                # échanges suivants, sinon les deux indicateurs se doublonnent.
+                (reply_first if not answered_once else reply_next)[oid].append(pair)
+                answered_once = True
                 pending_in = None
             elif prev_out is not None:
                 raw_h = (ts - prev_out).total_seconds() / 3600
@@ -704,32 +724,55 @@ def compute_delays(emails, e2t, ic, care_ids, ref):
                     skipped['n'] += 1
             prev_out = ts
 
+    MIN_N = 5   # sous 5 mesures, une médiane n'a pas de sens : on affiche un tiret
+
+    def med(vals, i, n=MIN_N):
+        v = [x[i] for x in vals]
+        return round(median(v), 1) if len(v) >= n else None
+
     by_period = {}
     for period in PERIODS:
         rows = []
         for oid in care_ids:
-            rp = [(r, b) for ts, r, b in reply[oid] if in_period(ts, period, ref)]
-            rl = [(r, b) for ts, r, b in relance[oid] if in_period(ts, period, ref)]
+            keep = lambda src: [(r, b) for ts, r, b in src[oid] if in_period(ts, period, ref)]
+            rp, rf, rn, rl = keep(reply), keep(reply_first), keep(reply_next), keep(relance)
             rows.append({
                 'name': ic[oid]['name'],
                 'level': ic[oid]['level'],
+                'tl': ic[oid].get('tl', ''),
+                # toutes réponses confondues (rétrocompat)
                 'reply_n': len(rp),
-                'reply_raw_h': round(median([r for r, _ in rp]), 1) if len(rp) >= 5 else None,
-                'reply_biz_h': round(median([b for _, b in rp]), 1) if len(rp) >= 5 else None,
-                'reply_p75_biz': round(pct_at([b for _, b in rp], 0.75), 1) if len(rp) >= 5 else None,
+                'reply_raw_h': med(rp, 0),
+                'reply_biz_h': med(rp, 1),
+                'reply_p75_biz': round(pct_at([b for _, b in rp], 0.75), 1) if len(rp) >= MIN_N else None,
+                # 1re réponse du ticket = SLA
+                'first_n': len(rf),
+                'first_biz_h': med(rf, 1),
+                'first_raw_h': med(rf, 0),
+                # réponses suivantes = délai entre touches
+                'next_n': len(rn),
+                'next_biz_h': med(rn, 1),
+                'next_raw_h': med(rn, 0),
+                'next_p75_biz': round(pct_at([b for _, b in rn], 0.75), 1) if len(rn) >= MIN_N else None,
+                # relances sans réponse client entre deux envois
                 'relance_n': len(rl),
-                'relance_raw_h': round(median([r for r, _ in rl]), 1) if len(rl) >= 5 else None,
-                'relance_biz_h': round(median([b for _, b in rl]), 1) if len(rl) >= 5 else None,
+                'relance_raw_h': med(rl, 0),
+                'relance_biz_h': med(rl, 1),
             })
-        rows.sort(key=lambda r: (r['reply_biz_h'] is None, r['reply_biz_h'] or 0))
+        rows.sort(key=lambda r: (r['next_biz_h'] is None, r['next_biz_h'] or 0))
         by_period[period] = rows
 
-    all_reply = [b for oid in care_ids for _, _, b in reply[oid]]
-    all_relance = [b for oid in care_ids for _, _, b in relance[oid]]
+    flat = lambda src: [b for oid in care_ids for _, _, b in src[oid]]
+    all_reply, all_first = flat(reply), flat(reply_first)
+    all_next, all_relance = flat(reply_next), flat(relance)
     return {
         'by_period': by_period,
+        'min_n': MIN_N,
         'dept_reply_biz_h': round(median(all_reply), 1) if all_reply else None,
+        'dept_first_biz_h': round(median(all_first), 1) if all_first else None,
+        'dept_next_biz_h': round(median(all_next), 1) if all_next else None,
         'dept_relance_biz_h': round(median(all_relance), 1) if all_relance else None,
+        'n_first': len(all_first), 'n_next': len(all_next),
         'n_tickets': len(by_ticket),
         'min_sample': 5,
         'biz_window': f'{BIZ_START}h-{BIZ_END}h, lun-ven',
@@ -997,11 +1040,15 @@ def _standalone():
     print(f"Departement : reponse {d['dept_reply_biz_h']}h · relance {d['dept_relance_biz_h']}h")
     print(f"Doubles envois ecartes (< {d['relance_floor_min']} min) : "
           f"{d['double_sends_excluded']}")
-    print(f"{'IC':12s} {'n rep':>6s} {'reponse':>9s} {'p75':>7s} {'n rel':>6s} {'relance':>9s}")
+    print(f"Departement : 1re reponse {d['dept_first_biz_h']}h ({d['n_first']} mes.) "
+          f"· entre touches {d['dept_next_biz_h']}h ({d['n_next']} mes.)")
+    print(f"\n{'IC':12s} {'n 1re':>6s} {'1re rep':>8s} {'n suiv':>7s} {'entre touches':>14s} "
+          f"{'p75':>7s} {'n rel':>6s} {'relance':>8s}")
     for r in d['by_period']['30d']:
         f = lambda v: f"{v}h" if v is not None else '-'
-        print(f"{r['name']:12s} {r['reply_n']:6d} {f(r['reply_biz_h']):>9s} "
-              f"{f(r['reply_p75_biz']):>7s} {r['relance_n']:6d} {f(r['relance_biz_h']):>9s}")
+        print(f"{r['name']:12s} {r['first_n']:6d} {f(r['first_biz_h']):>8s} "
+              f"{r['next_n']:7d} {f(r['next_biz_h']):>14s} {f(r['next_p75_biz']):>7s} "
+              f"{r['relance_n']:6d} {f(r['relance_biz_h']):>8s}")
 
     h = data['CARE_HOURLY']
     mx = max(h['mails'] + [1])

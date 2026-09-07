@@ -3402,6 +3402,11 @@ def main():
     }
 
     # Save data for debug
+# === CARE_ACTIVITY : fusion avant ecriture (patch_refresh_order) ===
+    # data.json doit contenir les clés Care : il alimente rendergo.py et
+    # toute analyse hors dashboard. La fusion doit donc précéder l'écriture.
+    data.update(care)
+
     with open(DATA_PATH, 'w') as f:
         json.dump(data, f, indent=1, default=str, ensure_ascii=False)
 
@@ -3410,7 +3415,6 @@ def main():
         log.error(f"Template introuvable: {TEMPLATE_PATH}")
         sys.exit(3)
     template_html = TEMPLATE_PATH.read_text()
-    data.update(care)      # === CARE_ACTIVITY (patch_refresh) ===
     output_html = render_template(template_html, data, now)
     OUTPUT_PATH.write_text(output_html)
 

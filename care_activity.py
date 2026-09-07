@@ -47,7 +47,11 @@ from collections import defaultdict
 #         à repasser à True le jour de la migration Cloudflare Access.
 PUBLISH_VERBATIMS = True
 
-WINDOW_DAYS = 35          # fenêtre glissante emails + appels (30j + bords de semaine)
+# Fenêtre glissante emails + appels. Portée à 95 jours le 07/09 pour que la
+# période "3 derniers mois" existe réellement : les délais se calculent par
+# ticket à partir des emails bruts et ne peuvent pas être reconstitués depuis
+# l'historique agrégé. Coût mesuré : environ +100 s sur un refresh de 7 min.
+WINDOW_DAYS = 95
 
 # Seuil d'aboutissement d'un appel (validé Pierre 28/08). L'intégration
 # téléphonie crée un enregistrement par NUMÉROTATION et les marque toutes
@@ -74,7 +78,7 @@ PORTAL_ID = '26173790'
 TICKET_URL = 'https://app.hubspot.com/contacts/' + PORTAL_ID + '/record/0-5/{}'
 
 CARE_LEVELS = ('N1', 'N2', 'Immat', 'N1+Liasses')
-PERIODS = ('today', 'yesterday', 'lastbizday', 'thisweek', 'lastweek', '30d')
+PERIODS = ('today', 'yesterday', 'lastbizday', 'thisweek', 'lastweek', '30d', '3m')
 
 # Fallback des libellés de disposition si /calling/v1/dispositions échoue.
 # Les GUID non résolus sont affichés tronqués plutôt que devinés.
@@ -244,6 +248,10 @@ def period_bounds(period, ref):
         return mon - datetime.timedelta(days=7), mon
     if period == '30d':
         return ref - datetime.timedelta(days=30), None
+    if period == '3m':
+        # 92 jours, borné par la fenêtre de collecte pour ne jamais annoncer
+        # une profondeur qu'on n'a pas réellement fetchée.
+        return ref - datetime.timedelta(days=min(92, WINDOW_DAYS - 2)), None
     return None, None
 
 

@@ -1289,6 +1289,10 @@
       <div><div class="block-sub" style="margin-bottom:6px">SLA 1er touchpoint</div><div class="chart-wrap"><canvas id="chartN1SLA"></canvas></div></div>
       <div><div class="block-sub" style="margin-bottom:6px">% Lost</div><div class="chart-wrap"><canvas id="chartN1LostEsc"></canvas></div></div>
     </div>
+    <div class="two-col" style="margin-top:1rem">
+      <div><div class="block-sub" style="margin-bottom:6px">Délai médian de 1re réponse <span style="color:var(--muted);font-size:10px">· heures ouvrées</span></div><div class="chart-wrap"><canvas id="chartN1First"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Délai médian entre touches <span style="color:var(--muted);font-size:10px">· échanges 2, 3, 4... · heures ouvrées</span></div><div class="chart-wrap"><canvas id="chartN1Next"></canvas></div></div>
+    </div>
   </div>
 
   <div class="block">
@@ -1301,9 +1305,13 @@
         <span class="block-sub" style="margin:0 0 0 10px">IC :</span><select class="ic-select" id="icSelect"></select>
       </div>
     </div>
-    <div class="two-col">
-      <div><div class="block-sub" style="margin-bottom:6px">Tickets fermés</div><div class="chart-wrap"><canvas id="chartICWeekly"></canvas></div></div>
+    <div>
+      <div class="block-sub" style="margin-bottom:6px">Tickets fermés</div>
+      <div class="chart-wrap lg"><canvas id="chartICWeekly"></canvas></div>
+    </div>
+    <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">Touchpoints envoyés vs mails entrants</div><div class="chart-wrap"><canvas id="chartICTouchWeekly"></canvas></div></div>
+      <div><div class="block-sub" style="margin-bottom:6px">Délai entre touches <span style="color:var(--muted);font-size:10px">· heures ouvrées · pointillé = médiane équipe</span></div><div class="chart-wrap"><canvas id="chartICNext"></canvas></div></div>
     </div>
     <div class="two-col" style="margin-top:1rem">
       <div><div class="block-sub" style="margin-bottom:6px">CES promoteurs <span style="color:var(--muted);font-size:10px">· par IC dès W13 2026</span></div><div class="chart-wrap"><canvas id="chartICCES"></canvas></div></div>
@@ -1386,6 +1394,10 @@
     <span class="chip active" data-cesscope="all">Département</span>
     <span class="chip" data-cesscope="cyrielle">Team Cyrielle</span>
     <span class="chip" data-cesscope="noemie">Team Noémie</span>
+    <span class="level-filter-label" style="margin-left:14px">Période</span>
+    <span class="chip" data-cesrange="lastweek">Semaine dernière</span>
+    <span class="chip" data-cesrange="month">Ce mois</span>
+    <span class="chip active" data-cesrange="90d">90 derniers jours</span>
     <span class="level-filter-label" style="margin-left:14px">IC</span>
     <select class="ic-select" id="cesIcSelect"><option value="">Tous les IC du périmètre</option></select>
     <span class="level-filter-label" id="cesScopeInfo" style="margin-left:10px;opacity:.8"></span>
@@ -5930,7 +5942,7 @@ function scopeLabel(){
 }
 function icScopeRefresh(){
   n1TeamFilter = IC_SCOPE;
-  buildN1Bars(); buildN1CareBars(); renderICTable(); renderPoleTable();
+  buildN1Bars(); buildN1CareBars(); buildN1Delays(); renderICTable(); renderPoleTable();
   const info = document.getElementById('icScopeInfo');
   if (info){
     const n = careOnly(IC_DATA['30d']||[]).filter(inIcScope).length;
@@ -6210,17 +6222,28 @@ function renderPoleTable() {
   const cyrN1 = lw.filter(x => x.tl === 'cyrielle');
   const sumFor = (arr,key) => arr.reduce((s,x)=>s+(x[key]||0),0);
   const avgW = (arr,pk,nk) => { let s=0,n=0; arr.forEach(x=>{ if(x[pk] != null && x[nk]>0){s+=x[pk]*x[nk];n+=x[nk];} }); return n?(s/n).toFixed(1):'—'; };
+  /* Délais par pôle : médiane des médianes par IC, pondérée par le nombre de
+     mesures. Une vraie médiane globale exigerait les écarts individuels, qui
+     ne sont pas exposés ; la moyenne pondérée en est la meilleure approche. */
+  const DEL = (((DATA.CARE_DELAYS || {}).by_period || {}).lastweek) || [];
+  const delBy = {}; DEL.forEach(r => delBy[r.name] = r);
+  const delFor = (arr, key, nkey) => {
+    let s = 0, n = 0;
+    arr.forEach(x => { const r = delBy[x.name];
+      if (r && r[key] != null && r[nkey] > 0){ s += r[key] * r[nkey]; n += r[nkey]; } });
+    return n ? (s / n).toFixed(1) + 'h' : '—';
+  };
   const rows = [
-    { name:'<span class="tl-pill noemie">Noémie</span> N1 (6 N1)', ic:6, closed:sumFor(noemieN1,'closed'), sla:avgW(noemieN1,'sla_pct','sla_n'), ces:avgW(noemieN1,'ces_pct','ces_n'), lost:`${(sumFor(noemieN1,'lost')/sumFor(noemieN1,'created')*100).toFixed(1)}%` },
-    { name:'<span class="tl-pill cyrielle">Cyrielle</span> N1 + N2 + Immat (Gaëlle + Jade + Magda + Priscilla + Hamda)', ic:5, closed:sumFor(cyrN1,'closed'), sla:avgW(cyrN1,'sla_pct','sla_n'), ces:avgW(cyrN1,'ces_pct','ces_n'), lost:`${(sumFor(cyrN1,'lost')/sumFor(cyrN1,'created')*100).toFixed(1)}%` },
+    { name:'<span class="tl-pill noemie">Noémie</span> N1', ic:noemieN1.length, closed:sumFor(noemieN1,'closed'), sla:avgW(noemieN1,'sla_pct','sla_n'), first:delFor(noemieN1,'first_biz_h','first_n'), next:delFor(noemieN1,'next_biz_h','next_n'), ces:avgW(noemieN1,'ces_pct','ces_n'), lost:`${(sumFor(noemieN1,'lost')/sumFor(noemieN1,'created')*100).toFixed(1)}%` },
+    { name:'<span class="tl-pill cyrielle">Cyrielle</span> N1 + N2 + Immat', ic:cyrN1.length, closed:sumFor(cyrN1,'closed'), sla:avgW(cyrN1,'sla_pct','sla_n'), first:delFor(cyrN1,'first_biz_h','first_n'), next:delFor(cyrN1,'next_biz_h','next_n'), ces:avgW(cyrN1,'ces_pct','ces_n'), lost:`${(sumFor(cyrN1,'lost')/sumFor(cyrN1,'created')*100).toFixed(1)}%` },
   ];
   const totClosed = sumFor(lw,'closed');
   const totCreated = sumFor(lw,'created');
   el.innerHTML = `<table>
-    <thead><tr><th class="left">Pôle</th><th>IC actifs</th><th>Fermés ${LAST_FULL_WEEK_LABEL}</th><th>SLA 1st</th><th>CES prom.</th><th>% Lost</th></tr></thead>
+    <thead><tr><th class="left">Pôle</th><th>IC actifs</th><th>Fermés ${LAST_FULL_WEEK_LABEL}</th><th>SLA 1st</th><th title="Médiane pondérée du délai de 1re réponse, heures ouvrées">1re rép.</th><th title="Médiane pondérée du délai sur les échanges 2, 3, 4...">Entre touches</th><th>CES prom.</th><th>% Lost</th></tr></thead>
     <tbody>
-      ${rows.map(r => `<tr><td>${r.name}</td><td>${r.ic}</td><td>${r.closed}</td><td>${r.sla==='—'?r.sla:r.sla+'%'}</td><td>${r.ces}</td><td>${r.lost}</td></tr>`).join('')}
-      <tr class="avg-row"><td>Département N1+N2</td><td>16</td><td>${totClosed}</td><td>${avgW(lw,'sla_pct','sla_n')}%</td><td>${avgW(lw,'ces_pct','ces_n')}</td><td>${(sumFor(lw,'lost')/totCreated*100).toFixed(1)}%</td></tr>
+      ${rows.map(r => `<tr><td>${r.name}</td><td>${r.ic}</td><td>${r.closed}</td><td>${r.sla==='—'?r.sla:r.sla+'%'}</td><td>${r.first}</td><td>${r.next}</td><td>${r.ces}</td><td>${r.lost}</td></tr>`).join('')}
+      <tr class="avg-row"><td>Département Care</td><td>${lw.length}</td><td>${totClosed}</td><td>${avgW(lw,'sla_pct','sla_n')}%</td><td>${delFor(lw,'first_biz_h','first_n')}</td><td>${delFor(lw,'next_biz_h','next_n')}</td><td>${avgW(lw,'ces_pct','ces_n')}</td><td>${(sumFor(lw,'lost')/totCreated*100).toFixed(1)}%</td></tr>
     </tbody></table>`;
 }
 
@@ -6834,7 +6857,7 @@ document.querySelectorAll('[data-n1period]').forEach(chip=>{
   chip.addEventListener('click',()=>{
     document.querySelectorAll('[data-n1period]').forEach(c=>c.classList.remove('active'));
     chip.classList.add('active');
-    n1Period = chip.dataset.n1period; buildN1Bars(); buildN1CareBars();
+    n1Period = chip.dataset.n1period; buildN1Bars(); buildN1CareBars(); buildN1Delays();
   });
 });
 
@@ -6918,7 +6941,7 @@ function populateICSelect(){
     const tlName = ic ? (ic.tl==='cyrielle' ? 'Cyrielle' : 'Noémie') : '';
     return `<option value="${name}">${name}</option>`;
   }).join('');
-  sel.addEventListener('change', () => { buildICDetail(); buildICCareWeekly(); });
+  sel.addEventListener('change', () => { buildICDetail(); buildICCareWeekly(); buildICNext(); });
 }
 
 function teamAvgSeries(weeks, metric) {
@@ -6936,7 +6959,7 @@ document.querySelectorAll('[data-ictimeline]').forEach(chip => {
     document.querySelectorAll('[data-ictimeline]').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     IC_TIMELINE = chip.dataset.ictimeline;
-    buildICDetail(); buildICCareWeekly();
+    buildICDetail(); buildICCareWeekly(); buildICNext();
   });
 });
 
@@ -8306,6 +8329,88 @@ function buildN1CareBars(){
   });
 }
 
+
+/* ===== Délais par IC : 1re réponse et entre touches (07/09) ===== */
+function delayRows(period){
+  return (((DATA.CARE_DELAYS || {}).by_period || {})[period]) || null;
+}
+
+function buildN1Delays(){
+  const D = delayRows(n1Period);
+  const scope = careOnly(IC_DATA['30d'] || []).filter(inIcScope);
+  const minN = (DATA.CARE_DELAYS || {}).min_n || 5;
+
+  [['chartN1First', 'first_biz_h', 'first_n', 'Délai 1re réponse', SEM.sla],
+   ['chartN1Next',  'next_biz_h',  'next_n',  'Délai entre touches', C.orange]].forEach(
+  function(spec){
+    const id = spec[0], key = spec[1], nkey = spec[2], label = spec[3], col = spec[4];
+    destroyIfExists(id);
+    const el = document.getElementById(id); if (!el) return;
+    if (!D){ emptyChart(id, "Délais non collectés sur cette période"); return; }
+    const by = {}; D.forEach(function(r){ by[r.name] = r; });
+    /* Tri croissant : le plus réactif à gauche. Les IC sous le seuil de
+       mesures partent en fin de graphe avec une barre vide. */
+    const rows = scope.map(function(a){ return by[a.name] || {name:a.name, tl:a.tl}; })
+      .map(function(r){ return {name:r.name, tl:r.tl, v:r[key], n:r[nkey] || 0}; })
+      .sort(function(a,b){ return (a.v == null) - (b.v == null) || (a.v || 0) - (b.v || 0); });
+    const o = withRotatedX(baseOpts());
+    o.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:false,
+      formatter: function(v){ return v == null ? '' : v + 'h'; } };
+    o.scales.y = { beginAtZero:true, grid:{color:C.grid}, border:{color:C.axis},
+      ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, callback:function(v){ return v+'h'; }} };
+    o.plugins.tooltip.callbacks = { label: function(ctx){
+      const r = rows[ctx.dataIndex];
+      return r.v == null ? (' moins de ' + minN + ' mesures') : (' ' + r.v + ' h · ' + r.n + ' mesures');
+    }};
+    chartInstances[id] = new Chart(el, {
+      type:'bar',
+      data:{ labels: rows.map(function(r){ return r.name; }), datasets:[
+        { label: label, data: rows.map(function(r){ return r.v; }),
+          backgroundColor: semBg(col), borderColor: col, borderWidth:1.5, borderRadius:3 }
+      ]},
+      options: o
+    });
+  });
+}
+
+/* ===== Zoom IC · délai entre touches vs médiane équipe ===== */
+function buildICNext(){
+  const id = 'chartICNext'; destroyIfExists(id);
+  const el = document.getElementById(id); if (!el) return;
+  const name = (document.getElementById('icSelect') || {}).value;
+  /* Pas d'historique hebdo des délais (ils se calculent par ticket sur la
+     fenêtre de collecte) : on compare donc l'IC au département sur les
+     périodes disponibles, ce qui reste exploitable en 1:1. */
+  const per = ['lastbizday','thisweek','lastweek','30d','3m'];
+  const lbl = {lastbizday:'Dern. j. ouvré', thisweek:'Cette sem.', lastweek:'Sem. der.', '30d':'30j', '3m':'3 mois'};
+  const mine = [], dept = [];
+  per.forEach(function(p){
+    const rows = delayRows(p) || [];
+    const r = rows.filter(function(x){ return x.name === name; })[0];
+    mine.push(r ? r.next_biz_h : null);
+    const vals = rows.map(function(x){ return x.next_biz_h; })
+                     .filter(function(v){ return v != null; }).sort(function(a,b){ return a-b; });
+    dept.push(vals.length ? +(vals[Math.floor(vals.length/2)]).toFixed(1) : null);
+  });
+  if (!mine.some(function(v){ return v != null; })){
+    emptyChart(id, "Moins de 5 mesures sur toutes les périodes"); return;
+  }
+  const o = legendOn(baseOpts());
+  o.plugins.dataLabels = { enabled:true, fontSize:9, color:C.labelText, rotate:false,
+    formatter: function(v){ return v == null ? '' : v + 'h'; } };
+  o.scales.y = { beginAtZero:true, grid:{color:C.grid}, border:{color:C.axis},
+    ticks:{color:C.tick, font:{family:'JetBrains Mono',size:10}, callback:function(v){ return v+'h'; }} };
+  chartInstances[id] = new Chart(el, {
+    type:'bar',
+    data:{ labels: per.map(function(p){ return lbl[p]; }), datasets:[
+      { label: name || 'IC', data: mine, backgroundColor: semBg(C.orange), borderColor: C.orange, borderWidth:1.5, borderRadius:3 },
+      { label:'Médiane équipe', data: dept, type:'line', borderColor: C.muted, borderDash:[5,4],
+        borderWidth:2, pointRadius:2, backgroundColor:'transparent', fill:false, spanGaps:true }
+    ]},
+    options: o
+  });
+}
+
 /* ===== Zoom IC · touchpoints et appels semaine par semaine ===== */
 function buildICCareWeekly(){
   const name = (document.getElementById('icSelect')||{}).value;
@@ -8427,6 +8532,32 @@ function renderCesRecap(){
 let CES_FILTER = 'all';      // toutes / low / high / verbatim
 let CES_SCOPE  = 'all';      // all / cyrielle / noemie
 let CES_IC     = '';         // nom d'un IC, '' = tous
+let CES_RANGE  = '90d';      // lastweek / month / 90d ; 90d = fenêtre de collecte
+
+/* Bornes de la période CES. Le module collecte 90 jours glissants : les deux
+   périodes plus courtes sont dérivées de ce même jeu, sans coût. */
+function cesRangeBounds(){
+  const now = new Date();
+  const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (CES_RANGE === 'month') return [new Date(now.getFullYear(), now.getMonth(), 1), null];
+  if (CES_RANGE === 'lastweek'){
+    const monday = new Date(d0); monday.setDate(d0.getDate() - ((d0.getDay() + 6) % 7));
+    const prev = new Date(monday); prev.setDate(monday.getDate() - 7);
+    return [prev, monday];
+  }
+  return [null, null];
+}
+function cesInRange(r){
+  const [a, b] = cesRangeBounds();
+  if (!a && !b) return true;
+  const t = new Date(r.ts);
+  if (a && t < a) return false;
+  if (b && t >= b) return false;
+  return true;
+}
+function cesRangeLabel(){
+  return {lastweek:'semaine dernière', month:'ce mois', '90d':'90 derniers jours'}[CES_RANGE];
+}
 
 /* Mapping IC -> TL depuis ic_config (déjà embarqué dans data.json). */
 const IC_TL = (function(){
@@ -8442,6 +8573,7 @@ function cesEligible(r){
 }
 function cesInScope(r){
   if (!cesEligible(r)) return false;
+  if (!cesInRange(r)) return false;
   if (CES_IC) return r.ic === CES_IC;
   if (CES_SCOPE === 'all') return true;
   return IC_TL[r.ic] === CES_SCOPE;
@@ -8452,7 +8584,7 @@ function cesInScope(r){
 function cesData(){
   const raw = (typeof DATA !== 'undefined' && DATA.CARE_CES) ? DATA.CARE_CES : null;
   if (!raw || !raw.available) return raw;
-  const rows = (raw.responses || []).filter(cesInScope);
+  const rows = (raw.responses || []).filter(cesInScope);   // périmètre ET période
   const dist = {};
   rows.forEach(r => dist[String(r.note)] = (dist[String(r.note)] || 0) + 1);
   const by_ic = {};
@@ -8486,7 +8618,7 @@ function cesRefreshAll(){
   if (info){
     const D = cesData();
     const label = CES_IC ? CES_IC : (CES_SCOPE === 'all' ? 'département' : 'team ' + (CES_SCOPE==='cyrielle'?'Cyrielle':'Noémie'));
-    info.textContent = D && D.available ? `${D.n_total} réponses · ${label}` : '';
+    info.textContent = D && D.available ? `${D.n_total} réponses · ${label} · ${cesRangeLabel()}` : '';
   }
 }
 
@@ -8496,7 +8628,7 @@ function populateCesIcSelect(){
   const raw = (typeof DATA !== 'undefined') ? DATA.CARE_CES : null;
   const names = raw && raw.available
     ? [...new Set((raw.responses||[])
-        .filter(cesEligible)
+        .filter(cesEligible).filter(cesInRange)
         .filter(r => CES_SCOPE === 'all' ? true : IC_TL[r.ic] === CES_SCOPE)
         .map(r => r.ic))].sort()
     : [];
@@ -8505,6 +8637,14 @@ function populateCesIcSelect(){
   if (CES_IC && !names.includes(CES_IC)) { CES_IC = ''; sel.value = ''; }
 }
 
+document.querySelectorAll('[data-cesrange]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('[data-cesrange]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    CES_RANGE = chip.dataset.cesrange;
+    populateCesIcSelect(); cesRefreshAll();
+  });
+});
 document.querySelectorAll('[data-cesscope]').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('[data-cesscope]').forEach(c => c.classList.remove('active'));
@@ -8531,7 +8671,7 @@ function renderCesKPIs(){
   const promo = n(6)+n(7);
   const verb = (D.responses||[]).filter(r=>r.has_verbatim).length;
   const cards = [
-    {cls:'indigo', label:'Réponses CES',      val:D.n_total,                sub:`${D.window_days} derniers jours`},
+    {cls:'indigo', label:'Réponses CES',      val:D.n_total,                sub:cesRangeLabel()},
     {cls:'green',  label:'Promoteurs',        val:(D.pct_high!=null?D.pct_high+'%':'—'), sub:`${promo} réponses en 6-7`},
     {cls:'red',    label:'Détracteurs',       val:(D.n_total?Math.round(detract/D.n_total*100)+'%':'—'), sub:`${detract} réponses en 1-4`},
     {cls:'',       label:'Verbatims',         val:(D.n_total?Math.round(verb/D.n_total*100)+'%':'—'), sub:`${verb} réponses commentées`},
@@ -8679,7 +8819,9 @@ function rebuildAllCharts(){
   safe(()=>populateCesIcSelect(), 'populateCesIcSelect'); cesRefreshAll();
   safe(()=>renderHeroCare(), 'renderHeroCare'); renderChargeCare(); renderCesRecap();
   safe(()=>buildTouchVolume(), 'buildTouchVolume'); buildCallVolume(); buildHourly();
-  safe(()=>icScopeRefresh(), 'icScopeRefresh'); buildICCareWeekly();
+  safe(()=>icScopeRefresh(), 'icScopeRefresh');
+  safe(()=>buildICCareWeekly(), 'buildICCareWeekly');
+  safe(()=>buildICNext(), 'buildICNext');
   safe(()=>renderHeroYtD(), 'renderHeroYtD');
 }
 

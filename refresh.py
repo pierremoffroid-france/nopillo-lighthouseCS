@@ -3323,6 +3323,23 @@ def main():
         log.error("care_activity a échoué, on publie sans : %s", exc)
         care = {'CARE_META': {'error': str(exc)[:300]}}
 
+    # === SUCCESS_ACTIVITY (patch_refresh_success) ===
+    # Zone Customer Success : pipeline retention, issues par cohorte, motifs,
+    # vue par IC, appels par type, cross-sell. Isole dans son propre try : un
+    # echec ici ne doit pas emporter le bloc Care ni le reste du dashboard.
+    # Les trois cles Stripe (SUCCESS_COHORT / SUCCESS_ARR / SUCCESS_RECOVERY)
+    # restent absentes tant que la cle API Stripe n'est pas fournie.
+    success = {}
+    try:
+        from success_activity import compute_success_activity
+        success = compute_success_activity(
+            cfg['hubspot_token'], ref_now=now, verbose=True,
+        )
+        log.info("success_activity OK : %s", success.get('SUCCESS_META', {}))
+    except Exception as exc:                       # noqa: BLE001
+        log.error("success_activity a echoue, on publie sans : %s", exc)
+        success = {'SUCCESS_META': {'error': str(exc)[:300]}}
+
     data = {
         'IC_DATA': ic_data,
         'IC_MAP_CONFIG': [
@@ -3425,6 +3442,8 @@ def main():
     # data.json doit contenir les clés Care : il alimente rendergo.py et
     # toute analyse hors dashboard. La fusion doit donc précéder l'écriture.
     data.update(care)
+    # === SUCCESS_ACTIVITY : fusion avant ecriture (patch_refresh_success) ===
+    data.update(success)
 
     with open(DATA_PATH, 'w') as f:
         json.dump(data, f, indent=1, default=str, ensure_ascii=False)
